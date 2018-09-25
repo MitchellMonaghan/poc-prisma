@@ -1,18 +1,21 @@
 import config from '@config'
+import { importSchema } from 'graphql-import'
 import { ApolloServer, makeExecutableSchema } from 'apollo-server'
 import { Prisma } from 'prisma-binding'
 import { get } from 'lodash'
 
 import { getUserFromToken, verifyEmail } from '@modules/auth/manager'
 
-import typeDefs from './typeDefs'
+// import typeDefs from './typeDefs'
 import resolvers from './resolvers'
-import schemaDirectives from './schemaDirectives'
+import directiveResolvers from './directives'
+const typeDefs = importSchema('./src/graphql/schema.graphql')
+// const schemaDirectives = importSchema('./src/graphql/modules/_directives/schema.graphql')
 
 const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
-  schemaDirectives
+  directiveResolvers
 })
 
 const graphqlServer = new ApolloServer({
@@ -39,7 +42,7 @@ const graphqlServer = new ApolloServer({
     }
 
     context.prisma = new Prisma({
-      typeDefs: 'src/generated/prisma.graphql',
+      typeDefs: 'src/graphql/generated/prisma.graphql',
       endpoint: process.env.PRISMA_URL
     })
 

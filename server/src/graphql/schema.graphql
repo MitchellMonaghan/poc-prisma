@@ -1,0 +1,7 @@
+# import * from "./directives/schema.graphql"
+
+# import Permission, PermissionAccessType, PermissionAccessLevel from "./generated/prisma.graphql"
+
+# import *, Query.*, Mutation.* from "./modules/auth/schema.graphql"
+# import *, Query.*, Mutation.* from "./modules/permission/schema.graphql"
+# import *, Query.*, Mutation.* from "./modules/user/schema.graphql"

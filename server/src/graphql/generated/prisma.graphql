@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Tue Sep 25 2018 00:43:35 GMT-0500 (Central Daylight Time)
+# timestamp: Tue Sep 25 2018 15:43:00 GMT-0500 (Central Daylight Time)
 
 type AggregatePermission {
   count: Int!
@@ -66,7 +66,7 @@ type PageInfo {
 
 type Permission implements Node {
   id: ID!
-  user(where: UserWhereInput): User!
+  user: User!
   accessType: PermissionAccessType!
   accessLevel: PermissionAccessLevel!
 }

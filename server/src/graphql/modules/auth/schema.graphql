@@ -1,0 +1,14 @@
+type Query {
+  authenticateUser(username: String!, password: String!): String!
+  refreshToken: String! @isAuthenticated
+
+  forgotPassword(email: String!): String!
+}
+
+type Mutation {
+  registerUser(firstName: String, lastName: String, username: String, email: String!, password: String!): String!
+  inviteUser(email: String!): String! @isAuthenticated
+  verifyEmail: String! @isAuthenticated
+
+  changePassword(id: ID!, password: String!): String! @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+}

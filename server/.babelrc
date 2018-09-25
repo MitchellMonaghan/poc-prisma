@@ -8,7 +8,8 @@
       "alias": {
         "@root": ".",
         "@config": "./src/config",
-        "@modules": "./src/modules",
+        "@graphql": "./src/graphql",
+        "@modules": "./src/graphql/modules",
         "@services": "./src/services"
       }
     }]

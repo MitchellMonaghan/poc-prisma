@@ -1,0 +1,21 @@
+type User {
+  id: ID
+  username: String
+  firstName: String @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+  lastName: String @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+  email: String @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+  permissions: [Permission!]!
+}
+
+type Query {
+  "Gets all users from the system"
+  getUsers: [User!]! @hasPermission(permission: READ_USER, accessLevel: ALL)
+
+  "Gets a single user specified by the id provided"
+  getUser(id: ID!): User @hasPermission(permission: READ_USER, accessLevel: OWNER)
+}
+
+type Mutation {
+  updateUser(id: ID!, username: String!, firstName: String, lastName: String): User @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+  deleteUser(id: ID!): User @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+}
