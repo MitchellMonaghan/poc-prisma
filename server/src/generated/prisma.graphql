@@ -1,0 +1,766 @@
+# source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
+# timestamp: Tue Sep 25 2018 00:43:35 GMT-0500 (Central Daylight Time)
+
+type AggregatePermission {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+scalar DateTime
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  createPermission(data: PermissionCreateInput!): Permission!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updatePermission(data: PermissionUpdateInput!, where: PermissionWhereUniqueInput!): Permission
+  deleteUser(where: UserWhereUniqueInput!): User
+  deletePermission(where: PermissionWhereUniqueInput!): Permission
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertPermission(where: PermissionWhereUniqueInput!, create: PermissionCreateInput!, update: PermissionUpdateInput!): Permission!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyPermissions(data: PermissionUpdateInput!, where: PermissionWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyPermissions(where: PermissionWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Permission implements Node {
+  id: ID!
+  user(where: UserWhereInput): User!
+  accessType: PermissionAccessType!
+  accessLevel: PermissionAccessLevel!
+}
+
+enum PermissionAccessLevel {
+  NONE
+  OWNER
+  ALL
+  SUPER
+}
+
+enum PermissionAccessType {
+  CREATE_USER
+  READ_USER
+  UPDATE_USER
+}
+
+"""A connection to a list of items."""
+type PermissionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PermissionEdge]!
+  aggregate: AggregatePermission!
+}
+
+input PermissionCreateInput {
+  accessType: PermissionAccessType!
+  accessLevel: PermissionAccessLevel!
+  user: UserCreateOneWithoutPermissionsInput!
+}
+
+input PermissionCreateManyWithoutUserInput {
+  create: [PermissionCreateWithoutUserInput!]
+  connect: [PermissionWhereUniqueInput!]
+}
+
+input PermissionCreateWithoutUserInput {
+  accessType: PermissionAccessType!
+  accessLevel: PermissionAccessLevel!
+}
+
+"""An edge in a connection."""
+type PermissionEdge {
+  """The item at the end of the edge."""
+  node: Permission!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PermissionOrderByInput {
+  id_ASC
+  id_DESC
+  accessType_ASC
+  accessType_DESC
+  accessLevel_ASC
+  accessLevel_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PermissionPreviousValues {
+  id: ID!
+  accessType: PermissionAccessType!
+  accessLevel: PermissionAccessLevel!
+}
+
+type PermissionSubscriptionPayload {
+  mutation: MutationType!
+  node: Permission
+  updatedFields: [String!]
+  previousValues: PermissionPreviousValues
+}
+
+input PermissionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PermissionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PermissionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PermissionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PermissionWhereInput
+}
+
+input PermissionUpdateInput {
+  accessType: PermissionAccessType
+  accessLevel: PermissionAccessLevel
+  user: UserUpdateOneRequiredWithoutPermissionsInput
+}
+
+input PermissionUpdateManyWithoutUserInput {
+  create: [PermissionCreateWithoutUserInput!]
+  connect: [PermissionWhereUniqueInput!]
+  disconnect: [PermissionWhereUniqueInput!]
+  delete: [PermissionWhereUniqueInput!]
+  update: [PermissionUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [PermissionUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input PermissionUpdateWithoutUserDataInput {
+  accessType: PermissionAccessType
+  accessLevel: PermissionAccessLevel
+}
+
+input PermissionUpdateWithWhereUniqueWithoutUserInput {
+  where: PermissionWhereUniqueInput!
+  data: PermissionUpdateWithoutUserDataInput!
+}
+
+input PermissionUpsertWithWhereUniqueWithoutUserInput {
+  where: PermissionWhereUniqueInput!
+  update: PermissionUpdateWithoutUserDataInput!
+  create: PermissionCreateWithoutUserInput!
+}
+
+input PermissionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PermissionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PermissionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PermissionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  accessType: PermissionAccessType
+
+  """All values that are not equal to given value."""
+  accessType_not: PermissionAccessType
+
+  """All values that are contained in given list."""
+  accessType_in: [PermissionAccessType!]
+
+  """All values that are not contained in given list."""
+  accessType_not_in: [PermissionAccessType!]
+  accessLevel: PermissionAccessLevel
+
+  """All values that are not equal to given value."""
+  accessLevel_not: PermissionAccessLevel
+
+  """All values that are contained in given list."""
+  accessLevel_in: [PermissionAccessLevel!]
+
+  """All values that are not contained in given list."""
+  accessLevel_not_in: [PermissionAccessLevel!]
+  user: UserWhereInput
+}
+
+input PermissionWhereUniqueInput {
+  id: ID
+}
+
+type Query {
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  permissions(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Permission]!
+  user(where: UserWhereUniqueInput!): User
+  permission(where: PermissionWhereUniqueInput!): Permission
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  permissionsConnection(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PermissionConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Subscription {
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  permission(where: PermissionSubscriptionWhereInput): PermissionSubscriptionPayload
+}
+
+type User implements Node {
+  id: ID!
+  firstName: String
+  lastName: String
+  username: String!
+  email: String!
+  password: String!
+  lastPasswordChange: DateTime!
+  confirmed: Boolean!
+  permissions(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Permission!]
+  deleted: Boolean!
+}
+
+"""A connection to a list of items."""
+type UserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  firstName: String
+  lastName: String
+  username: String!
+  email: String!
+  password: String!
+  lastPasswordChange: DateTime!
+  confirmed: Boolean!
+  deleted: Boolean
+  permissions: PermissionCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutPermissionsInput {
+  create: UserCreateWithoutPermissionsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutPermissionsInput {
+  firstName: String
+  lastName: String
+  username: String!
+  email: String!
+  password: String!
+  lastPasswordChange: DateTime!
+  confirmed: Boolean!
+  deleted: Boolean
+}
+
+"""An edge in a connection."""
+type UserEdge {
+  """The item at the end of the edge."""
+  node: User!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  firstName_ASC
+  firstName_DESC
+  lastName_ASC
+  lastName_DESC
+  username_ASC
+  username_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  lastPasswordChange_ASC
+  lastPasswordChange_DESC
+  confirmed_ASC
+  confirmed_DESC
+  deleted_ASC
+  deleted_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  firstName: String
+  lastName: String
+  username: String!
+  email: String!
+  password: String!
+  lastPasswordChange: DateTime!
+  confirmed: Boolean!
+  deleted: Boolean!
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateInput {
+  firstName: String
+  lastName: String
+  username: String
+  email: String
+  password: String
+  lastPasswordChange: DateTime
+  confirmed: Boolean
+  deleted: Boolean
+  permissions: PermissionUpdateManyWithoutUserInput
+}
+
+input UserUpdateOneRequiredWithoutPermissionsInput {
+  create: UserCreateWithoutPermissionsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutPermissionsDataInput
+  upsert: UserUpsertWithoutPermissionsInput
+}
+
+input UserUpdateWithoutPermissionsDataInput {
+  firstName: String
+  lastName: String
+  username: String
+  email: String
+  password: String
+  lastPasswordChange: DateTime
+  confirmed: Boolean
+  deleted: Boolean
+}
+
+input UserUpsertWithoutPermissionsInput {
+  update: UserUpdateWithoutPermissionsDataInput!
+  create: UserCreateWithoutPermissionsInput!
+}
+
+input UserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  firstName: String
+
+  """All values that are not equal to given value."""
+  firstName_not: String
+
+  """All values that are contained in given list."""
+  firstName_in: [String!]
+
+  """All values that are not contained in given list."""
+  firstName_not_in: [String!]
+
+  """All values less than the given value."""
+  firstName_lt: String
+
+  """All values less than or equal the given value."""
+  firstName_lte: String
+
+  """All values greater than the given value."""
+  firstName_gt: String
+
+  """All values greater than or equal the given value."""
+  firstName_gte: String
+
+  """All values containing the given string."""
+  firstName_contains: String
+
+  """All values not containing the given string."""
+  firstName_not_contains: String
+
+  """All values starting with the given string."""
+  firstName_starts_with: String
+
+  """All values not starting with the given string."""
+  firstName_not_starts_with: String
+
+  """All values ending with the given string."""
+  firstName_ends_with: String
+
+  """All values not ending with the given string."""
+  firstName_not_ends_with: String
+  lastName: String
+
+  """All values that are not equal to given value."""
+  lastName_not: String
+
+  """All values that are contained in given list."""
+  lastName_in: [String!]
+
+  """All values that are not contained in given list."""
+  lastName_not_in: [String!]
+
+  """All values less than the given value."""
+  lastName_lt: String
+
+  """All values less than or equal the given value."""
+  lastName_lte: String
+
+  """All values greater than the given value."""
+  lastName_gt: String
+
+  """All values greater than or equal the given value."""
+  lastName_gte: String
+
+  """All values containing the given string."""
+  lastName_contains: String
+
+  """All values not containing the given string."""
+  lastName_not_contains: String
+
+  """All values starting with the given string."""
+  lastName_starts_with: String
+
+  """All values not starting with the given string."""
+  lastName_not_starts_with: String
+
+  """All values ending with the given string."""
+  lastName_ends_with: String
+
+  """All values not ending with the given string."""
+  lastName_not_ends_with: String
+  username: String
+
+  """All values that are not equal to given value."""
+  username_not: String
+
+  """All values that are contained in given list."""
+  username_in: [String!]
+
+  """All values that are not contained in given list."""
+  username_not_in: [String!]
+
+  """All values less than the given value."""
+  username_lt: String
+
+  """All values less than or equal the given value."""
+  username_lte: String
+
+  """All values greater than the given value."""
+  username_gt: String
+
+  """All values greater than or equal the given value."""
+  username_gte: String
+
+  """All values containing the given string."""
+  username_contains: String
+
+  """All values not containing the given string."""
+  username_not_contains: String
+
+  """All values starting with the given string."""
+  username_starts_with: String
+
+  """All values not starting with the given string."""
+  username_not_starts_with: String
+
+  """All values ending with the given string."""
+  username_ends_with: String
+
+  """All values not ending with the given string."""
+  username_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  lastPasswordChange: DateTime
+
+  """All values that are not equal to given value."""
+  lastPasswordChange_not: DateTime
+
+  """All values that are contained in given list."""
+  lastPasswordChange_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  lastPasswordChange_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  lastPasswordChange_lt: DateTime
+
+  """All values less than or equal the given value."""
+  lastPasswordChange_lte: DateTime
+
+  """All values greater than the given value."""
+  lastPasswordChange_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  lastPasswordChange_gte: DateTime
+  confirmed: Boolean
+
+  """All values that are not equal to given value."""
+  confirmed_not: Boolean
+  deleted: Boolean
+
+  """All values that are not equal to given value."""
+  deleted_not: Boolean
+  permissions_every: PermissionWhereInput
+  permissions_some: PermissionWhereInput
+  permissions_none: PermissionWhereInput
+}
+
+input UserWhereUniqueInput {
+  id: ID
+  username: String
+  email: String
+}

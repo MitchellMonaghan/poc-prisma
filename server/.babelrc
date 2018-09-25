@@ -1,0 +1,16 @@
+{
+  "presets": ["@babel/preset-env"],
+  "retainLines": true,
+  "sourceMaps": true,
+  "plugins": [
+    ["module-resolver", {
+      "root": ["."],
+      "alias": {
+        "@root": ".",
+        "@config": "./src/config",
+        "@modules": "./src/modules",
+        "@services": "./src/services"
+      }
+    }]
+  ]
+}

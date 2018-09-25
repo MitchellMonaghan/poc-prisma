@@ -1,0 +1,46 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "poc-graphql server",
+  "main": "./src/app.js",
+  "scripts": {
+    "start": "npm run lint && node --nolazy --require @babel/register --require @babel/polyfill --inspect-brk=9229 ./src/app.js",
+    "dev": "npm run lint && node --require @babel/register --require @babel/polyfill ./src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src"
+  },
+  "author": "Mitchell Monaghan",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.0.5",
+    "bcrypt": "^3.0.1",
+    "dotenv": "^6.0.0",
+    "graphql": "^0.13.2",
+    "graphql-redis-subscriptions": "^1.5.0",
+    "graphql-tools": "^3.1.1",
+    "joi": "^13.6.0",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.10",
+    "mailgun-js": "^0.20.0",
+    "moment": "^2.22.2",
+    "prisma-binding": "^2.1.6",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/node": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "apollo": "^1.9.1",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "eslint": "^5.5.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "nodemon": "^1.18.4"
+  }
+}
