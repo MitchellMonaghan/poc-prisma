@@ -1,7 +1,6 @@
 import config from '@config'
 import uuid from 'uuid/v4'
 
-import { first } from 'lodash'
 import bcrypt from 'bcrypt'
 
 import { UserInputError } from 'apollo-server'
@@ -10,7 +9,7 @@ import { generateJWT } from '@services/jwt'
 import Joi from '@services/joi'
 import mailer from '@services/mailer'
 
-import userManager from '@modules/user/manager'
+import { createUser, userExists } from '@modules/user/manager'
 
 // Private functions
 
@@ -35,28 +34,7 @@ const authenticateUser = async (root, args, context, info) => {
 
   Joi.validate({ username, password }, validationSchema)
 
-  // Searching on username case insensitive
-  const users = await prisma.query.users({
-    where: {
-      OR: [
-        { username },
-        { email: username }
-      ]
-    }
-  })
-
-  const user = first(users)
-
-  // You can only login if confirmed
-  if (!user || (user && !user.confirmed)) {
-    throw new UserInputError('Username or email not found', {
-      invalidArgs: [
-        'username',
-        'email'
-      ]
-    })
-  }
-
+  const user = await userExists(prisma, { username, password })
   const isValid = await bcrypt.compare(password, user.password)
 
   if (!isValid) {
@@ -76,6 +54,7 @@ const refreshToken = async (root, args, context, info) => {
 }
 
 const forgotPassword = async (root, args, context, info) => {
+  const { prisma } = context
   const { email } = args
 
   const validationSchema = {
@@ -84,21 +63,10 @@ const forgotPassword = async (root, args, context, info) => {
 
   Joi.validate({ email }, validationSchema)
 
-  const user = await context.prisma.query({
-    where: { email }
-  })
-
-  if (!user || (user && !user.confirmed)) {
-    throw new UserInputError('Email not found', {
-      invalidArgs: [
-        'email'
-      ]
-    })
-  }
-
+  const user = await userExists(prisma, { email })
   user.forgotPasswordToken = await generateJWT(user)
 
-  mailer.sendEmail(mailer.emailEnum.forgotPassword, [email], user)
+  mailer.sendEmail(mailer.emailEnum.forgotPassword, [user.email], user)
   return 'Email sent'
 }
 
@@ -111,7 +79,7 @@ const registerUser = async (root, args, context, info) => {
 
   Joi.validate(args, validationSchema)
 
-  const user = await userManager.createUser(root, args, context, info)
+  const user = await createUser(root, args, context, info)
 
   user.verifyEmailToken = await generateJWT(user)
   mailer.sendEmail(mailer.emailEnum.verifyEmail, [user.email], user)
@@ -126,7 +94,7 @@ const inviteUser = async (email, user) => {
 
   Joi.validate({ email }, validationSchema)
 
-  const invitedUser = await userManager.createUser({ email, password: uuid() })
+  const invitedUser = await createUser({ email, password: uuid() })
 
   invitedUser.verifyEmailToken = await generateJWT(invitedUser)
   mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, invitee: user })

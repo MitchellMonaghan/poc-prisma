@@ -1,7 +1,7 @@
 import { UserInputError } from 'apollo-server'
 import bcrypt from 'bcrypt'
 import Joi from '@services/joi'
-import { pick } from 'lodash'
+import { pick, first } from 'lodash'
 
 import { permissionAccessTypeEnum, permissionAccessLevelEnum } from '@modules/permission/manager'
 
@@ -161,12 +161,39 @@ const hashPassword = async (password) => {
   return bcrypt.hashSync(password, salt)
 }
 
+const userExists = async (prisma, { username, email }) => {
+  const users = await prisma.query.users({
+    where: {
+      OR: [
+        { username },
+        { username: email },
+        { email }
+      ]
+    }
+  })
+
+  const user = first(users)
+
+  if (!user || (user && !user.confirmed)) {
+    throw new UserInputError('Username or email not found', {
+      invalidArgs: [
+        'username',
+        'email'
+      ]
+    })
+  }
+
+  return user
+}
+
 const publicProps = {
   createUser,
   getUsers,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+
+  userExists
 }
 
 module.exports = publicProps
