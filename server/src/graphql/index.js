@@ -4,13 +4,12 @@ import { ApolloServer, makeExecutableSchema } from 'apollo-server'
 import { Prisma } from 'prisma-binding'
 import { get } from 'lodash'
 
-import { getUserFromToken, verifyEmail } from '@modules/auth/manager'
+import { getUserFromToken } from '@services/jwt'
+import { verifyEmail } from '@modules/auth/manager'
 
-// import typeDefs from './typeDefs'
 import resolvers from './resolvers'
 import directiveResolvers from './directives'
 const typeDefs = importSchema('./src/graphql/schema.graphql')
-// const schemaDirectives = importSchema('./src/graphql/modules/_directives/schema.graphql')
 
 const schema = makeExecutableSchema({
   typeDefs,

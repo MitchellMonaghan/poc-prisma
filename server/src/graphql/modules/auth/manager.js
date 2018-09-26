@@ -1,11 +1,12 @@
 import config from '@config'
 import uuid from 'uuid/v4'
-import jwt from 'jsonwebtoken'
-import { pick, first } from 'lodash'
+
+import { first } from 'lodash'
 import bcrypt from 'bcrypt'
 
-import { AuthenticationError, UserInputError } from 'apollo-server'
+import { UserInputError } from 'apollo-server'
 
+import { generateJWT } from '@services/jwt'
 import Joi from '@services/joi'
 import mailer from '@services/mailer'
 
@@ -21,36 +22,6 @@ const permissionsEnum = {
   owner: 1, // access owner only
   all: 2, // access all of a collection
   super: 3 // super user who cannot be tampered with
-}
-
-const generateJWT = async (user) => {
-  const props = Object.assign({}, {
-    user: pick(user, ['id', 'username', 'email', 'firstName', 'lastName', 'lastPasswordChange'])
-  })
-
-  // Sign token with a combination of authSecret and user password
-  // This way both the server and the user has the ability to invalidate all tokens
-  return jwt.sign(props, `${config.authSecret}`, { expiresIn: config.tokenExipresIn })
-}
-
-const getUserFromToken = async (prisma, token) => {
-  try {
-    const decoded = jwt.decode(token)
-    // const user = await User.findById(decoded.user.id).exec()
-    const user = await prisma.query.user({
-      where: { id: decoded.user.id }
-    })
-
-    jwt.verify(token, `${config.authSecret}`)
-
-    if (decoded.user.lastPasswordChange !== user.lastPasswordChange) {
-      throw new AuthenticationError('Token invalid please authenticate.')
-    }
-
-    return user
-  } catch (error) {
-    return null
-  }
 }
 
 const authenticateUser = async (root, args, context, info) => {
@@ -99,8 +70,36 @@ const authenticateUser = async (root, args, context, info) => {
   return generateJWT(user)
 }
 
-const refreshToken = async (user) => {
+const refreshToken = async (root, args, context, info) => {
+  const { user } = context
   return generateJWT(user)
+}
+
+const forgotPassword = async (root, args, context, info) => {
+  const { email } = args
+
+  const validationSchema = {
+    email: Joi.string().email({ minDomainAtoms: 2 }).required()
+  }
+
+  Joi.validate({ email }, validationSchema)
+
+  const user = await context.prisma.query({
+    where: { email }
+  })
+
+  if (!user || (user && !user.confirmed)) {
+    throw new UserInputError('Email not found', {
+      invalidArgs: [
+        'email'
+      ]
+    })
+  }
+
+  user.forgotPasswordToken = await generateJWT(user)
+
+  mailer.sendEmail(mailer.emailEnum.forgotPassword, [email], user)
+  return 'Email sent'
 }
 
 const registerUser = async (root, args, context, info) => {
@@ -133,33 +132,6 @@ const inviteUser = async (email, user) => {
   mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, invitee: user })
 
   return `Success`
-}
-
-const forgotPassword = async (root, args, context, info) => {
-  const { email } = args
-
-  const validationSchema = {
-    email: Joi.string().email({ minDomainAtoms: 2 }).required()
-  }
-
-  Joi.validate({ email }, validationSchema)
-
-  const user = await context.prisma.query({
-    where: { email }
-  })
-
-  if (!user || (user && !user.confirmed)) {
-    throw new UserInputError('Email not found', {
-      invalidArgs: [
-        'email'
-      ]
-    })
-  }
-
-  user.forgotPasswordToken = await generateJWT(user)
-
-  mailer.sendEmail(mailer.emailEnum.forgotPassword, [email], user)
-  return 'Email sent'
 }
 
 const verifyEmail = async (root, args, context, info) => {
@@ -199,13 +171,13 @@ const changePassword = async (root, args, context, info) => {
 
 const publicProps = {
   permissionsEnum,
-  generateJWT,
-  getUserFromToken,
+
   authenticateUser,
   refreshToken,
+  forgotPassword,
+
   registerUser,
   inviteUser,
-  forgotPassword,
   verifyEmail,
   changePassword
 }
