@@ -1,7 +1,9 @@
 import config from '@config'
 import uuid from 'uuid/v4'
 import jwt from 'jsonwebtoken'
-import { pick } from 'lodash'
+import { pick, first } from 'lodash'
+import bcrypt from 'bcrypt'
+
 import { AuthenticationError, UserInputError } from 'apollo-server'
 
 import Joi from '@services/joi'
@@ -52,8 +54,8 @@ const getUserFromToken = async (prisma, token) => {
 }
 
 const authenticateUser = async (root, args, context, info) => {
-  const { password } = args
-  let { username } = args
+  const { prisma } = context
+  const { username, password } = args
 
   const validationSchema = {
     username: Joi.string().required(),
@@ -62,17 +64,17 @@ const authenticateUser = async (root, args, context, info) => {
 
   Joi.validate({ username, password }, validationSchema)
 
-  username = username.toLowerCase().trim()
-
   // Searching on username case insensitive
-  const user = await context.prisma.query({
+  const users = await prisma.query.users({
     where: {
       OR: [
         { username },
         { email: username }
       ]
     }
-  }, info)
+  })
+
+  const user = first(users)
 
   // You can only login if confirmed
   if (!user || (user && !user.confirmed)) {
@@ -84,7 +86,7 @@ const authenticateUser = async (root, args, context, info) => {
     })
   }
 
-  const isValid = await user.verifyPassword(password)
+  const isValid = await bcrypt.compare(password, user.password)
 
   if (!isValid) {
     return new UserInputError('Incorrect password', {
