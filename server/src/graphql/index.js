@@ -8,13 +8,13 @@ import { getUserFromToken } from '@services/jwt'
 import { verifyEmail } from '@modules/auth/manager'
 
 import resolvers from './resolvers'
-import directiveResolvers from './directives'
+import schemaDirectives from './directives'
 const typeDefs = importSchema('./src/graphql/schema.graphql')
 
 const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
-  directiveResolvers
+  schemaDirectives
 })
 
 const graphqlServer = new ApolloServer({

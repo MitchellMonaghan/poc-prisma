@@ -27,6 +27,7 @@ enum PermissionAccessType {
 enum PermissionAccessLevel {
   NONE #no access 0
   OWNER #access owner only 1
-  ALL #access all of a collection 2
-  SUPER #super user who cannot be tampered with 3
+  ALL #access all of a collection 2, cannot access protected fields
+  ADMIN #access all of a collection 3, can access protected fields
+  SUPER #super user who cannot be tampered with 4
 }

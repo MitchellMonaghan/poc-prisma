@@ -8,6 +8,7 @@ const permissionAccessLevelEnum = {
   NONE: 'NONE',
   OWNER: 'OWNER',
   ALL: 'ALL',
+  ADMIN: 'ADMIN',
   SUPER: 'SUPER'
 }
 
@@ -15,7 +16,8 @@ const permissionAccessLevelValuesEnum = {
   NONE: 0,
   OWNER: 1,
   ALL: 2,
-  SUPER: 3
+  ADMIN: 3,
+  SUPER: 4
 }
 
 const createPermission = async (root, args, context, info) => {

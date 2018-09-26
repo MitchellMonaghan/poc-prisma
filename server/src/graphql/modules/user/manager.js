@@ -1,5 +1,5 @@
 import { UserInputError } from 'apollo-server'
-import bcrypt from 'bcrypt'
+import { hashPassword } from '@services/jwt'
 import Joi from '@services/joi'
 import { pick, first } from 'lodash'
 
@@ -153,12 +153,6 @@ const deleteUser = async (root, args, context, info) => {
   return prisma.mutation.deleteUser({
     where: { id }
   }, info)
-}
-
-const hashPassword = async (password) => {
-  const saltRounds = 10
-  const salt = bcrypt.genSaltSync(saltRounds)
-  return bcrypt.hashSync(password, salt)
 }
 
 const userExists = async (prisma, { username, email }) => {

@@ -2,13 +2,14 @@ import config from '@config'
 import uuid from 'uuid/v4'
 
 import bcrypt from 'bcrypt'
-
+// import { find } from 'lodash'
 import { UserInputError } from 'apollo-server'
 
-import { generateJWT } from '@services/jwt'
+import { hashPassword, generateJWT } from '@services/jwt'
 import Joi from '@services/joi'
 import mailer from '@services/mailer'
 
+// import { permissionAccessTypeEnum, permissionAccessLevelEnum } from '@modules/permission/manager'
 import { createUser, userExists } from '@modules/user/manager'
 
 // Private functions
@@ -16,13 +17,6 @@ import { createUser, userExists } from '@modules/user/manager'
 // End private functions
 
 // Public functions
-const permissionsEnum = {
-  none: 0, // no access
-  owner: 1, // access owner only
-  all: 2, // access all of a collection
-  super: 3 // super user who cannot be tampered with
-}
-
 const authenticateUser = async (root, args, context, info) => {
   const { prisma } = context
   const { username, password } = args
@@ -119,6 +113,7 @@ const verifyEmail = async (root, args, context, info) => {
 }
 
 const changePassword = async (root, args, context, info) => {
+  const { prisma } = context
   const { id, password } = args
 
   const validationSchema = {
@@ -128,21 +123,20 @@ const changePassword = async (root, args, context, info) => {
 
   Joi.validate({ id, password }, validationSchema)
 
-  let updatedUser = context.prisma.mutation.updatedUser({
+  const passwordHash = await hashPassword(password)
+  let updatedUser = await prisma.mutation.updateUser({
     where: { id },
     data: {
-      password,
+      password: passwordHash,
       lastPasswordChange: new Date()
     }
-  }, info)
+  })
 
   return generateJWT(updatedUser)
 }
 // End public functions
 
 const publicProps = {
-  permissionsEnum,
-
   authenticateUser,
   refreshToken,
   forgotPassword,

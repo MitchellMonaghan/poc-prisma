@@ -10,5 +10,5 @@ type Mutation {
   inviteUser(email: String!): String! @isAuthenticated
   verifyEmail: String! @isAuthenticated
 
-  changePassword(id: ID!, password: String!): String! @hasPermission(permission: UPDATE_USER, accessLevel: OWNER)
+  changePassword(id: ID!, password: String!): String! @protected(permission: UPDATE_USER)
 }

@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Tue Sep 25 2018 15:43:00 GMT-0500 (Central Daylight Time)
+# timestamp: Wed Sep 26 2018 18:01:13 GMT-0500 (Central Daylight Time)
 
 type AggregatePermission {
   count: Int!
@@ -75,6 +75,7 @@ enum PermissionAccessLevel {
   NONE
   OWNER
   ALL
+  ADMIN
   SUPER
 }
 
