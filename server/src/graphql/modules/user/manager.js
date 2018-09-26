@@ -18,7 +18,7 @@ const createUser = async (root, args, context, info) => {
     user.email = user.email.trim().toLowerCase()
     user.confirmed = false
     user.lastPasswordChange = new Date()
-    user.password = hashPassword(user.password)
+    user.password = await hashPassword(user.password)
     user.permissions = {
       create: [
         { accessType: permissionAccessTypeEnum.CREATE_USER, accessLevel: permissionAccessLevelEnum.ALL },

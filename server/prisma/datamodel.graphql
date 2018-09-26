@@ -7,13 +7,13 @@ type User {
   password: String!
   lastPasswordChange: DateTime!
   confirmed: Boolean!
-  permissions: [Permission!]!
+  permissions: [Permission!]! @relation(name: "UserPermissions" onDelete: CASCADE)
   deleted: Boolean! @default(value: "false")
 }
 
 type Permission {
   id: ID! @unique
-  user: User!
+  user: User! @relation(name: "UserPermissions")
   accessType: PermissionAccessType!
   accessLevel: PermissionAccessLevel!
 }

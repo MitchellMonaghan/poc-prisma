@@ -31,19 +31,17 @@ const generateJWT = async (user) => {
   return jwt.sign(props, `${config.authSecret}`, { expiresIn: config.tokenExipresIn })
 }
 
-const getUserFromToken = async (root, args, context, info) => {
+const getUserFromToken = async (prisma, token) => {
   try {
-    const { token } = args
-
     const decoded = jwt.decode(token)
     // const user = await User.findById(decoded.user.id).exec()
-    const user = await context.prisma.query({
+    const user = await prisma.query.user({
       where: { id: decoded.user.id }
     })
 
     jwt.verify(token, `${config.authSecret}`)
 
-    if (decoded.user.lastPasswordChange !== user.lastPasswordChange.toISOString()) {
+    if (decoded.user.lastPasswordChange !== user.lastPasswordChange) {
       throw new AuthenticationError('Token invalid please authenticate.')
     }
 
@@ -162,9 +160,15 @@ const forgotPassword = async (root, args, context, info) => {
   return 'Email sent'
 }
 
-const verifyEmail = async (user) => {
-  user.confirmed = true
-  user.save()
+const verifyEmail = async (root, args, context, info) => {
+  const { prisma, user } = context
+
+  await prisma.mutation.updateUser({
+    where: { id: user.id },
+    data: {
+      confirmed: true
+    }
+  })
 
   return 'Success'
 }

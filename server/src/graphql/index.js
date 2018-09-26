@@ -22,12 +22,16 @@ const graphqlServer = new ApolloServer({
   schema,
   context: async ({ req, connection }) => {
     let context = {}
+    context.prisma = new Prisma({
+      typeDefs: 'src/graphql/generated/prisma.graphql',
+      endpoint: process.env.PRISMA_URL
+    })
 
     if (get(req, 'headers.authorization')) {
       let authToken = req.headers.authorization
 
       if (authToken) {
-        context.user = await getUserFromToken(authToken)
+        context.user = await getUserFromToken(context.prisma, authToken)
 
         // Only do this check if a real user token was provided
         if (context.user) {
@@ -40,11 +44,6 @@ const graphqlServer = new ApolloServer({
     } else if (connection) {
       context = connection.context
     }
-
-    context.prisma = new Prisma({
-      typeDefs: 'src/graphql/generated/prisma.graphql',
-      endpoint: process.env.PRISMA_URL
-    })
 
     return context
   },
