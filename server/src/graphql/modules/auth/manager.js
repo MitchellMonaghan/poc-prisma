@@ -87,14 +87,17 @@ const registerUser = async (root, args, context, info) => {
   return 'User created, we will email you to verify your email.'
 }
 
-const inviteUser = async (email, user) => {
+const inviteUser = async (root, args, context, info) => {
+  const { user } = context
+  const { email } = args
+
   const validationSchema = {
     email: Joi.string().email({ minDomainAtoms: 2 }).required()
   }
 
   Joi.validate({ email }, validationSchema)
 
-  const invitedUser = await createUser({ email, password: uuid() })
+  const invitedUser = await createUser(root, { email, password: uuid() }, context, info)
 
   invitedUser.verifyEmailToken = await generateJWT(invitedUser)
   mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, invitee: user })
