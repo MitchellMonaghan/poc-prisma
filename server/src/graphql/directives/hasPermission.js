@@ -2,12 +2,7 @@ import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError, ApolloError } from 'apollo-server'
 import { find } from 'lodash'
 import { permissionAccessLevelValuesEnum } from '@modules/permission/manager'
-
-const rootObjects = {
-  query: 'Query',
-  mutation: 'Mutation',
-  subscription: 'Subscription'
-}
+import { isRootObject } from './directiveHelper'
 
 class hasPermission extends SchemaDirectiveVisitor {
   visitObject (objectType, test) {
@@ -28,7 +23,9 @@ class hasPermission extends SchemaDirectiveVisitor {
   hasPermission (field) {
     const { resolve } = field
 
-    field.resolve = async (parent, args, context, field) => {
+    field.resolve = async (...args) => {
+      const [parent, , context, field] = args
+
       if (!context.user) {
         throw new AuthenticationError('Token invalid please authenticate.')
       }
@@ -43,9 +40,8 @@ class hasPermission extends SchemaDirectiveVisitor {
         throw new ApolloError('You do not have the sufficient permissions to do that.', '403', { status: 403 })
       } else {
         const parentTypeName = field.parentType.name
-        const isRootObject = parentTypeName === rootObjects.query || parentTypeName === rootObjects.mutation || parentTypeName === rootObjects.subscription
 
-        if (isRootObject) {
+        if (isRootObject(parentTypeName)) {
           return resolve ? resolve.apply(this, args) : parent
         } else {
           return parent[field.fieldName]

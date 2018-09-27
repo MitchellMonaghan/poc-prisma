@@ -4,6 +4,7 @@ import Joi from '@services/joi'
 import { pick, first } from 'lodash'
 
 import { permissionAccessTypeEnum, permissionAccessLevelEnum } from '@modules/permission/manager'
+import { protectedUpdate } from '@graphql/directives/protected'
 
 const createUser = async (root, args, context, info) => {
   const { prisma } = context
@@ -69,7 +70,8 @@ const createUser = async (root, args, context, info) => {
 }
 
 const getUsers = async (root, args, context, info) => {
-  return context.prisma.query.users({}, info)
+  const { prisma } = context
+  return prisma.query.users({}, info)
 }
 
 const getUser = async (root, args, context, info) => {
@@ -89,41 +91,47 @@ const getUser = async (root, args, context, info) => {
 
 const updateUser = async (root, args, context, info) => {
   const { prisma, user } = context
-  const { id, username } = args
+  const { where, data } = args
 
-  const validationSchema = {
-    id: Joi.string().required(),
-    username: Joi.string().required(),
+  const whereSchemaValidation = {
+    id: Joi.string().required()
+  }
+
+  const dataSchemaValidation = {
+    username: Joi.string().alphanum().required(),
     firstName: Joi.string(),
     lastName: Joi.string()
   }
 
-  Joi.validate(args, validationSchema)
+  Joi.validate(where, whereSchemaValidation)
 
-  delete args.id
-
-  const userNameExists = await context.prisma.query({
-    where: { username }
+  const userToBeUpdated = await prisma.query.user({
+    where
   }, info)
 
-  if (userNameExists && user.id !== userNameExists.id) {
-    throw new UserInputError('Username has already been taken', {
-      invalidArgs: [
-        'username'
-      ]
-    })
-  }
+  // if updating username check to ensure it doesnt already exist
+  if (data.username) {
+    const userNameExists = await prisma.query.user({
+      where: { username: data.username }
+    }, info)
 
-  const userToBeUpdated = await context.prisma.query({
-    where: { id }
-  })
-
-  if (userToBeUpdated.username === username) {
-    delete args.username
+    // if it exists ignore it if its on the user we are updating
+    if (userNameExists && where.id !== userNameExists.id) {
+      throw new UserInputError('Username has already been taken', {
+        invalidArgs: [
+          'username'
+        ]
+      })
+    }
   } else {
-    Joi.validate(args.username, Joi.string().alphanum())
+    // If were defaulting to use the username already set by the user
+    // Then we can we will remove teh alphanum, as the username might
+    // have been defaulted to a email
+    dataSchemaValidation.username = Joi.string().required()
+    data.username = userToBeUpdated.username
   }
 
+  /* TODO: Need to better define how permission stuff is going to work
   if (userToBeUpdated.permissions['update_user'] > user.permissions['update_user']) {
     throw new UserInputError('You can not update a user who has a higher level permission than you.', {
       invalidArgs: [
@@ -131,10 +139,16 @@ const updateUser = async (root, args, context, info) => {
       ]
     })
   }
+  */
+
+  Joi.validate(data, dataSchemaValidation)
+
+  // Check if we are trying to update protected fields and if we are allowed to
+  protectedUpdate(userToBeUpdated.id, data, user, info)
 
   let updatedUser = await prisma.mutation.updateUser({
-    where: { id },
-    data: args
+    where,
+    data
   })
 
   return updatedUser

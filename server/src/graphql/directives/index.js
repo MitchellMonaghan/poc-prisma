@@ -1,6 +1,6 @@
 import isAuthenticated from './isAuthenticated'
 import hasPermission from './hasPermission'
-import protectedField from './protected'
+import { protectedField } from './protected'
 
 const publicProps = {
   isAuthenticated,
