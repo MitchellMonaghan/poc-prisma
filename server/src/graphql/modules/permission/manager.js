@@ -8,19 +8,11 @@ const permissionAccessTypeEnum = {
 }
 
 const permissionAccessLevelEnum = {
-  NONE: 'NONE',
-  OWNER: 'OWNER',
-  ALL: 'ALL',
-  ADMIN: 'ADMIN',
-  SUPER: 'SUPER'
-}
-
-const permissionAccessLevelValuesEnum = {
-  NONE: 0,
-  OWNER: 1,
-  ALL: 2,
-  ADMIN: 3,
-  SUPER: 4
+  NONE: { key: 'NONE', value: 0 },
+  OWNER: { key: 'OWNER', value: 1 },
+  ALL: { key: 'ALL', value: 2 },
+  ADMIN: { key: 'ADMIN', value: 3 },
+  SUPER: { key: 'SUPER', value: 4 },
 }
 
 // This should be called on every mutation, as it respects the directives on the data type
@@ -57,11 +49,11 @@ const checkPermissions = async (entityBeingUpdated, args, context, info) => {
 
       const isOwner = entityBeingUpdated.createdBy === user.id
       const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
-      const usersPermissionAccessLevel = permissionAccessLevelValuesEnum[updatePermission.accessLevel]
+      const usersPermissionAccessLevel = permissionAccessLevelEnum[updatePermission.accessLevel].value
 
-      if (usersPermissionAccessLevel === permissionAccessLevelValuesEnum.NONE) {
+      if (usersPermissionAccessLevel === permissionAccessLevelEnum.NONE.value) {
         throw new ApolloError(`You do not have the appropriate access level to udpate that record.`, '403', { status: 403 })
-      } else if (usersPermissionAccessLevel === permissionAccessLevelValuesEnum.OWNER && !isOwner) {
+      } else if (usersPermissionAccessLevel === permissionAccessLevelEnum.OWNER.value && !isOwner) {
         throw new ApolloError(`You do not have the appropriate access level to udpate that record.`, '403', { status: 403 })
       }
     }
@@ -94,9 +86,9 @@ const checkProtectedFields = async (entityBeingUpdated, args, context, info) => 
         // Check if user has admin update or is owner
         const isOwner = entityBeingUpdated.createdBy === user.id
         const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
-        const usersPermissionAccessLevel = permissionAccessLevelValuesEnum[updatePermission.accessLevel]
+        const usersPermissionAccessLevel = permissionAccessLevelEnum[updatePermission.accessLevel].value
 
-        if (!(isOwner || usersPermissionAccessLevel >= permissionAccessLevelValuesEnum.ADMIN)) {
+        if (!(isOwner || usersPermissionAccessLevel >= permissionAccessLevelEnum.ADMIN.value)) {
           throw new ApolloError(`${field} is a protected field and can only be updated by the owner or admin access level.`, '403', { status: 403 })
         }
       }
@@ -112,7 +104,6 @@ const updatePermission = async (root, args, context, info) => {
 const publicProps = {
   permissionAccessTypeEnum,
   permissionAccessLevelEnum,
-  permissionAccessLevelValuesEnum,
 
   checkPermissionsAndProtectedFields,
 

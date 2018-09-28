@@ -1,7 +1,7 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError, ApolloError } from 'apollo-server'
 import { find } from 'lodash'
-import { permissionAccessLevelValuesEnum } from '@modules/permission/manager'
+import { permissionAccessLevelEnum } from '@modules/permission/manager'
 
 class requiresPermission extends SchemaDirectiveVisitor {
   visitObject (objectType) {
@@ -29,10 +29,10 @@ class requiresPermission extends SchemaDirectiveVisitor {
       }
 
       const permissionTypeRequired = this.args.permission
-      const accessLevelRequired = permissionAccessLevelValuesEnum[this.args.accessLevel]
+      const accessLevelRequired = permissionAccessLevelEnum[this.args.accessLevel].value
 
       const usersPermission = find(user.permissions, { accessType: permissionTypeRequired })
-      const usersPermissionAccessLevel = permissionAccessLevelValuesEnum[usersPermission.accessLevel]
+      const usersPermissionAccessLevel = permissionAccessLevelEnum[usersPermission.accessLevel].value
 
       if (usersPermissionAccessLevel < accessLevelRequired) {
         throw new ApolloError('You do not have the sufficient permissions to do that.', '403', { status: 403 })

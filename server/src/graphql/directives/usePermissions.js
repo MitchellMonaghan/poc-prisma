@@ -1,7 +1,7 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError } from 'apollo-server'
 import { get, find } from 'lodash'
-import { permissionAccessLevelValuesEnum } from '@modules/permission/manager'
+import { permissionAccessLevelEnum } from '@modules/permission/manager'
 
 // TODO: Implement a resolver that will check the users permission to know if
 // they are allow to read the data they are requesting
@@ -38,11 +38,11 @@ class usePermissions extends SchemaDirectiveVisitor {
       }
 
       const usersPermission = find(user.permissions, { accessType: permissionTypeRequired })
-      const usersPermissionAccessLevel = permissionAccessLevelValuesEnum[usersPermission.accessLevel]
+      const usersPermissionAccessLevel = permissionAccessLevelEnum[usersPermission.accessLevel].value
 
-      if (usersPermissionAccessLevel === permissionAccessLevelValuesEnum.NONE) {
+      if (usersPermissionAccessLevel === permissionAccessLevelEnum.NONE.value) {
         throw new AuthenticationError('You do not have any access.')
-      } else if (usersPermissionAccessLevel === permissionAccessLevelValuesEnum.OWNER && !isOwner) {
+      } else if (usersPermissionAccessLevel === permissionAccessLevelEnum.OWNER.value && !isOwner) {
         throw new AuthenticationError('You are not the owner.')
       }
 
