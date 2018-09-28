@@ -106,18 +106,7 @@ const checkProtectedFields = async (entityBeingUpdated, args, context, info) => 
 
 const updatePermission = async (root, args, context, info) => {
   const { prisma } = context
-  const { user, accessType, accessLevel } = args
-
-  prisma.mutation.updatePermission({
-    where: {
-      user: { id: user.id },
-      accessType
-    },
-
-    data: {
-      accessLevel
-    }
-  }, info)
+  prisma.mutation.updatePermission({}, info)
 }
 
 const publicProps = {

@@ -1,0 +1,3 @@
+type Mutation {
+  updatePermission(data: PermissionUpdateInput!, where: PermissionWhereUniqueInput!): Permission @requiresPermission(permission: UPDATE_USER, accessLevel: ADMIN)
+}

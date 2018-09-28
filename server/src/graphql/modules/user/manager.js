@@ -75,21 +75,31 @@ const getUsers = async (root, args, context, info) => {
 
 const getUser = async (root, args, context, info) => {
   const { prisma } = context
-  const { id } = args
+  const { id, username, email } = args.where
 
-  const validationSchema = {
-    id: Joi.string().required()
-  }
+  const validationSchema = Joi.object().keys({
+    id: Joi.string(),
+    email: Joi.string(),
+    username: Joi.string()
+  }).or('id', 'email', 'username')
 
-  Joi.validate({ id }, validationSchema)
+  Joi.validate(args.where, validationSchema)
 
-  return prisma.query({
-    where: { id }
-  }, info)
+  return first(await prisma.query.users({
+    where: {
+      OR: [
+        { id },
+        { username },
+        { email },
+        { username: email },
+        { email: username }
+      ]
+    }
+  }, info))
 }
 
 const updateUser = async (root, args, context, info) => {
-  const { prisma } = context
+  const { prisma, user } = context
   const { where, data } = args
 
   const whereSchemaValidation = {
@@ -108,8 +118,8 @@ const updateUser = async (root, args, context, info) => {
     where
   }, info)
 
-  // if updating username check to ensure it doesnt already exist
   if (data.username) {
+    // if updating username check to ensure it doesnt already exist
     const userNameExists = await prisma.query.user({
       where: { username: data.username }
     }, info)
@@ -130,15 +140,13 @@ const updateUser = async (root, args, context, info) => {
     data.username = userToBeUpdated.username
   }
 
-  /* TODO: Need to better define how permission stuff is going to work
-  if (userToBeUpdated.permissions['update_user'] > user.permissions['update_user']) {
+  if (userToBeUpdated.permissions[permissionAccessTypeEnum.UPDATE_USER] > user.permissions[permissionAccessTypeEnum.UPDATE_USER]) {
     throw new UserInputError('You can not update a user who has a higher level permission than you.', {
       invalidArgs: [
         'id'
       ]
     })
   }
-  */
 
   Joi.validate(data, dataSchemaValidation)
 
@@ -152,55 +160,11 @@ const updateUser = async (root, args, context, info) => {
   return updatedUser
 }
 
-const deleteUser = async (root, args, context, info) => {
-  const { id } = args
-  const { prisma } = context
-
-  const validationSchema = {
-    id: Joi.string().required()
-  }
-
-  Joi.validate({ id }, validationSchema)
-
-  return prisma.mutation.deleteUser({
-    where: { id }
-  }, info)
-}
-
-const userExists = async (prisma, { username, email }) => {
-  const users = await prisma.query.users({
-    where: {
-      OR: [
-        { username },
-        { email },
-        { username: email },
-        { email: username }
-      ]
-    }
-  })
-
-  const user = first(users)
-
-  if (!user || (user && !user.confirmed)) {
-    throw new UserInputError('Username or email not found', {
-      invalidArgs: [
-        'username',
-        'email'
-      ]
-    })
-  }
-
-  return user
-}
-
 const publicProps = {
   createUser,
   getUsers,
   getUser,
-  updateUser,
-  deleteUser,
-
-  userExists
+  updateUser
 }
 
 module.exports = publicProps

@@ -23,29 +23,25 @@ const generateJWT = async (user) => {
 const getUserFromToken = async (prisma, token) => {
   try {
     const decoded = jwt.decode(token)
-    const query = `
-      query ($userId: ID!){
-        user(where: { id: $userId }) {
-          id
-          firstName
-          lastName
-          username
-          email
-          password
-          lastPasswordChange
-          confirmed
-          permissions {
-            accessType
-            accessLevel
-          }
 
-          deleted
-        }
+    const user = await prisma.query.user({
+      where: { id: decoded.user.id }
+    }, `{
+      id
+      firstName
+      lastName
+      username
+      email
+      password
+      lastPasswordChange
+      confirmed
+      permissions {
+        accessType
+        accessLevel
       }
-    `
 
-    const prismaResponse = await prisma.request(query, { userId: decoded.user.id })
-    const { user } = prismaResponse.data
+      deleted
+    }`)
 
     jwt.verify(token, `${config.authSecret}`)
 

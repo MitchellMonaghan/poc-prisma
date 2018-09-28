@@ -7,7 +7,7 @@ import { hashPassword, generateJWT } from '@services/jwt'
 import Joi from '@services/joi'
 import mailer from '@services/mailer'
 
-import { createUser, userExists } from '@modules/user/manager'
+import { createUser, getUser } from '@modules/user/manager'
 
 // Private functions
 
@@ -15,7 +15,6 @@ import { createUser, userExists } from '@modules/user/manager'
 
 // Public functions
 const authenticateUser = async (root, args, context, info) => {
-  const { prisma } = context
   const { username, password } = args
 
   const validationSchema = {
@@ -25,7 +24,17 @@ const authenticateUser = async (root, args, context, info) => {
 
   Joi.validate({ username, password }, validationSchema)
 
-  const user = await userExists(prisma, { username, password })
+  const user = await getUser(root, { where: { username } }, context)
+
+  if (!user || (user && !user.confirmed)) {
+    throw new UserInputError('Username or email not found', {
+      invalidArgs: [
+        'username',
+        'email'
+      ]
+    })
+  }
+
   const isValid = await bcrypt.compare(password, user.password)
 
   if (!isValid) {
@@ -45,16 +54,24 @@ const refreshToken = async (root, args, context, info) => {
 }
 
 const forgotPassword = async (root, args, context, info) => {
-  const { prisma } = context
   const { email } = args
 
   const validationSchema = {
     email: Joi.string().email({ minDomainAtoms: 2 }).required()
   }
 
-  Joi.validate({ email }, validationSchema)
+  Joi.validate(args, validationSchema)
 
-  const user = await userExists(prisma, { email })
+  const user = await getUser(root, { where: { email } }, context)
+
+  if (!user || (user && !user.confirmed)) {
+    throw new UserInputError('Email not found', {
+      invalidArgs: [
+        'email'
+      ]
+    })
+  }
+
   user.forgotPasswordToken = await generateJWT(user)
 
   mailer.sendEmail(mailer.emailEnum.forgotPassword, [user.email], user)
