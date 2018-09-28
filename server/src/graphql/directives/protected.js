@@ -1,6 +1,6 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError, ApolloError } from 'apollo-server'
-import { find } from 'lodash'
+import { get, find } from 'lodash'
 import { permissionAccessLevelValuesEnum } from '@modules/permission/manager'
 import { isRootObject } from './directiveHelper'
 
@@ -22,39 +22,35 @@ class protectedField extends SchemaDirectiveVisitor {
     const { resolve } = field
 
     field.resolve = async (...args) => {
-      const [parent, requestArgs, context, field] = args
+      const [parent, , context, field] = args
+      const { user } = context
 
-      if (!context.user) {
+      if (!user) {
         throw new AuthenticationError('Token invalid please authenticate.')
       }
 
       const parentTypeName = field.parentType.name
-      const isARootObject = isRootObject(parentTypeName)
 
-      // Protected read, write, or both. If not defined, both will be protected
-      const permissionRequired = this.args.permission || `READ_${parentTypeName.toUpperCase()}`
-      const usersPermission = find(context.user.permissions, { accessType: permissionRequired })
+      const entityReadPermission = `READ_${parentTypeName.toUpperCase()}`
+      const permissionRequired = get(this, 'args.permission') ? this.args.permission : entityReadPermission
+
+      const usersPermission = find(user.permissions, { accessType: permissionRequired })
       const usersPermissionAccessLevel = permissionAccessLevelValuesEnum[usersPermission.accessLevel]
 
-      const isOwner = await this.isOwner({ parent, requestArgs, context, field }, resolve)
+      const isOwner = await this.isOwner(...args)
 
       if (isOwner || usersPermissionAccessLevel >= permissionAccessLevelValuesEnum.ADMIN) {
-        if (isARootObject) {
-          return resolve ? resolve.apply(this, args) : parent
-        } else {
-          return resolve ? resolve.apply(this, args) : parent[field.fieldName]
-        }
+        return resolve ? resolve.apply(this, args) : parent[field.fieldName]
       } else {
         throw new ApolloError('You do not have the sufficient permissions to do that.', '403', { status: 403 })
       }
     }
   }
 
-  async isOwner ({ parent, requestArgs, context, field }, resolve) {
-    const { prisma } = context
+  async isOwner (parent, requestArgs, context, field) {
+    const { prisma, user } = context
 
     let entity
-    let createdBy
     let entityType
     const parentTypeName = field.parentType.name
 
@@ -67,17 +63,13 @@ class protectedField extends SchemaDirectiveVisitor {
       })
     } else {
       entityType = field.parentType.name.toLowerCase()
-
       entity = parent
     }
 
-    createdBy = entity.createdBy
+    const createdBy = entityType === 'user' ? entity.id : entity.createdBy
+    const isOwner = createdBy === user.id
 
-    if (entityType === 'user') {
-      createdBy = entity.id
-    }
-
-    return createdBy === context.user.id
+    return isOwner
   }
 }
 

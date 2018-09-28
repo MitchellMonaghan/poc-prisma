@@ -1,11 +1,11 @@
 """User must be authenticated to access a field with this directive"""
-directive @isAuthenticated on FIELD | FIELD_DEFINITION
+directive @isAuthenticated on QUERY | MUTATION
 
 """User must either be the owner or have admin or higher access to access a field with this directive"""
-directive @protected(permission: PermissionAccessType) on FIELD | FIELD_DEFINITION
+directive @protected(permission: PermissionAccessType) on OBJECT | FIELD | MUTATION
 
 """User must have this permission and access level minimum to access a field with this directive"""
-directive @requiresPermission(permission: PermissionAccessType, accessLevel: PermissionAccessLevel) on FIELD | FIELD_DEFINITION
+directive @requiresPermission(permission: PermissionAccessType, accessLevel: PermissionAccessLevel) on OBJECT | FIELD | QUERY | MUTATION
 
 """Completes the query or mutation using the specified permission"""
 directive @usePermissions(permission: PermissionAccessType) on OBJECT

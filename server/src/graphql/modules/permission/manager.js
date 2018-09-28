@@ -23,13 +23,12 @@ const permissionAccessLevelValuesEnum = {
   SUPER: 4
 }
 
-// Specifally used for mutations
+// This should be called on every mutation, as it respects the directives on the data type
 const checkPermissionsAndProtectedFields = async (entityBeingUpdated, args, context, info) => {
   await checkPermissions(entityBeingUpdated, args, context, info)
   await checkProtectedFields(entityBeingUpdated, args, context, info)
 }
 
-// Specifally used for mutations
 const checkPermissions = async (entityBeingUpdated, args, context, info) => {
   const { user } = context
 
@@ -69,7 +68,6 @@ const checkPermissions = async (entityBeingUpdated, args, context, info) => {
   }
 }
 
-// Specifally used for mutations
 const checkProtectedFields = async (entityBeingUpdated, args, context, info) => {
   const { user } = context
   const { data } = args
@@ -128,8 +126,6 @@ const publicProps = {
   permissionAccessLevelValuesEnum,
 
   checkPermissionsAndProtectedFields,
-  checkPermissions,
-  checkProtectedFields,
 
   updatePermission
 }

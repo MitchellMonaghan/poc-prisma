@@ -124,7 +124,7 @@ const updateUser = async (root, args, context, info) => {
     }
   } else {
     // If were defaulting to use the username already set by the user
-    // Then we can we will remove teh alphanum, as the username might
+    // then we can remove the alphanum requirement, as the username might
     // have been defaulted to a email
     dataSchemaValidation.username = Joi.string().required()
     data.username = userToBeUpdated.username
@@ -172,8 +172,9 @@ const userExists = async (prisma, { username, email }) => {
     where: {
       OR: [
         { username },
+        { email },
         { username: email },
-        { email }
+        { email: username }
       ]
     }
   })
