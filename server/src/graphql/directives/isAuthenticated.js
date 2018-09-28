@@ -1,5 +1,6 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError } from 'apollo-server'
+import { errorText } from '@services/joi'
 
 class isAuthenticated extends SchemaDirectiveVisitor {
   visitFieldDefinition (field, details) {
@@ -16,7 +17,7 @@ class isAuthenticated extends SchemaDirectiveVisitor {
         return resolve.apply(this, args)
       }
 
-      throw new AuthenticationError('Token invalid please authenticate.')
+      throw new AuthenticationError(errorText.authenticationError())
     }
   }
 }

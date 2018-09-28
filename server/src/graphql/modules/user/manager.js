@@ -1,6 +1,6 @@
 import { UserInputError } from 'apollo-server'
 import { hashPassword } from '@services/jwt'
-import Joi from '@services/joi'
+import { Joi, errorText } from '@services/joi'
 import { pick, first } from 'lodash'
 
 import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
@@ -33,7 +33,7 @@ const createUser = async (root, args, context, info) => {
       }, info)
 
       if (userNameExists) {
-        throw new UserInputError('Username has already been taken', {
+        throw new UserInputError(errorText.usernameAlreadyTaken(user.username), {
           invalidArgs: [
             'username'
           ]
@@ -58,7 +58,7 @@ const createUser = async (root, args, context, info) => {
     })
   } else if (user && user.confirmed) {
     // If user exists and is verified, throw error
-    throw new UserInputError('Email has already been registered', {
+    throw new UserInputError(errorText.emailAlreadyTaken(args.email), {
       invalidArgs: [
         'email'
       ]
@@ -126,7 +126,7 @@ const updateUser = async (root, args, context, info) => {
 
     // if it exists ignore it if its on the user we are updating
     if (userNameExists && where.id !== userNameExists.id) {
-      throw new UserInputError('Username has already been taken', {
+      throw new UserInputError(errorText.usernameAlreadyTaken(data.username), {
         invalidArgs: [
           'username'
         ]
@@ -141,7 +141,7 @@ const updateUser = async (root, args, context, info) => {
   }
 
   if (userToBeUpdated.permissions[permissionAccessTypeEnum.UPDATE_USER] > user.permissions[permissionAccessTypeEnum.UPDATE_USER]) {
-    throw new UserInputError('You can not update a user who has a higher level permission than you.', {
+    throw new UserInputError(errorText.cannotUpdateUserWithHigherPermission(), {
       invalidArgs: [
         'id'
       ]

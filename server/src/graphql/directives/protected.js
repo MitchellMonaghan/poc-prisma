@@ -1,8 +1,10 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
-import { AuthenticationError, ApolloError } from 'apollo-server'
+import { AuthenticationError, ForbiddenError } from 'apollo-server'
 import { get, find } from 'lodash'
 import { permissionAccessLevelEnum } from '@modules/permission/manager'
 import { isRootObject } from './directiveHelper'
+
+import { errorText } from '@services/joi'
 
 class protectedField extends SchemaDirectiveVisitor {
   visitObject (objectType) {
@@ -26,7 +28,7 @@ class protectedField extends SchemaDirectiveVisitor {
       const { user } = context
 
       if (!user) {
-        throw new AuthenticationError('Token invalid please authenticate.')
+        throw new AuthenticationError(errorText.authenticationError())
       }
 
       const parentTypeName = field.parentType.name
@@ -42,7 +44,7 @@ class protectedField extends SchemaDirectiveVisitor {
       if (isOwner || usersPermissionAccessLevel >= permissionAccessLevelEnum.ADMIN.value) {
         return resolve ? resolve.apply(this, args) : parent[field.fieldName]
       } else {
-        throw new ApolloError('You do not have the sufficient permissions to do that.', '403', { status: 403 })
+        throw new ForbiddenError(errorText.protectedFieldRead(field.fieldName))
       }
     }
   }

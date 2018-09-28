@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { UserInputError } from 'apollo-server'
 
 import { hashPassword, generateJWT } from '@services/jwt'
-import Joi from '@services/joi'
+import { Joi, errorText } from '@services/joi'
 import mailer from '@services/mailer'
 
 import { createUser, getUser } from '@modules/user/manager'
@@ -27,7 +27,7 @@ const authenticateUser = async (root, args, context, info) => {
   const user = await getUser(root, { where: { username } }, context)
 
   if (!user || (user && !user.confirmed)) {
-    throw new UserInputError('Username or email not found', {
+    throw new UserInputError(errorText.userNotFound(), {
       invalidArgs: [
         'username',
         'email'
@@ -38,7 +38,7 @@ const authenticateUser = async (root, args, context, info) => {
   const isValid = await bcrypt.compare(password, user.password)
 
   if (!isValid) {
-    return new UserInputError('Incorrect password', {
+    return new UserInputError(errorText.incorrectPassword(), {
       invalidArgs: [
         'password'
       ]
@@ -65,7 +65,7 @@ const forgotPassword = async (root, args, context, info) => {
   const user = await getUser(root, { where: { email } }, context)
 
   if (!user || (user && !user.confirmed)) {
-    throw new UserInputError('Email not found', {
+    throw new UserInputError(errorText.userNotFound(), {
       invalidArgs: [
         'email'
       ]

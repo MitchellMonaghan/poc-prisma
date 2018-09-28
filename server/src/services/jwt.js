@@ -3,6 +3,7 @@ import { AuthenticationError } from 'apollo-server'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { pick } from 'lodash'
+import { errorText } from '@services/joi'
 
 const hashPassword = async (password) => {
   const saltRounds = 10
@@ -46,7 +47,7 @@ const getUserFromToken = async (prisma, token) => {
     jwt.verify(token, `${config.authSecret}`)
 
     if (decoded.user.lastPasswordChange !== user.lastPasswordChange) {
-      throw new AuthenticationError('Token invalid please authenticate.')
+      throw new AuthenticationError(errorText.authenticationError())
     }
 
     return user

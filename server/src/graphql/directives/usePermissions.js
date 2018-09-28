@@ -1,7 +1,8 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
-import { AuthenticationError } from 'apollo-server'
+import { AuthenticationError, ForbiddenError } from 'apollo-server'
 import { get, find } from 'lodash'
 import { permissionAccessLevelEnum } from '@modules/permission/manager'
+import { errorText } from '@services/joi'
 
 // TODO: Implement a resolver that will check the users permission to know if
 // they are allow to read the data they are requesting
@@ -23,7 +24,7 @@ class usePermissions extends SchemaDirectiveVisitor {
       const { user } = context
 
       if (!user) {
-        throw new AuthenticationError('Token invalid please authenticate.')
+        throw new AuthenticationError(errorText.authenticationError())
       }
 
       const parentTypeName = field.parentType.name
@@ -41,9 +42,9 @@ class usePermissions extends SchemaDirectiveVisitor {
       const usersPermissionAccessLevel = permissionAccessLevelEnum[usersPermission.accessLevel].value
 
       if (usersPermissionAccessLevel === permissionAccessLevelEnum.NONE.value) {
-        throw new AuthenticationError('You do not have any access.')
+        throw new ForbiddenError(errorText.noAccessRead(parentTypeName))
       } else if (usersPermissionAccessLevel === permissionAccessLevelEnum.OWNER.value && !isOwner) {
-        throw new AuthenticationError('You are not the owner.')
+        throw new ForbiddenError(errorText.notOwnerRead(parentTypeName))
       }
 
       return resolve ? resolve.apply(this, args) : parent[field.fieldName]
