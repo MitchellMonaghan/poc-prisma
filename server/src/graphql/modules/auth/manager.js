@@ -1,15 +1,12 @@
 import config from '@config'
 import uuid from 'uuid/v4'
-
 import bcrypt from 'bcrypt'
-// import { find } from 'lodash'
 import { UserInputError } from 'apollo-server'
 
 import { hashPassword, generateJWT } from '@services/jwt'
 import Joi from '@services/joi'
 import mailer from '@services/mailer'
 
-// import { permissionAccessTypeEnum, permissionAccessLevelEnum } from '@modules/permission/manager'
 import { createUser, userExists } from '@modules/user/manager'
 
 // Private functions

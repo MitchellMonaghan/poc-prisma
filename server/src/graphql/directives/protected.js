@@ -5,9 +5,7 @@ import { permissionAccessLevelValuesEnum } from '@modules/permission/manager'
 import { isRootObject } from './directiveHelper'
 
 class protectedField extends SchemaDirectiveVisitor {
-  visitObject (objectType, test) {
-    objectType._isOwnerFieldsWrapped = true
-
+  visitObject (objectType) {
     const fields = objectType.getFields()
 
     Object.keys(fields).forEach(fieldName => {
@@ -44,7 +42,7 @@ class protectedField extends SchemaDirectiveVisitor {
         if (isARootObject) {
           return resolve ? resolve.apply(this, args) : parent
         } else {
-          return parent[field.fieldName]
+          return resolve ? resolve.apply(this, args) : parent[field.fieldName]
         }
       } else {
         throw new ApolloError('You do not have the sufficient permissions to do that.', '403', { status: 403 })
@@ -83,39 +81,5 @@ class protectedField extends SchemaDirectiveVisitor {
   }
 }
 
-const protectedUpdate = (createdBy, data, user, info) => {
-  Object.keys(data).forEach((field) => {
-    const entityType = info.returnType.name
-    const entityUpdatePermissionName = `UPDATE_${entityType.toUpperCase()}`
-
-    // Check for protected
-    const protectedDirective = find(info.returnType._fields[field].astNode.directives, (directive) => {
-      return directive.name.value === 'protected'
-    })
-
-    if (protectedDirective) {
-      const updatePermissionSpecified = find(protectedDirective.arguments, (argument) => {
-        return argument.value.value === entityUpdatePermissionName
-      })
-
-      if (protectedDirective.arguments.length === 0 || updatePermissionSpecified) {
-        // Check if user has admin update or is owner
-        const isOwner = createdBy === user.id
-        const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
-        const usersPermissionAccessLevel = permissionAccessLevelValuesEnum[updatePermission.accessLevel]
-
-        if (!(isOwner || usersPermissionAccessLevel >= permissionAccessLevelValuesEnum.ADMIN)) {
-          throw new ApolloError(`${field} is a protected field and can only be updated by the owner or admin access level.`, '403', { status: 403 })
-        }
-      }
-    }
-  })
-}
-
-const publicProps = {
-  protectedField,
-  protectedUpdate
-}
-
-module.exports = publicProps
-export default publicProps
+module.exports = protectedField
+export default protectedField

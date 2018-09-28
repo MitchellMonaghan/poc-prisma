@@ -3,8 +3,7 @@ import { hashPassword } from '@services/jwt'
 import Joi from '@services/joi'
 import { pick, first } from 'lodash'
 
-import { permissionAccessTypeEnum, permissionAccessLevelEnum } from '@modules/permission/manager'
-import { protectedUpdate } from '@graphql/directives/protected'
+import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 
 const createUser = async (root, args, context, info) => {
   const { prisma } = context
@@ -90,7 +89,7 @@ const getUser = async (root, args, context, info) => {
 }
 
 const updateUser = async (root, args, context, info) => {
-  const { prisma, user } = context
+  const { prisma } = context
   const { where, data } = args
 
   const whereSchemaValidation = {
@@ -143,8 +142,7 @@ const updateUser = async (root, args, context, info) => {
 
   Joi.validate(data, dataSchemaValidation)
 
-  // Check if we are trying to update protected fields and if we are allowed to
-  protectedUpdate(userToBeUpdated.id, data, user, info)
+  await checkPermissionsAndProtectedFields(userToBeUpdated, args, context, info)
 
   let updatedUser = await prisma.mutation.updateUser({
     where,

@@ -4,23 +4,21 @@ import { find } from 'lodash'
 import { permissionAccessLevelValuesEnum } from '@modules/permission/manager'
 import { isRootObject } from './directiveHelper'
 
-class hasPermission extends SchemaDirectiveVisitor {
-  visitObject (objectType, test) {
-    objectType._isOwnerFieldsWrapped = true
-
+class requiresPermission extends SchemaDirectiveVisitor {
+  visitObject (objectType) {
     const fields = objectType.getFields()
 
     Object.keys(fields).forEach(fieldName => {
       const field = fields[fieldName]
-      this.hasPermission(field)
+      this.requiresPermission(field)
     })
   }
 
   visitFieldDefinition (field, details) {
-    this.hasPermission(field)
+    this.requiresPermission(field)
   }
 
-  hasPermission (field) {
+  requiresPermission (field) {
     const { resolve } = field
 
     field.resolve = async (...args) => {
@@ -51,5 +49,5 @@ class hasPermission extends SchemaDirectiveVisitor {
   }
 }
 
-module.exports = hasPermission
-export default hasPermission
+module.exports = requiresPermission
+export default requiresPermission
