@@ -8,6 +8,7 @@ type User {
   lastPasswordChange: DateTime!
   confirmed: Boolean!
   permissions: [Permission!]! @relation(name: "UserPermissions" onDelete: CASCADE)
+  notifications: [Notification!]! @relation(name: "UserNotifications" onDelete: CASCADE)
   deleted: Boolean! @default(value: "false")
 }
 
@@ -22,6 +23,9 @@ enum PermissionAccessType {
   CREATE_USER
   READ_USER
   UPDATE_USER
+
+  READ_NOTIFICATION
+  UPDATE_NOTIFICATION
 }
 
 enum PermissionAccessLevel {
@@ -30,4 +34,11 @@ enum PermissionAccessLevel {
   ALL #access all of a collection 2, cannot access protected fields
   ADMIN #access all of a collection 3, can access protected fields
   SUPER #super user who cannot be tampered with 4
+}
+
+type Notification {
+  id: ID! @unique
+  user: User! @relation(name: "UserNotifications")
+  message: String!
+  viewed: Boolean! @default(value: "false")
 }

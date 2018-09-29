@@ -5,7 +5,10 @@ import { errorText } from '@services/joi'
 const permissionAccessTypeEnum = {
   CREATE_USER: 'CREATE_USER',
   READ_USER: 'READ_USER',
-  UPDATE_USER: 'UPDATE_USER'
+  UPDATE_USER: 'UPDATE_USER',
+
+  READ_NOTIFICATION: 'READ_NOTIFICATION',
+  UPDATE_NOTIFICATION: 'UPDATE_NOTIFICATION'
 }
 
 const permissionAccessLevelEnum = {

@@ -1,5 +1,9 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Wed Sep 26 2018 18:01:13 GMT-0500 (Central Daylight Time)
+# timestamp: Sat Sep 29 2018 13:14:56 GMT-0500 (Central Daylight Time)
+
+type AggregateNotification {
+  count: Int!
+}
 
 type AggregatePermission {
   count: Int!
@@ -25,16 +29,22 @@ scalar Long
 type Mutation {
   createUser(data: UserCreateInput!): User!
   createPermission(data: PermissionCreateInput!): Permission!
+  createNotification(data: NotificationCreateInput!): Notification!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updatePermission(data: PermissionUpdateInput!, where: PermissionWhereUniqueInput!): Permission
+  updateNotification(data: NotificationUpdateInput!, where: NotificationWhereUniqueInput!): Notification
   deleteUser(where: UserWhereUniqueInput!): User
   deletePermission(where: PermissionWhereUniqueInput!): Permission
+  deleteNotification(where: NotificationWhereUniqueInput!): Notification
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertPermission(where: PermissionWhereUniqueInput!, create: PermissionCreateInput!, update: PermissionUpdateInput!): Permission!
+  upsertNotification(where: NotificationWhereUniqueInput!, create: NotificationCreateInput!, update: NotificationUpdateInput!): Notification!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyPermissions(data: PermissionUpdateInput!, where: PermissionWhereInput): BatchPayload!
+  updateManyNotifications(data: NotificationUpdateInput!, where: NotificationWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyPermissions(where: PermissionWhereInput): BatchPayload!
+  deleteManyNotifications(where: NotificationWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -47,6 +57,237 @@ enum MutationType {
 interface Node {
   """The id of the object."""
   id: ID!
+}
+
+type Notification implements Node {
+  id: ID!
+  user: User!
+  message: String!
+  viewed: Boolean!
+}
+
+"""A connection to a list of items."""
+type NotificationConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [NotificationEdge]!
+  aggregate: AggregateNotification!
+}
+
+input NotificationCreateInput {
+  message: String!
+  viewed: Boolean
+  user: UserCreateOneWithoutNotificationsInput!
+}
+
+input NotificationCreateManyWithoutUserInput {
+  create: [NotificationCreateWithoutUserInput!]
+  connect: [NotificationWhereUniqueInput!]
+}
+
+input NotificationCreateWithoutUserInput {
+  message: String!
+  viewed: Boolean
+}
+
+"""An edge in a connection."""
+type NotificationEdge {
+  """The item at the end of the edge."""
+  node: Notification!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum NotificationOrderByInput {
+  id_ASC
+  id_DESC
+  message_ASC
+  message_DESC
+  viewed_ASC
+  viewed_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type NotificationPreviousValues {
+  id: ID!
+  message: String!
+  viewed: Boolean!
+}
+
+type NotificationSubscriptionPayload {
+  mutation: MutationType!
+  node: Notification
+  updatedFields: [String!]
+  previousValues: NotificationPreviousValues
+}
+
+input NotificationSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [NotificationSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [NotificationSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [NotificationSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: NotificationWhereInput
+}
+
+input NotificationUpdateInput {
+  message: String
+  viewed: Boolean
+  user: UserUpdateOneRequiredWithoutNotificationsInput
+}
+
+input NotificationUpdateManyWithoutUserInput {
+  create: [NotificationCreateWithoutUserInput!]
+  connect: [NotificationWhereUniqueInput!]
+  disconnect: [NotificationWhereUniqueInput!]
+  delete: [NotificationWhereUniqueInput!]
+  update: [NotificationUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [NotificationUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input NotificationUpdateWithoutUserDataInput {
+  message: String
+  viewed: Boolean
+}
+
+input NotificationUpdateWithWhereUniqueWithoutUserInput {
+  where: NotificationWhereUniqueInput!
+  data: NotificationUpdateWithoutUserDataInput!
+}
+
+input NotificationUpsertWithWhereUniqueWithoutUserInput {
+  where: NotificationWhereUniqueInput!
+  update: NotificationUpdateWithoutUserDataInput!
+  create: NotificationCreateWithoutUserInput!
+}
+
+input NotificationWhereInput {
+  """Logical AND on all given filters."""
+  AND: [NotificationWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [NotificationWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [NotificationWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  message: String
+
+  """All values that are not equal to given value."""
+  message_not: String
+
+  """All values that are contained in given list."""
+  message_in: [String!]
+
+  """All values that are not contained in given list."""
+  message_not_in: [String!]
+
+  """All values less than the given value."""
+  message_lt: String
+
+  """All values less than or equal the given value."""
+  message_lte: String
+
+  """All values greater than the given value."""
+  message_gt: String
+
+  """All values greater than or equal the given value."""
+  message_gte: String
+
+  """All values containing the given string."""
+  message_contains: String
+
+  """All values not containing the given string."""
+  message_not_contains: String
+
+  """All values starting with the given string."""
+  message_starts_with: String
+
+  """All values not starting with the given string."""
+  message_not_starts_with: String
+
+  """All values ending with the given string."""
+  message_ends_with: String
+
+  """All values not ending with the given string."""
+  message_not_ends_with: String
+  viewed: Boolean
+
+  """All values that are not equal to given value."""
+  viewed_not: Boolean
+  user: UserWhereInput
+}
+
+input NotificationWhereUniqueInput {
+  id: ID
 }
 
 """Information about pagination in a connection."""
@@ -83,6 +324,8 @@ enum PermissionAccessType {
   CREATE_USER
   READ_USER
   UPDATE_USER
+  READ_NOTIFICATION
+  UPDATE_NOTIFICATION
 }
 
 """A connection to a list of items."""
@@ -288,10 +531,13 @@ input PermissionWhereUniqueInput {
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   permissions(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Permission]!
+  notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification]!
   user(where: UserWhereUniqueInput!): User
   permission(where: PermissionWhereUniqueInput!): Permission
+  notification(where: NotificationWhereUniqueInput!): Notification
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   permissionsConnection(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PermissionConnection!
+  notificationsConnection(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NotificationConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -303,6 +549,7 @@ type Query {
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   permission(where: PermissionSubscriptionWhereInput): PermissionSubscriptionPayload
+  notification(where: NotificationSubscriptionWhereInput): NotificationSubscriptionPayload
 }
 
 type User implements Node {
@@ -315,6 +562,7 @@ type User implements Node {
   lastPasswordChange: DateTime!
   confirmed: Boolean!
   permissions(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Permission!]
+  notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
   deleted: Boolean!
 }
 
@@ -338,11 +586,29 @@ input UserCreateInput {
   confirmed: Boolean!
   deleted: Boolean
   permissions: PermissionCreateManyWithoutUserInput
+  notifications: NotificationCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutNotificationsInput {
+  create: UserCreateWithoutNotificationsInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutPermissionsInput {
   create: UserCreateWithoutPermissionsInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutNotificationsInput {
+  firstName: String
+  lastName: String
+  username: String!
+  email: String!
+  password: String!
+  lastPasswordChange: DateTime!
+  confirmed: Boolean!
+  deleted: Boolean
+  permissions: PermissionCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutPermissionsInput {
@@ -354,6 +620,7 @@ input UserCreateWithoutPermissionsInput {
   lastPasswordChange: DateTime!
   confirmed: Boolean!
   deleted: Boolean
+  notifications: NotificationCreateManyWithoutUserInput
 }
 
 """An edge in a connection."""
@@ -451,6 +718,14 @@ input UserUpdateInput {
   confirmed: Boolean
   deleted: Boolean
   permissions: PermissionUpdateManyWithoutUserInput
+  notifications: NotificationUpdateManyWithoutUserInput
+}
+
+input UserUpdateOneRequiredWithoutNotificationsInput {
+  create: UserCreateWithoutNotificationsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutNotificationsDataInput
+  upsert: UserUpsertWithoutNotificationsInput
 }
 
 input UserUpdateOneRequiredWithoutPermissionsInput {
@@ -458,6 +733,18 @@ input UserUpdateOneRequiredWithoutPermissionsInput {
   connect: UserWhereUniqueInput
   update: UserUpdateWithoutPermissionsDataInput
   upsert: UserUpsertWithoutPermissionsInput
+}
+
+input UserUpdateWithoutNotificationsDataInput {
+  firstName: String
+  lastName: String
+  username: String
+  email: String
+  password: String
+  lastPasswordChange: DateTime
+  confirmed: Boolean
+  deleted: Boolean
+  permissions: PermissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutPermissionsDataInput {
@@ -469,6 +756,12 @@ input UserUpdateWithoutPermissionsDataInput {
   lastPasswordChange: DateTime
   confirmed: Boolean
   deleted: Boolean
+  notifications: NotificationUpdateManyWithoutUserInput
+}
+
+input UserUpsertWithoutNotificationsInput {
+  update: UserUpdateWithoutNotificationsDataInput!
+  create: UserCreateWithoutNotificationsInput!
 }
 
 input UserUpsertWithoutPermissionsInput {
@@ -758,6 +1051,9 @@ input UserWhereInput {
   permissions_every: PermissionWhereInput
   permissions_some: PermissionWhereInput
   permissions_none: PermissionWhereInput
+  notifications_every: NotificationWhereInput
+  notifications_some: NotificationWhereInput
+  notifications_none: NotificationWhereInput
 }
 
 input UserWhereUniqueInput {

@@ -1,0 +1,14 @@
+type Notification @usePermissions {
+  id: ID!
+  user: User!
+  message: String!
+  viewed: Boolean!
+}
+
+type Query {
+  notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification]!
+}
+
+type Mutation {
+  updateNotification(data: NotificationUpdateInput!, where: NotificationWhereUniqueInput!): Notification
+}

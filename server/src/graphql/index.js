@@ -20,7 +20,7 @@ const schema = makeExecutableSchema({
 const graphqlServer = new ApolloServer({
   schema,
   context: async ({ req, connection }) => {
-    let context = {}
+    let context = get(connection, 'context') || {}
     context.prisma = new Prisma({
       typeDefs: 'src/graphql/generated/prisma.graphql',
       endpoint: process.env.PRISMA_URL
@@ -40,8 +40,6 @@ const graphqlServer = new ApolloServer({
           context.user = context.user.confirmed || (!context.user.confirmed && accessingVerifyEmail) ? context.user : null
         }
       }
-    } else if (connection) {
-      context = connection.context
     }
 
     return context
@@ -58,6 +56,7 @@ const graphqlServer = new ApolloServer({
     },
 
     onDisconnect: async (webSocket, context) => {
+      console.log('disconnected')
       // ...
     }
   },

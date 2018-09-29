@@ -23,14 +23,17 @@ const createUser = async (root, args, context, info) => {
       create: [
         { accessType: permissionAccessTypeEnum.CREATE_USER, accessLevel: permissionAccessLevelEnum.ALL.key },
         { accessType: permissionAccessTypeEnum.READ_USER, accessLevel: permissionAccessLevelEnum.ALL.key },
-        { accessType: permissionAccessTypeEnum.UPDATE_USER, accessLevel: permissionAccessLevelEnum.OWNER.key }
+        { accessType: permissionAccessTypeEnum.UPDATE_USER, accessLevel: permissionAccessLevelEnum.OWNER.key },
+
+        { accessType: permissionAccessTypeEnum.READ_NOTIFICATION, accessLevel: permissionAccessLevelEnum.OWNER.key },
+        { accessType: permissionAccessTypeEnum.UPDATE_NOTIFICATION, accessLevel: permissionAccessLevelEnum.OWNER.key }
       ]
     }
 
     if (user.username) {
       const userNameExists = await prisma.query.user({
         where: { username: user.username }
-      }, info)
+      })
 
       if (userNameExists) {
         throw new UserInputError(errorText.usernameAlreadyTaken(user.username), {
@@ -46,8 +49,6 @@ const createUser = async (root, args, context, info) => {
     user = await prisma.mutation.createUser({
       data: user
     })
-
-    // await createDefaultPermissions(root, { userId: userInDatabase.id }, context, info)
   } else if (user && !user.confirmed) {
     // If user exists and is not verified, save the new password and send verify email
     const password = await hashPassword(args.password)
@@ -100,7 +101,8 @@ const getUser = async (root, args, context, info) => {
 
 const updateUser = async (root, args, context, info) => {
   const { prisma, user } = context
-  const { where, data } = args
+  const { where } = args
+  const data = pick(args.data, 'username', 'firstName', 'lastName')
 
   const whereSchemaValidation = {
     id: Joi.string().required()
@@ -114,15 +116,13 @@ const updateUser = async (root, args, context, info) => {
 
   Joi.validate(where, whereSchemaValidation)
 
-  const userToBeUpdated = await prisma.query.user({
-    where
-  }, info)
+  const userToBeUpdated = await prisma.query.user({ where })
 
   if (data.username) {
     // if updating username check to ensure it doesnt already exist
     const userNameExists = await prisma.query.user({
       where: { username: data.username }
-    }, info)
+    })
 
     // if it exists ignore it if its on the user we are updating
     if (userNameExists && where.id !== userNameExists.id) {
@@ -155,7 +155,7 @@ const updateUser = async (root, args, context, info) => {
   let updatedUser = await prisma.mutation.updateUser({
     where,
     data
-  })
+  }, info)
 
   return updatedUser
 }
