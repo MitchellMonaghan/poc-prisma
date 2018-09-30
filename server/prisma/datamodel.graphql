@@ -9,7 +9,6 @@ type User {
   confirmed: Boolean!
   permissions: [Permission!]! @relation(name: "UserPermissions" onDelete: CASCADE)
   notifications: [Notification!]! @relation(name: "UserNotifications" onDelete: CASCADE)
-  deleted: Boolean! @default(value: "false")
 }
 
 type Permission {
@@ -38,7 +37,7 @@ enum PermissionAccessLevel {
 
 type Notification {
   id: ID! @unique
-  user: User! @relation(name: "UserNotifications")
+  createdBy: User! @relation(name: "UserNotifications")
   message: String!
   viewed: Boolean! @default(value: "false")
 }

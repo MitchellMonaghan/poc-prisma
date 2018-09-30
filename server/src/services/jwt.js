@@ -40,8 +40,6 @@ const getUserFromToken = async (prisma, token) => {
         accessType
         accessLevel
       }
-
-      deleted
     }`)
 
     jwt.verify(token, `${config.authSecret}`)

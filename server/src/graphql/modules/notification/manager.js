@@ -11,7 +11,7 @@ const createNotification = async (root, args, context, info) => {
 
 const getNotifications = async (root, args, context, info) => {
   const { prisma } = context
-  return prisma.query.notifications({}, info)
+  return prisma.query.notifications(args, info)
 }
 
 const updateNotification = async (root, args, context, info) => {
@@ -32,20 +32,14 @@ const updateNotification = async (root, args, context, info) => {
 
   const notificationToBeUpdated = await prisma.query.notification({
     where
-  }, `{
-    user {
-      id
-    }
-  }`)
-
-  notificationToBeUpdated.createdBy = notificationToBeUpdated.user.id
+  }, info)
 
   await checkPermissionsAndProtectedFields(notificationToBeUpdated, args, context, info)
 
   let updatedNotification = await prisma.mutation.updateNotification({
     where,
     data
-  })
+  }, info)
 
   return updatedNotification
 }

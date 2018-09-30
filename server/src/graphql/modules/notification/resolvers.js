@@ -12,7 +12,7 @@ export default {
   Subscription: {
     notification: {
       subscribe: async (parent, args, context, info) => {
-        return context.prisma.subscription.notification({}, info)
+        return context.prisma.subscription.notification(args, info)
       }
     }
   }

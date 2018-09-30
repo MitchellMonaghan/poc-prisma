@@ -71,7 +71,7 @@ const createUser = async (root, args, context, info) => {
 
 const getUsers = async (root, args, context, info) => {
   const { prisma } = context
-  return prisma.query.users({}, info)
+  return prisma.query.users(args, info)
 }
 
 const getUser = async (root, args, context, info) => {

@@ -1,15 +1,23 @@
 import config from '@config'
+import { parse } from 'graphql'
 import { importSchema } from 'graphql-import'
 import { ApolloServer, makeExecutableSchema } from 'apollo-server'
-import { Prisma } from 'prisma-binding'
-import { get } from 'lodash'
+import { Prisma, extractFragmentReplacements } from 'prisma-binding'
+import { get, merge } from 'lodash'
 
 import { getUserFromToken } from '@services/jwt'
 import { verifyEmail } from '@modules/auth/manager'
+import { addFragmentToFieldResolvers } from '@modules/permission/manager'
 
-import resolvers from './resolvers'
+import { resolvers as rootResolvers } from './resolvers'
 import schemaDirectives from './directives'
-const typeDefs = importSchema('./src/graphql/schema.graphql')
+
+const typeDefs = importSchema('./src/graphql/schema/schema.graphql')
+const dataModel = importSchema('./src/graphql/schema/dataModel.graphql')
+
+const preparedResolvers = addFragmentToFieldResolvers(parse(dataModel))
+const resolvers = merge(rootResolvers, { ...preparedResolvers })
+const fragmentReplacements = extractFragmentReplacements(preparedResolvers)
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -20,25 +28,24 @@ const schema = makeExecutableSchema({
 const graphqlServer = new ApolloServer({
   schema,
   context: async ({ req, connection }) => {
-    let context = get(connection, 'context') || {}
+    let context = get(connection, 'context') || { authToken: get(req, 'headers.authorization') }
     context.prisma = new Prisma({
+      fragmentReplacements,
       typeDefs: 'src/graphql/generated/prisma.graphql',
-      endpoint: process.env.PRISMA_URL
+      endpoint: config.prismaUrl,
+      secret: config.prismaSecret,
+      debug: config.env !== 'production'
     })
 
-    if (get(req, 'headers.authorization')) {
-      let authToken = req.headers.authorization
+    if (context.authToken) {
+      context.user = await getUserFromToken(context.prisma, context.authToken)
 
-      if (authToken) {
-        context.user = await getUserFromToken(context.prisma, authToken)
-
-        // Only do this check if a real user token was provided
-        if (context.user) {
-          // If the user is not confirmed they are only allowed to
-          // access the verifyEmail query as authenticated
-          let accessingVerifyEmail = req.body.query.includes(verifyEmail.name)
-          context.user = context.user.confirmed || (!context.user.confirmed && accessingVerifyEmail) ? context.user : null
-        }
+      // Only do this check if a real user token was provided
+      if (context.user) {
+        // If the user is not confirmed they are only allowed to
+        // access the verifyEmail query as authenticated
+        let accessingVerifyEmail = (get(req, 'body.query') || '').includes(verifyEmail.name)
+        context.user = context.user.confirmed || (!context.user.confirmed && accessingVerifyEmail) ? context.user : null
       }
     }
 
@@ -46,12 +53,7 @@ const graphqlServer = new ApolloServer({
   },
   subscriptions: {
     onConnect: async (connectionParams, webSocket, context) => {
-      if (connectionParams.authorization) {
-        let user = await getUserFromToken(connectionParams.authorization)
-        user = get(user, 'confirmed') ? user : null
-        context.user = user
-      }
-
+      context.authToken = connectionParams.authorization || connectionParams.Authorization
       return context
     },
 

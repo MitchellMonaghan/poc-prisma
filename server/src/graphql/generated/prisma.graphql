@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Sat Sep 29 2018 13:14:56 GMT-0500 (Central Daylight Time)
+# timestamp: Sun Sep 30 2018 16:34:39 GMT-0500 (Central Daylight Time)
 
 type AggregateNotification {
   count: Int!
@@ -61,7 +61,7 @@ interface Node {
 
 type Notification implements Node {
   id: ID!
-  user: User!
+  createdBy: User!
   message: String!
   viewed: Boolean!
 }
@@ -79,15 +79,15 @@ type NotificationConnection {
 input NotificationCreateInput {
   message: String!
   viewed: Boolean
-  user: UserCreateOneWithoutNotificationsInput!
+  createdBy: UserCreateOneWithoutNotificationsInput!
 }
 
-input NotificationCreateManyWithoutUserInput {
-  create: [NotificationCreateWithoutUserInput!]
+input NotificationCreateManyWithoutCreatedByInput {
+  create: [NotificationCreateWithoutCreatedByInput!]
   connect: [NotificationWhereUniqueInput!]
 }
 
-input NotificationCreateWithoutUserInput {
+input NotificationCreateWithoutCreatedByInput {
   message: String!
   viewed: Boolean
 }
@@ -162,32 +162,32 @@ input NotificationSubscriptionWhereInput {
 input NotificationUpdateInput {
   message: String
   viewed: Boolean
-  user: UserUpdateOneRequiredWithoutNotificationsInput
+  createdBy: UserUpdateOneRequiredWithoutNotificationsInput
 }
 
-input NotificationUpdateManyWithoutUserInput {
-  create: [NotificationCreateWithoutUserInput!]
+input NotificationUpdateManyWithoutCreatedByInput {
+  create: [NotificationCreateWithoutCreatedByInput!]
   connect: [NotificationWhereUniqueInput!]
   disconnect: [NotificationWhereUniqueInput!]
   delete: [NotificationWhereUniqueInput!]
-  update: [NotificationUpdateWithWhereUniqueWithoutUserInput!]
-  upsert: [NotificationUpsertWithWhereUniqueWithoutUserInput!]
+  update: [NotificationUpdateWithWhereUniqueWithoutCreatedByInput!]
+  upsert: [NotificationUpsertWithWhereUniqueWithoutCreatedByInput!]
 }
 
-input NotificationUpdateWithoutUserDataInput {
+input NotificationUpdateWithoutCreatedByDataInput {
   message: String
   viewed: Boolean
 }
 
-input NotificationUpdateWithWhereUniqueWithoutUserInput {
+input NotificationUpdateWithWhereUniqueWithoutCreatedByInput {
   where: NotificationWhereUniqueInput!
-  data: NotificationUpdateWithoutUserDataInput!
+  data: NotificationUpdateWithoutCreatedByDataInput!
 }
 
-input NotificationUpsertWithWhereUniqueWithoutUserInput {
+input NotificationUpsertWithWhereUniqueWithoutCreatedByInput {
   where: NotificationWhereUniqueInput!
-  update: NotificationUpdateWithoutUserDataInput!
-  create: NotificationCreateWithoutUserInput!
+  update: NotificationUpdateWithoutCreatedByDataInput!
+  create: NotificationCreateWithoutCreatedByInput!
 }
 
 input NotificationWhereInput {
@@ -283,7 +283,7 @@ input NotificationWhereInput {
 
   """All values that are not equal to given value."""
   viewed_not: Boolean
-  user: UserWhereInput
+  createdBy: UserWhereInput
 }
 
 input NotificationWhereUniqueInput {
@@ -563,7 +563,6 @@ type User implements Node {
   confirmed: Boolean!
   permissions(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Permission!]
   notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
-  deleted: Boolean!
 }
 
 """A connection to a list of items."""
@@ -584,9 +583,8 @@ input UserCreateInput {
   password: String!
   lastPasswordChange: DateTime!
   confirmed: Boolean!
-  deleted: Boolean
   permissions: PermissionCreateManyWithoutUserInput
-  notifications: NotificationCreateManyWithoutUserInput
+  notifications: NotificationCreateManyWithoutCreatedByInput
 }
 
 input UserCreateOneWithoutNotificationsInput {
@@ -607,7 +605,6 @@ input UserCreateWithoutNotificationsInput {
   password: String!
   lastPasswordChange: DateTime!
   confirmed: Boolean!
-  deleted: Boolean
   permissions: PermissionCreateManyWithoutUserInput
 }
 
@@ -619,8 +616,7 @@ input UserCreateWithoutPermissionsInput {
   password: String!
   lastPasswordChange: DateTime!
   confirmed: Boolean!
-  deleted: Boolean
-  notifications: NotificationCreateManyWithoutUserInput
+  notifications: NotificationCreateManyWithoutCreatedByInput
 }
 
 """An edge in a connection."""
@@ -649,8 +645,6 @@ enum UserOrderByInput {
   lastPasswordChange_DESC
   confirmed_ASC
   confirmed_DESC
-  deleted_ASC
-  deleted_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -666,7 +660,6 @@ type UserPreviousValues {
   password: String!
   lastPasswordChange: DateTime!
   confirmed: Boolean!
-  deleted: Boolean!
 }
 
 type UserSubscriptionPayload {
@@ -716,9 +709,8 @@ input UserUpdateInput {
   password: String
   lastPasswordChange: DateTime
   confirmed: Boolean
-  deleted: Boolean
   permissions: PermissionUpdateManyWithoutUserInput
-  notifications: NotificationUpdateManyWithoutUserInput
+  notifications: NotificationUpdateManyWithoutCreatedByInput
 }
 
 input UserUpdateOneRequiredWithoutNotificationsInput {
@@ -743,7 +735,6 @@ input UserUpdateWithoutNotificationsDataInput {
   password: String
   lastPasswordChange: DateTime
   confirmed: Boolean
-  deleted: Boolean
   permissions: PermissionUpdateManyWithoutUserInput
 }
 
@@ -755,8 +746,7 @@ input UserUpdateWithoutPermissionsDataInput {
   password: String
   lastPasswordChange: DateTime
   confirmed: Boolean
-  deleted: Boolean
-  notifications: NotificationUpdateManyWithoutUserInput
+  notifications: NotificationUpdateManyWithoutCreatedByInput
 }
 
 input UserUpsertWithoutNotificationsInput {
@@ -1044,10 +1034,6 @@ input UserWhereInput {
 
   """All values that are not equal to given value."""
   confirmed_not: Boolean
-  deleted: Boolean
-
-  """All values that are not equal to given value."""
-  deleted_not: Boolean
   permissions_every: PermissionWhereInput
   permissions_some: PermissionWhereInput
   permissions_none: PermissionWhereInput

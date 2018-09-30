@@ -19,6 +19,36 @@ const permissionAccessLevelEnum = {
   SUPER: { key: 'SUPER', value: 4 }
 }
 
+const addFragmentToFieldResolvers = (schemaAST, fragmentSelection = `{ id createdBy { id } }`) => {
+  // id and createdBy.id are required by the system to determine if the requesting user is the owner
+  // and so this fragment will need to be added to all prisma requests
+  return schemaAST.definitions.reduce((result, schemaDefinition) => {
+    if (schemaDefinition.kind === 'ObjectTypeDefinition') {
+      return {
+        ...result,
+        [schemaDefinition.name.value]: schemaDefinition.fields.reduce((result, fieldDefinition) => {
+          // TODO: this includes check is naive and will break for some strings
+          if (fragmentSelection.includes(fieldDefinition.name.value)) {
+            return result
+          }
+
+          return {
+            ...result,
+            [fieldDefinition.name.value]: {
+              fragment: `fragment Fragment on ${schemaDefinition.name.value} ${fragmentSelection}`,
+              resolve: (parent, args, context, info) => {
+                return parent[fieldDefinition.name.value]
+              }
+            }
+          }
+        }, {})
+      }
+    } else {
+      return result
+    }
+  }, {})
+}
+
 // This should be called on every mutation, as it respects the directives on the data type
 const checkPermissionsAndProtectedFields = async (entityBeingUpdated, args, context, info) => {
   await checkPermissions(entityBeingUpdated, args, context, info)
@@ -32,7 +62,7 @@ const checkPermissions = async (entityBeingUpdated, args, context, info) => {
   const entityUpdatePermissionName = `UPDATE_${entityType.toUpperCase()}`
 
   if (entityType.toLowerCase() === 'user') {
-    entityBeingUpdated.createdBy = entityBeingUpdated.id
+    entityBeingUpdated.createdBy = { id: entityBeingUpdated.id }
   }
 
   // Check for usePermissions directive
@@ -51,7 +81,7 @@ const checkPermissions = async (entityBeingUpdated, args, context, info) => {
         throw new AuthenticationError(errorText.authenticationError())
       }
 
-      const isOwner = entityBeingUpdated.createdBy === user.id
+      const isOwner = entityBeingUpdated.createdBy.id === user.id
       const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
       const usersPermissionAccessLevel = permissionAccessLevelEnum[updatePermission.accessLevel].value
 
@@ -73,7 +103,7 @@ const checkProtectedFields = async (entityBeingUpdated, args, context, info) => 
     const entityUpdatePermissionName = `UPDATE_${entityType.toUpperCase()}`
 
     if (entityType.toLowerCase() === 'user') {
-      entityBeingUpdated.createdBy = entityBeingUpdated.id
+      entityBeingUpdated.createdBy.id = entityBeingUpdated.id
     }
 
     // Check for protected directive
@@ -88,7 +118,7 @@ const checkProtectedFields = async (entityBeingUpdated, args, context, info) => 
 
       if (protectedDirective.arguments.length === 0 || updatePermissionSpecified) {
         // Check if user has admin update or is owner
-        const isOwner = entityBeingUpdated.createdBy === user.id
+        const isOwner = entityBeingUpdated.createdBy.id === user.id
         const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
         const usersPermissionAccessLevel = permissionAccessLevelEnum[updatePermission.accessLevel].value
 
@@ -102,13 +132,14 @@ const checkProtectedFields = async (entityBeingUpdated, args, context, info) => 
 
 const updatePermission = async (root, args, context, info) => {
   const { prisma } = context
-  prisma.mutation.updatePermission({}, info)
+  prisma.mutation.updatePermission(args, info)
 }
 
 const publicProps = {
   permissionAccessTypeEnum,
   permissionAccessLevelEnum,
 
+  addFragmentToFieldResolvers,
   checkPermissionsAndProtectedFields,
 
   updatePermission

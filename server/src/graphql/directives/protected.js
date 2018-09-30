@@ -68,7 +68,7 @@ class protectedField extends SchemaDirectiveVisitor {
       entity = parent
     }
 
-    const createdBy = entityType === 'user' ? entity.id : entity.createdBy
+    const createdBy = entityType === 'user' ? entity.id : entity.createdBy.id
     const isOwner = createdBy === user.id
 
     return isOwner

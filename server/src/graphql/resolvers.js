@@ -9,4 +9,9 @@ Object.keys(moduleResolvers).forEach(resolverKey => {
   merge(resolvers, resolver.default)
 })
 
-export default resolvers
+const publicProps = {
+  resolvers
+}
+
+module.exports = publicProps
+export default publicProps

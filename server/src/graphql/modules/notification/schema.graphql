@@ -1,6 +1,6 @@
 type Notification @usePermissions {
   id: ID!
-  user: User!
+  createdBy: User!
   message: String!
   viewed: Boolean!
 }

@@ -28,7 +28,7 @@ class usePermissions extends SchemaDirectiveVisitor {
       }
 
       const parentTypeName = field.parentType.name
-      const createdBy = parentTypeName.toLowerCase() === 'user' ? parent.id : parent.createdBy
+      const createdBy = parentTypeName.toLowerCase() === 'user' ? parent.id : parent.createdBy.id
       const isOwner = createdBy === user.id
 
       const entityReadPermission = `READ_${parentTypeName.toUpperCase()}`
