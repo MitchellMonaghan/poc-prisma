@@ -1,43 +1,24 @@
 import { ApolloClient } from 'apollo-client'
-
+import VueApollo from 'vue-apollo'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
-import { getMainDefinition } from 'apollo-utilities'
-
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import store from 'src/store'
-
-const vuexStore = store()
+import { getMainDefinition } from 'apollo-utilities'
 
 export default ({ Vue }) => {
   const httpLink = new HttpLink({
     uri: '/graphql',
     fetch: async (uri, options) => {
-      options.headers.authorization = vuexStore.state.auth.token
-
-      if (vuexStore.state.auth.decodedToken) {
-        const issuedDate = new Date(vuexStore.state.auth.decodedToken.iat * 1000)
-        const expirationDate = new Date(vuexStore.state.auth.decodedToken.exp * 1000)
-
-        const halfLife = new Date((issuedDate.getTime() + expirationDate.getTime()) / 2)
-
-        if (halfLife <= Date.now() && !options.body.includes('refreshToken')) {
-          try {
-            await vuexStore.dispatch('auth/refreshToken')
-            options.headers.authorization = vuexStore.state.auth.token
-          } catch (error) {
-            console.log(error)
-          }
-        }
-      }
+      // TODO: Check if token is valid and request a new token if it is not
+      // or request a new token if token is past half life
 
       return fetch(uri, options)
     }
   })
 
   const wsLink = new WebSocketLink({
-    uri: `ws://localhost:4000/subscriptions`,
+    uri: `ws://localhost:8080/graphql`,
     options: {
       reconnect: true
     }
@@ -56,18 +37,12 @@ export default ({ Vue }) => {
   const apolloClient = new ApolloClient({
     link,
     cache: new InMemoryCache(),
-    connectToDevTools: true,
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'network-only',
-        errorPolicy: 'ignore'
-      },
-      query: {
-        fetchPolicy: 'network-only',
-        errorPolicy: 'all'
-      }
-    }
+    connectToDevTools: true
   })
 
-  Vue.prototype.$apollo = apolloClient
+  const apolloProvider = new VueApollo({
+    defaultClient: apolloClient
+  })
+
+  Vue.prototype.$apollo = apolloProvider
 }

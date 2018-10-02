@@ -8,6 +8,7 @@
             :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
             :error="$v.form.username.$error"
             :error-label="usernameError"
+            helper=" "
           >
             <q-input
               v-model.trim="form.username"
@@ -48,6 +49,7 @@
 </template>
 
 <script>
+import { authenticateUserQuery } from 'src/graphql/queries'
 import { required, hasServerError } from 'src/validators'
 
 export default {
@@ -88,7 +90,12 @@ export default {
       }
 
       try {
-        await this.$store.dispatch('auth/login', this.form)
+        const response = await this.$apollo.defaultClient.query({
+          variables: this.form,
+          query: authenticateUserQuery
+        })
+
+        console.log(response)
 
         if (this.$route.query.redirect) {
           this.$router.push(this.$route.query.redirect)
@@ -96,6 +103,7 @@ export default {
           this.$router.push({ name: 'authenticatedLandingPage' })
         }
       } catch (error) {
+        console.log(JSON.stringify(error))
         this.serverErrors = error.graphQLErrors
       }
     },

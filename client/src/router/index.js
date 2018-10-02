@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 
 // import globalAuthGuard from 'src/.core.vue/router'
 import routes from './routes'
-import store from 'src/store'
 
 Vue.use(VueRouter)
 
@@ -13,12 +12,12 @@ Vue.use(VueRouter)
  */
 
 const globalAuthGuard = async function (to, from, next) {
-  const vuexStore = store()
-  let userIsAuthenticated = vuexStore.state.auth.user
+  // const vuexStore = store()
+  let userIsAuthenticated = false // vuexStore.state.auth.user
 
   if (!userIsAuthenticated) {
-    await vuexStore.dispatch('auth/getCurrentUser')
-    userIsAuthenticated = vuexStore.state.auth.user
+    // await vuexStore.dispatch('auth/getCurrentUser')
+    userIsAuthenticated = false // vuexStore.state.auth.user
   }
 
   if (to.matched.some(record => record.meta.anonymousOnly)) {

@@ -22,6 +22,7 @@
     "graphql-tag": "^2.9.2",
     "jsonwebtoken": "^8.3.0",
     "subscriptions-transport-ws": "^0.9.14",
+    "vue-apollo": "^3.0.0-beta.25",
     "vue-i18n": "^7.3.3",
     "vuelidate": "^0.7.4"
   },
