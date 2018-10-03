@@ -19,17 +19,16 @@ const refreshTokenQuery = gql`
 `
 
 const getUserQuery = gql`
-  query($id: ID!) {
-    getUser(id: $id) {
+  query($where: UserWhereUniqueInput!) {
+    user(where: $where) {
       id
       username
       email
       firstName
       lastName
-      permissions{
-        create_user
-        read_user
-        update_user
+      permissions {
+        accessType
+        accessLevel
       }
     }
   }

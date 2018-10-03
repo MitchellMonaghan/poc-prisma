@@ -1,20 +1,21 @@
 <template>
   <div class="row items-center" style="min-height:100vh">
     <div class="row col-12 justify-center">
-      <div class="row col-lg-4 col-md-8 col-11">
+      <form class="row col-lg-4 col-md-8 col-11">
         <!-- Username -->
           <q-field
             class="row col-12 q-mt-md"
             :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
             :error="$v.form.username.$error"
             :error-label="usernameError"
-            helper=" "
           >
             <q-input
               v-model.trim="form.username"
               :float-label="usernameLabel"
               @blur="onFieldBlur(usernameFieldKey)"
               @keyup.enter="login"
+
+              autocomplete="email"
             />
           </q-field>
         <!-- End username -->
@@ -32,6 +33,8 @@
               :float-label="passwordLabel"
               @blur="onFieldBlur(passwordFieldKey)"
               @keyup.enter="login"
+
+              autocomplete="current-password"
             />
           </q-field>
         <!-- End password -->
@@ -43,13 +46,12 @@
         <div class="row q-pt-xl col-12 justify-end">
           <q-btn  @click="login" label="login" />
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import { authenticateUserQuery } from 'src/graphql/queries'
 import { required, hasServerError } from 'src/validators'
 
 export default {
@@ -90,12 +92,7 @@ export default {
       }
 
       try {
-        const response = await this.$apollo.defaultClient.query({
-          variables: this.form,
-          query: authenticateUserQuery
-        })
-
-        console.log(response)
+        await this.$store.dispatch('auth/login', this.form)
 
         if (this.$route.query.redirect) {
           this.$router.push(this.$route.query.redirect)
@@ -103,7 +100,6 @@ export default {
           this.$router.push({ name: 'authenticatedLandingPage' })
         }
       } catch (error) {
-        console.log(JSON.stringify(error))
         this.serverErrors = error.graphQLErrors
       }
     },

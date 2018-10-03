@@ -1,4 +1,10 @@
 // Configuration for your app
+const dotenv = require('dotenv')
+dotenv.config()
+
+const env = {
+  APP_Domain: JSON.stringify(process.env.APP_Domain)
+}
 
 module.exports = function (ctx) {
   return {
@@ -35,7 +41,8 @@ module.exports = function (ctx) {
           loader: 'eslint-loader',
           exclude: /(node_modules|quasar)/
         })
-      }
+      },
+      env
     },
     devServer: {
       // https: true,
