@@ -75,6 +75,7 @@ export default {
         this.pageState = pageStates.form
       }
     } catch (error) {
+      this.$store.commit('auth/setToken')
       this.pageState = pageStates.invalidToken
     }
   },
