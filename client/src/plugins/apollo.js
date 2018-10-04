@@ -1,3 +1,4 @@
+import { Cookies } from 'quasar'
 import { ApolloClient } from 'apollo-client'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
@@ -10,9 +11,11 @@ const vuexStore = store()
 
 export default ({ Vue }) => {
   const httpLink = new HttpLink({
-    uri: `/graphql`,
+    uri: process.env.API_URL,
     fetch: async (uri, options) => {
-      options.headers.authorization = vuexStore.state.auth.token
+      if (vuexStore.state.auth.token) {
+        options.headers.authorization = vuexStore.state.auth.token
+      }
 
       if (vuexStore.state.auth.decodedToken) {
         const issuedDate = new Date(vuexStore.state.auth.decodedToken.iat * 1000)
@@ -35,9 +38,12 @@ export default ({ Vue }) => {
   })
 
   const wsLink = new WebSocketLink({
-    uri: `ws://${process.env.APP_Domain}/graphql`,
+    uri: process.env.WEB_SOCKET_URL,
     options: {
-      reconnect: true
+      reconnect: true,
+      connectionParams: {
+        authorization: Cookies.get('token')
+      }
     }
   })
 
@@ -54,17 +60,7 @@ export default ({ Vue }) => {
   const apolloClient = new ApolloClient({
     link,
     cache: new InMemoryCache(),
-    connectToDevTools: true,
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'network-only',
-        errorPolicy: 'ignore'
-      },
-      query: {
-        fetchPolicy: 'network-only',
-        errorPolicy: 'all'
-      }
-    }
+    connectToDevTools: true
   })
 
   Vue.prototype.$apollo = apolloClient

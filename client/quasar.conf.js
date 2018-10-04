@@ -3,7 +3,8 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const env = {
-  APP_Domain: JSON.stringify(process.env.APP_Domain)
+  API_URL: JSON.stringify(process.env.API_URL),
+  WEB_SOCKET_URL: JSON.stringify(process.env.WEB_SOCKET_URL)
 }
 
 module.exports = function (ctx) {
@@ -78,11 +79,14 @@ module.exports = function (ctx) {
         'QItemSide',
         'QInput',
         'QField',
+        'QChip',
 
+        'QPopover',
         'QSpinner'
       ],
       directives: [
-        'Ripple'
+        'Ripple',
+        'CloseOverlay'
       ],
       // Quasar plugins
       plugins: [

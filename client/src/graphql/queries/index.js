@@ -34,9 +34,19 @@ const getUserQuery = gql`
   }
 `
 
+const getNotificationsQuery = gql`
+  query($where: NotificationWhereInput!) {
+    notifications(where: $where) {
+      message
+      viewed
+    }
+  }
+`
+
 export {
   authenticateUserQuery,
   forgotPasswordQuery,
   refreshTokenQuery,
-  getUserQuery
+  getUserQuery,
+  getNotificationsQuery
 }

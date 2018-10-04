@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import auth from './auth'
+import notification from './notification'
 import user from './user'
 
 Vue.use(Vuex)
@@ -15,6 +16,7 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       auth,
+      notification,
       user
     }
   })

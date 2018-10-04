@@ -20,6 +20,18 @@
           Quasar App
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
+
+        <q-btn push color="white" text-color="primary" label="Notifications">
+          <q-chip floating color="primary">{{ $store.state.notification.notifications.length }}</q-chip>
+
+          <q-popover>
+            <q-list separator link>
+              <q-item v-close-overlay @click.native="notificationViewed" v-for="(notification, index) in $store.state.notification.notifications" :key="index">
+                {{ notification.message }}
+              </q-item>
+            </q-list>
+          </q-popover>
+        </q-btn>
       </q-toolbar>
     </q-layout-header>
 
@@ -76,12 +88,22 @@ export default {
       leftDrawerOpen: this.$q.platform.is.desktop
     }
   },
+
+  async created () {
+    await this.$store.dispatch('notification/getNotifications', this.$store.state.auth.user.id)
+    await this.$store.dispatch('notification/subscribe', this.$store.state.auth.user.id)
+  },
+
   methods: {
     openURL,
 
     async logout () {
       await this.$store.dispatch('auth/logout')
       this.$router.go({ name: 'login' })
+    },
+
+    async notificationViewed () {
+      console.log('TODO: Update server and local state')
     }
   }
 }
