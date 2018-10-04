@@ -26,7 +26,7 @@ Joi.validate = (data, validationSchema) => {
 
   if (error) {
     error = error.details[0]
-    error.message = error.type === 'string.regex.name' && error.context.key === 'password'
+    error.message = error.type === 'string.regex.base' && error.context.key === 'password'
       ? 'Password does not meet complexity requirements' : error.message
 
     throw new UserInputError(error.message, {
