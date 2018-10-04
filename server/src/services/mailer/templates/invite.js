@@ -1,4 +1,5 @@
 import config from '@config'
+const html = String.raw
 
 export default ({ invitedUser, invitee }) => {
   let displayName = invitedUser.username
@@ -11,7 +12,7 @@ export default ({ invitedUser, invitee }) => {
   const verifyEmailUrl = `${config.appUrl}/verifyEmail?token=${invitedUser.verifyEmailToken}`
 
   const subject = `Please confirm your email with ${config.productName}.`
-  const html = `
+  const html = html`
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
