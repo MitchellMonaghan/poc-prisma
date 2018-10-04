@@ -2,6 +2,7 @@ const fieldPlaceHolder = '{field}'
 
 const errorMessages = {
   required: `${fieldPlaceHolder} is required.`,
+  alphaNum: `Please only enter alphanumeric characters`,
   notSameAsUsername: `${fieldPlaceHolder} cannot match Username.`,
   notSameAsEmail: `${fieldPlaceHolder} cannot match Email.`,
   sameAsPassword: `Passwords must match.`,

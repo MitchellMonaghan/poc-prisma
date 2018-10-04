@@ -43,7 +43,7 @@ const mutations = extend({}, {
       state.token = null
       state.decodedToken = null
 
-      Cookies.remove('token')
+      Cookies.remove('token', { path: '/' })
     }
   }
 })

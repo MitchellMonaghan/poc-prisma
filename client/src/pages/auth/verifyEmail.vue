@@ -6,7 +6,7 @@
       </div>
 
       <div v-if="pageState === pageStates.validToken">
-        Welcome
+        Thank you for verifying your email
       </div>
 
       <div v-if="pageState === pageStates.invalidToken">
@@ -35,6 +35,7 @@ export default {
     try {
       await this.$store.dispatch('auth/verify', this.$route.query.token)
       this.pageState = this.pageStates.validToken
+      this.$router.push({ name: 'authenticatedLandingPage' })
     } catch (error) {
       this.pageState = this.pageStates.invalidToken
     }
