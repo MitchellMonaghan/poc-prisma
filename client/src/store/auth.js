@@ -10,7 +10,8 @@ import {
 
 import {
   registerUserMutation,
-  verifyEmailMutation
+  verifyEmailMutation,
+  changePasswordMutation
 } from 'src/graphql/mutations'
 
 const state = extend({}, {
@@ -107,11 +108,16 @@ const actions = extend({}, {
       query: refreshTokenQuery
     })
 
-    if (response.data) {
-      await commit('setToken', response.data.refreshToken)
-    } else {
-      throw new Error(response.errors[0].message)
-    }
+    await commit('setToken', response.data.refreshToken)
+  },
+
+  async changePassword ({ commit }, form) {
+    const response = await this._vm.$apollo.mutate({
+      variables: form,
+      mutation: changePasswordMutation
+    })
+
+    commit('setToken', response.data.changePassword)
   }
 })
 

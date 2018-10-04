@@ -21,13 +21,33 @@
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
 
-        <q-btn push color="white" text-color="primary" label="Notifications">
+        <q-btn flat dense color="white" label="Notifications">
           <q-chip floating color="primary">{{ $store.state.notification.notifications.length }}</q-chip>
 
           <q-popover>
             <q-list separator link>
               <q-item v-close-overlay @click.native="notificationViewed" v-for="(notification, index) in $store.state.notification.notifications" :key="index">
                 {{ notification.message }}
+              </q-item>
+            </q-list>
+          </q-popover>
+        </q-btn>
+
+        <q-btn
+          flat
+          dense
+          round
+        >
+          <q-icon name="settings" />
+
+          <q-popover>
+            <q-list separator link>
+              <q-item v-close-overlay @click.native="$router.push({ name: 'settings' })">
+                Settings <q-item-side right icon="settings" />
+              </q-item>
+
+              <q-item v-close-overlay @click.native="logout">
+                Logout <q-item-side right icon="fas fa-sign-out-alt" />
               </q-item>
             </q-list>
           </q-popover>

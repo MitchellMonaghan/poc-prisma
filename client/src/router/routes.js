@@ -5,7 +5,7 @@ const routes = [
     component: () => import('layouts/public.vue'),
     children: [
       // Anonymous only
-      { path: '', component: () => import('pages/Index.vue'), meta: { anonymousOnly: true } },
+      { path: '', component: () => import('pages/index.vue'), meta: { anonymousOnly: true } },
       { name: 'login', path: '/login', component: () => import(`pages/auth/login`), meta: { anonymousOnly: true } },
       { name: 'register', path: '/register', component: () => import(`pages/auth/register`), meta: { anonymousOnly: true } },
       { name: 'verifyEmail', path: '/verifyEmail', component: () => import(`pages/auth/verifyEmail.vue`), meta: { anonymousOnly: true } },
@@ -18,8 +18,9 @@ const routes = [
     component: () => import('layouts/authenticated.vue'),
     children: [
       // Authentication required
-      { name: 'authenticatedLandingPage', path: '/auth', component: () => import(`pages/Index.vue`), meta: { requiresAuthentication: true } },
-      { name: 'changePassword', path: '/auth', component: () => import(`pages/Index.vue`), meta: { requiresAuthentication: true } }
+      { name: 'authenticatedLandingPage', path: '/auth', component: () => import(`pages/index.vue`), meta: { requiresAuthentication: true } },
+      { name: 'settings', path: '/auth/settings', component: () => import(`pages/settings.vue`), meta: { requiresAuthentication: true } },
+      { name: 'changePassword', path: '/auth/settings', component: () => import(`pages/settings.vue`), meta: { requiresAuthentication: true } }
     ]
   }
 ]
@@ -28,7 +29,7 @@ const routes = [
 if (process.env.MODE !== 'ssr') {
   routes.push({
     path: '*',
-    component: () => import('pages/Error404.vue')
+    component: () => import('pages/error404.vue')
   })
 }
 

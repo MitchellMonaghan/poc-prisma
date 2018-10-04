@@ -12,7 +12,14 @@ const verifyEmailMutation = gql`
   }
 `
 
+const changePasswordMutation = gql`
+  mutation changePassword($id: ID!, $password: String!) {
+    changePassword(id: $id, password: $password)
+  }
+`
+
 export {
   registerUserMutation,
-  verifyEmailMutation
+  verifyEmailMutation,
+  changePasswordMutation
 }
