@@ -34,7 +34,8 @@ const mutations = extend({}, {
       state.decodedToken = jwt.decode(token)
 
       Cookies.set('token', token, {
-        expire: '', // TODO: Set expiration to match token
+        expires: new Date(state.decodedToken.exp * 1000),
+        path: '/',
         domain: window.location.hostname,
         secure: process.env.PROD // require https on production
       })
@@ -97,6 +98,7 @@ const actions = extend({}, {
   },
 
   async logout ({ commit }) {
+    await this._vm.$apollo.resetStore()
     commit('setToken')
   },
 
