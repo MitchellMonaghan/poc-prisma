@@ -18,8 +18,19 @@ const changePasswordMutation = gql`
   }
 `
 
+const updateNotificationMutation = gql`
+  mutation updateNotification($where: NotificationWhereUniqueInput!, $data: NotificationUpdateInput!) {
+    updateNotification(where: $where, data: $data) {
+      id
+      message
+      viewed
+    }
+  }
+`
+
 export {
   registerUserMutation,
   verifyEmailMutation,
-  changePasswordMutation
+  changePasswordMutation,
+  updateNotificationMutation
 }

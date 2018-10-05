@@ -23,7 +23,7 @@
 
         <q-btn flat dense aria-label="notifications">
           <q-icon name="notifications" />
-          <q-chip floating color="red">{{ unviewedNotifications.length }}</q-chip>
+          <q-chip floating color="red" v-if="unviewedNotifications.length > 0">{{ unviewedNotifications.length }}</q-chip>
 
           <q-popover>
             <q-list separator link>
@@ -147,7 +147,7 @@ export default {
 
     async notificationViewed (notification) {
       notification.viewed = true
-      console.log(`TODO: Update server and local state notificationId ${notification.id}`)
+      await this.$store.dispatch('notification/updateNotification', notification)
     }
   }
 }

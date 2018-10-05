@@ -6,6 +6,10 @@ import {
 } from 'src/graphql/queries'
 
 import {
+  updateNotificationMutation
+} from 'src/graphql/mutations'
+
+import {
   notificationSubscription
 } from 'src/graphql/subscriptions'
 
@@ -34,6 +38,16 @@ const mutations = extend({}, {
 })
 
 const actions = extend({}, {
+  async updateNotification ({commit}, notification) {
+    await this._vm.$apollo.mutate({
+      variables: {
+        where: { id: notification.id },
+        data: { viewed: notification.viewed }
+      },
+      mutation: updateNotificationMutation
+    })
+  },
+
   async getNotifications ({commit}, userId) {
     const response = await this._vm.$apollo.query({
       variables: { where: { createdBy: { id: userId } } },
@@ -56,15 +70,6 @@ const actions = extend({}, {
       }
     })
   }
-
-  /*
-  async unsubscribe ({ commit }) {
-    await this._vm.$apollo.mutate({
-      variables: form,
-      mutation: registerUserMutation
-    })
-  }
-  */
 })
 
 export default {
