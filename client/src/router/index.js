@@ -22,10 +22,6 @@ const globalAuthGuard = async function (to, from, next) {
       userIsAuthenticated = vuexStore.state.auth.user
     } catch (error) {
       vuexStore.commit('auth/setToken')
-      next({
-        name: 'login',
-        query: { redirect: to.fullPath }
-      })
     }
   }
 
