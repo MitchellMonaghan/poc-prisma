@@ -17,8 +17,16 @@ const globalAuthGuard = async function (to, from, next) {
   let userIsAuthenticated = vuexStore.state.auth.user
 
   if (!userIsAuthenticated) {
-    await vuexStore.dispatch('auth/getCurrentUser')
-    userIsAuthenticated = vuexStore.state.auth.user
+    try {
+      await vuexStore.dispatch('auth/getCurrentUser')
+      userIsAuthenticated = vuexStore.state.auth.user
+    } catch (error) {
+      vuexStore.commit('auth/setToken')
+      next({
+        name: 'login',
+        query: { redirect: to.fullPath }
+      })
+    }
   }
 
   if (to.matched.some(record => record.meta.anonymousOnly)) {

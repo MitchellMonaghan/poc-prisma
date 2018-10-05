@@ -21,7 +21,8 @@
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
 
-        <q-btn flat dense color="white" label="Notifications">
+        <q-btn flat dense aria-label="notifications">
+          <q-icon name="notifications" />
           <q-chip floating color="primary">{{ $store.state.notification.notifications.length }}</q-chip>
 
           <q-popover>
@@ -38,7 +39,7 @@
           dense
           round
         >
-          <q-icon name="settings" />
+          <q-icon name="expand_more" />
 
           <q-popover>
             <q-list separator link>
