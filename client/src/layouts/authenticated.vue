@@ -23,11 +23,16 @@
 
         <q-btn flat dense aria-label="notifications">
           <q-icon name="notifications" />
-          <q-chip floating color="red">{{ $store.state.notification.notifications.length }}</q-chip>
+          <q-chip floating color="red">{{ unviewedNotifications.length }}</q-chip>
 
           <q-popover>
             <q-list separator link>
-              <q-item v-close-overlay @click.native="notificationViewed" v-for="(notification, index) in $store.state.notification.notifications" :key="index">
+              <q-item
+                v-close-overlay
+                @click.native="notificationViewed(notification)"
+                v-for="(notification, index) in notifications" :key="index"
+                :class="notification.viewed ? '' : `bg-blue-3`"
+              >
                 {{ notification.message }}
               </q-item>
             </q-list>
@@ -100,6 +105,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { openURL } from 'quasar'
 
 export default {
@@ -111,8 +117,24 @@ export default {
   },
 
   async created () {
-    await this.$store.dispatch('notification/getNotifications', this.$store.state.auth.user.id)
-    await this.$store.dispatch('notification/subscribe', this.$store.state.auth.user.id)
+    await this.$store.dispatch('notification/getNotifications', this.user.id)
+    await this.$store.dispatch('notification/subscribe', this.user.id)
+  },
+
+  computed: {
+    ...mapState('auth', [
+      'user'
+    ]),
+
+    ...mapState('notification', [
+      'notifications'
+    ]),
+
+    unviewedNotifications () {
+      return this.notifications.filter((notification) => {
+        return !notification.viewed
+      })
+    }
   },
 
   methods: {
@@ -123,8 +145,9 @@ export default {
       this.$router.go({ name: 'login' })
     },
 
-    async notificationViewed () {
-      console.log('TODO: Update server and local state')
+    async notificationViewed (notification) {
+      notification.viewed = true
+      console.log(`TODO: Update server and local state notificationId ${notification.id}`)
     }
   }
 }

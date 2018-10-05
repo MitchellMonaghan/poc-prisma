@@ -37,6 +37,7 @@ const getUserQuery = gql`
 const getNotificationsQuery = gql`
   query($where: NotificationWhereInput!) {
     notifications(where: $where) {
+      id
       message
       viewed
     }

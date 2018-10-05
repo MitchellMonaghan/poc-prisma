@@ -1,4 +1,5 @@
 import { extend } from 'quasar'
+import { findIndex } from 'lodash'
 
 import {
   getNotificationsQuery
@@ -13,8 +14,22 @@ const state = extend({}, {
 })
 
 const mutations = extend({}, {
-  addNewNotifications (state, newNotifications) {
-    state.notifications = newNotifications.concat(state.notifications)
+  upsertNotifications (state, newNotifications) {
+    newNotifications = Array.isArray(newNotifications) ? newNotifications : [newNotifications]
+
+    const toBeAppendedToFront = []
+
+    newNotifications.forEach(notification => {
+      const notificationIndex = findIndex(state.notifications, { id: notification.id })
+
+      if (notificationIndex >= 0) {
+        state.notifications[notificationIndex] = notification
+      } else {
+        toBeAppendedToFront.push(notification)
+      }
+    })
+
+    state.notifications = toBeAppendedToFront.concat(state.notifications)
   }
 })
 
@@ -25,7 +40,7 @@ const actions = extend({}, {
       query: getNotificationsQuery
     })
 
-    commit('addNewNotifications', response.data.notifications)
+    commit('upsertNotifications', response.data.notifications)
   },
 
   async subscribe ({commit}, userId) {
@@ -34,8 +49,7 @@ const actions = extend({}, {
       query: notificationSubscription
     }).subscribe({
       next (response) {
-        console.log(response)
-        commit('addNewNotifications', [response.data.notification.node])
+        commit('upsertNotifications', [response.data.notification.node])
       },
       error (error) {
         console.log(error)
