@@ -23,7 +23,7 @@
 
         <q-btn flat dense aria-label="notifications">
           <q-icon name="notifications" />
-          <q-chip floating color="primary">{{ $store.state.notification.notifications.length }}</q-chip>
+          <q-chip floating color="red">{{ $store.state.notification.notifications.length }}</q-chip>
 
           <q-popover>
             <q-list separator link>
