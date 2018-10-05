@@ -7,6 +7,7 @@ import { hashPassword, generateJWT } from '@services/jwt'
 import { Joi, errorText } from '@services/joi'
 import mailer from '@services/mailer'
 
+import { createNotification } from '@modules/notification/manager'
 import { createUser, getUser } from '@modules/user/manager'
 
 // Private functions
@@ -106,6 +107,7 @@ const inviteUser = async (root, args, context, info) => {
   Joi.validate({ email }, validationSchema)
 
   const invitedUser = await createUser(root, { email, password: uuid() }, context, info)
+  invitedUser.invitee = user.id
 
   invitedUser.verifyEmailToken = await generateJWT(invitedUser)
   mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, invitee: user })
@@ -122,6 +124,18 @@ const verifyEmail = async (root, args, context, info) => {
       confirmed: true
     }
   })
+
+  if (context.decodedToken.user.invitee) {
+    createNotification(
+      root,
+      {
+        createdBy: { connect: { id: context.decodedToken.user.invitee } },
+        message: `${user.email} has accepted your invite to ${config.productName}!`
+      },
+      context,
+      info
+    )
+  }
 
   return 'Success'
 }

@@ -13,12 +13,10 @@ const hashPassword = async (password) => {
 
 const generateJWT = async (user) => {
   const props = Object.assign({}, {
-    user: pick(user, ['id', 'username', 'email', 'firstName', 'lastName', 'lastPasswordChange'])
+    user: pick(user, ['id', 'username', 'email', 'firstName', 'lastName', 'lastPasswordChange', 'invitee'])
   })
 
-  // Sign token with a combination of authSecret and user password
-  // This way both the server and the user has the ability to invalidate all tokens
-  return jwt.sign(props, `${config.authSecret}`, { expiresIn: config.tokenExipresIn })
+  return jwt.sign(props, config.authSecret, { expiresIn: config.tokenExipresIn })
 }
 
 const getUserFromToken = async (prisma, token) => {

@@ -4,9 +4,10 @@ import { pick } from 'lodash'
 import { checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 
 const createNotification = async (root, args, context, info) => {
-  // const { prisma } = context
-  // const notification = {}
-  // return notification
+  const { prisma } = context
+  await prisma.mutation.createNotification({
+    data: args
+  })
 }
 
 const getNotifications = async (root, args, context, info) => {

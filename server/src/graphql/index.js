@@ -4,6 +4,7 @@ import { importSchema } from 'graphql-import'
 import { ApolloServer, makeExecutableSchema } from 'apollo-server'
 import { Prisma, extractFragmentReplacements } from 'prisma-binding'
 import { get, merge } from 'lodash'
+import jwt from 'jsonwebtoken'
 
 import { getUserFromToken } from '@services/jwt'
 import { verifyEmail } from '@modules/auth/manager'
@@ -38,6 +39,7 @@ const graphqlServer = new ApolloServer({
     })
 
     if (context.authToken) {
+      context.decodedToken = jwt.decode(context.authToken)
       context.user = await getUserFromToken(context.prisma, context.authToken)
 
       // Only do this check if a real user token was provided
@@ -54,12 +56,11 @@ const graphqlServer = new ApolloServer({
   subscriptions: {
     onConnect: async (connectionParams, webSocket, context) => {
       context.authToken = connectionParams.authorization || connectionParams.Authorization
+      context.decodedToken = jwt.decode(context.authToken)
       return context
     },
 
     onDisconnect: async (webSocket, context) => {
-      console.log('disconnected')
-      // ...
     }
   },
   engine: {
