@@ -29,6 +29,11 @@ const init = (apollo, store) => {
     notification: gql`
     subscription($where: NotificationSubscriptionWhereInput!) {
       notification(where: $where) {
+        mutation
+        previousValues {
+          id
+          viewed
+        }
         node {
           id
           message
@@ -64,11 +69,17 @@ const init = (apollo, store) => {
     // Subscription
     subscribeToNotifications: async (userId) => {
       await apollo.subscribe({
-        variables: { where: { node: { createdBy: { id: userId } } } },
+        variables: { where: {
+          node: { createdBy: { id: userId } } }
+        },
         query: subscriptions.notification
       }).subscribe({
         next (response) {
-          store.dispatch('notification/upsertNotifications', [response.data.notification.node])
+          if (response.data.notification.mutation === 'DELETED') {
+            store.dispatch('notification/deleteNotification', response.data.notification.previousValues.id)
+          } else {
+            store.dispatch('notification/upsertNotifications', [response.data.notification.node])
+          }
         },
         error (error) {
           console.log(error)
