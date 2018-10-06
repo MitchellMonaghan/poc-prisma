@@ -107,10 +107,10 @@ const inviteUser = async (root, args, context, info) => {
   Joi.validate({ email }, validationSchema)
 
   const invitedUser = await createUser(root, { email, password: uuid() }, context, info)
-  invitedUser.invitee = user.id
+  invitedUser.inviter = user.id
 
   invitedUser.verifyEmailToken = await generateJWT(invitedUser)
-  mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, invitee: user })
+  mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, inviter: user })
 
   return `Success`
 }
@@ -125,11 +125,11 @@ const verifyEmail = async (root, args, context, info) => {
     }
   })
 
-  if (context.decodedToken.user.invitee) {
+  if (context.decodedToken.user.inviter && !user.confirmed) {
     createNotification(
       root,
       {
-        createdBy: { connect: { id: context.decodedToken.user.invitee } },
+        createdBy: { connect: { id: context.decodedToken.user.inviter } },
         message: `${user.email} has accepted your invite to ${config.productName}!`
       },
       context,

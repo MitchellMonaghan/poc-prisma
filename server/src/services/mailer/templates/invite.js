@@ -1,15 +1,15 @@
 import config from '@config'
 
-export default ({ invitedUser, invitee }) => {
+export default ({ invitee, inviter }) => {
   const html = String.raw
-  let displayName = invitedUser.username
-  let inviteeDisplayName = invitee.username
+  let displayName = invitee.username
+  let inviterDisplayName = inviter.username
 
-  if (invitee.firstName && invitee.lastName) {
-    inviteeDisplayName = `${invitee.firstName} ${invitee.lastName}`
+  if (inviter.firstName && inviter.lastName) {
+    inviterDisplayName = `${inviter.firstName} ${inviter.lastName}`
   }
 
-  const verifyEmailUrl = `${config.appUrl}/verifyEmail?token=${invitedUser.verifyEmailToken}`
+  const verifyEmailUrl = `${config.appUrl}/verifyEmail?token=${invitee.verifyEmailToken}`
 
   const subject = `Please confirm your email with ${config.productName}.`
   const inviteEmailTemplate = html`
@@ -428,7 +428,7 @@ export default ({ invitedUser, invitee }) => {
                       <tr>
                         <td class="content-cell">
                           <h1>Welcome, ${displayName}!</h1>
-                          <p>${inviteeDisplayName} has invited you to ${config.productName}. We’re thrilled to have you on board.</p>
+                          <p>${inviterDisplayName} has invited you to ${config.productName}. We’re thrilled to have you on board.</p>
                           <p>To get the most out of ${config.productName}, do this primary next step:</p>
 
                           <!-- Action -->
@@ -464,7 +464,7 @@ export default ({ invitedUser, invitee }) => {
                                     <td class="attributes_item"><strong>Login Page:</strong> ${config.appUrl}/login</td>
                                   </tr>
                                   <tr>
-                                    <td class="attributes_item"><strong>Username:</strong> ${invitedUser.username}</td>
+                                    <td class="attributes_item"><strong>Username:</strong> ${invitee.username}</td>
                                   </tr>
                                 </table>
                               </td>

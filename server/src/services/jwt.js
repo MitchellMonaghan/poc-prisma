@@ -13,7 +13,7 @@ const hashPassword = async (password) => {
 
 const generateJWT = async (user) => {
   const props = Object.assign({}, {
-    user: pick(user, ['id', 'username', 'email', 'firstName', 'lastName', 'lastPasswordChange', 'invitee'])
+    user: pick(user, ['id', 'username', 'email', 'firstName', 'lastName', 'lastPasswordChange', 'inviter'])
   })
 
   return jwt.sign(props, config.authSecret, { expiresIn: config.tokenExipresIn })
