@@ -33,7 +33,7 @@ export default {
 
   async created () {
     try {
-      await this.$store.dispatch('auth/verify', this.$route.query.token)
+      await this.$graphql.auth.verifyEmail(this.$route.query.token)
       this.pageState = this.pageStates.validToken
       this.$router.push({ name: 'authenticatedLandingPage' })
     } catch (error) {

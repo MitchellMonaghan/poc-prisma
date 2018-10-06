@@ -1,5 +1,29 @@
 <template>
   <div class="row justify-center">
+    <div class="q-headline col-11 q-mt-md">Change username</div>
+
+    <form class="col-11">
+      <!-- Username -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
+          :error="$v.changeUsernameForm.username.$error"
+          :error-label="usernameError"
+        >
+          <q-input
+            v-model.trim="changeUsernameForm.username"
+            :float-label="usernameLabel"
+            @blur="$v.changeUsernameForm.username.$touch()"
+            @keyup.enter="onSubmitChangeUsername"
+          />
+        </q-field>
+      <!-- End username -->
+
+      <div class="row q-pt-xl col-12 justify-end">
+        <q-btn  @click="onSubmitChangeUsername" label="save" />
+      </div>
+    </form>
+
     <div class="q-headline col-11 q-mt-md">Change password</div>
 
     <form class="col-11">
@@ -14,7 +38,7 @@
             type="password"
             v-model.trim="changePasswordForm.password"
             :float-label="passwordLabel"
-            @blur="onFieldBlur(passwordFieldKey, 'changePasswordForm')"
+            @blur="$v.changePasswordForm.password.$touch()"
             @keyup.enter="onSubmitChangePassword"
           />
         </q-field>
@@ -88,6 +112,29 @@ export default {
   },
 
   methods: {
+    async onSubmitChangeUsername () {
+      this.serverErrors = []
+      this.$v.changeUsernameForm.$touch()
+
+      if (this.$v.changeUsernameForm.$error) {
+        return
+      }
+
+      try {
+        // TODO: Figure out what we call update user?
+        // await this.$store.dispatch('auth/changePassword', { id: this.$store.state.auth.user.id, password: this.changeUsernameForm.password })
+        this.resetChangeUsernameForm()
+
+        Notify.create({
+          color: 'positive',
+          position: 'bottom-right',
+          message: 'Your username has been updated'
+        })
+      } catch (error) {
+        this.serverErrors = error.graphQLErrors
+      }
+    },
+
     async onSubmitChangePassword () {
       this.serverErrors = []
       this.$v.changePasswordForm.$touch()
@@ -97,7 +144,7 @@ export default {
       }
 
       try {
-        await this.$store.dispatch('auth/changePassword', { id: this.$store.state.auth.user.id, password: this.changePasswordForm.password })
+        await this.$graphql.auth.changePassword({ id: this.$store.state.auth.user.id, password: this.changePasswordForm.password })
         this.resetChangePasswordForm()
 
         Notify.create({

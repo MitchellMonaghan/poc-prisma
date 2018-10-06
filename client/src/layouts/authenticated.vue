@@ -117,8 +117,8 @@ export default {
   },
 
   async created () {
-    await this.$store.dispatch('notification/getNotifications', this.user.id)
-    await this.$store.dispatch('notification/subscribe', this.user.id)
+    await this.$graphql.notification.getNotifications(this.user.id)
+    await this.$graphql.notification.subscribeToNotifications(this.user.id)
   },
 
   computed: {
@@ -147,7 +147,7 @@ export default {
 
     async notificationViewed (notification) {
       notification.viewed = true
-      await this.$store.dispatch('notification/updateNotification', notification)
+      await this.$graphql.notification.updateNotification(notification)
     }
   }
 }

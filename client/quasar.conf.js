@@ -13,7 +13,7 @@ module.exports = function (ctx) {
     plugins: [
       'i18n',
       'axios',
-      'apollo',
+      'graphql',
       'vuelidate',
       'errorHandler'
     ],

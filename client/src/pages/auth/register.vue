@@ -133,7 +133,7 @@ export default {
       }
 
       try {
-        await this.$store.dispatch('auth/register', this.form)
+        await this.$graphql.auth.registerUser(this.form)
         this.$router.push({ name: 'login' })
       } catch (error) {
         this.serverErrors = error.graphQLErrors

@@ -65,10 +65,10 @@ export default {
   async created () {
     try {
       if (this.$route.query.token) {
-        this.$store.commit('auth/setToken', this.$route.query.token)
+        await this.$store.dispatch('auth/setToken', this.$route.query.token)
 
         // Call refresh token to know if their current token is valid or not
-        await this.$store.dispatch('auth/refreshToken')
+        await this.$graphql.auth.refreshToken(this)
 
         this.$router.push({ name: 'changePassword' })
       } else {
@@ -95,8 +95,7 @@ export default {
       }
 
       try {
-        await this.$store.dispatch('auth/forgotPassword', this.form)
-
+        await this.$graphql.auth.forgotPassword(this.form)
         this.pageState = this.pageStates.emailSent
       } catch (error) {
         this.serverErrors = error.graphQLErrors

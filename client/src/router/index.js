@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-// import globalAuthGuard from 'src/.core.vue/router'
 import routes from './routes'
-import store from 'src/store'
+import graphql from 'src/graphql'
 
 Vue.use(VueRouter)
 
@@ -13,15 +12,14 @@ Vue.use(VueRouter)
  */
 
 const globalAuthGuard = async function (to, from, next) {
-  const vuexStore = store()
-  let userIsAuthenticated = vuexStore.state.auth.user
+  let userIsAuthenticated = graphql.store.state.auth.user
 
   if (!userIsAuthenticated) {
     try {
-      await vuexStore.dispatch('auth/getCurrentUser')
-      userIsAuthenticated = vuexStore.state.auth.user
+      await graphql.auth.getCurrentUser()
+      userIsAuthenticated = graphql.store.state.auth.user
     } catch (error) {
-      vuexStore.commit('auth/setToken')
+      await graphql.store.dispatch('auth/setToken')
     }
   }
 

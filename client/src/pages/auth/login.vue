@@ -92,7 +92,7 @@ export default {
       }
 
       try {
-        await this.$store.dispatch('auth/login', this.form)
+        await this.$graphql.auth.login(this.form)
 
         if (this.$route.query.redirect) {
           this.$router.push(this.$route.query.redirect)
