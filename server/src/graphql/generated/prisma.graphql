@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Tue Oct 02 2018 14:56:18 GMT-0500 (Central Daylight Time)
+# timestamp: Sun Oct 07 2018 00:04:32 GMT-0500 (Central Daylight Time)
 
 type AggregateNotification {
   count: Int!
@@ -64,6 +64,7 @@ type Notification implements Node {
   createdBy: User!
   message: String!
   viewed: Boolean!
+  createdAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -108,16 +109,17 @@ enum NotificationOrderByInput {
   message_DESC
   viewed_ASC
   viewed_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type NotificationPreviousValues {
   id: ID!
   message: String!
   viewed: Boolean!
+  createdAt: DateTime!
 }
 
 type NotificationSubscriptionPayload {
@@ -283,6 +285,28 @@ input NotificationWhereInput {
 
   """All values that are not equal to given value."""
   viewed_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
   createdBy: UserWhereInput
 }
 

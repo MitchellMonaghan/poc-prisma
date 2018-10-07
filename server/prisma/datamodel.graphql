@@ -40,4 +40,5 @@ type Notification {
   createdBy: User! @relation(name: "UserNotifications")
   message: String!
   viewed: Boolean! @default(value: "false")
+  createdAt: DateTime!
 }
