@@ -29,8 +29,10 @@ const schema = makeExecutableSchema({
 
 const graphqlServer = new ApolloServer({
   schema,
-  context: async ({ req, connection }) => {
+  context: async ({ req, connection, payload }) => {
     let context = get(connection, 'context') || { authToken: get(req, 'headers.authorization') }
+    context.authToken = context.authToken || get(payload, 'authToken')
+
     context.prisma = new Prisma({
       fragmentReplacements,
       typeDefs: 'src/graphql/generated/prisma.graphql',

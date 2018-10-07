@@ -169,6 +169,7 @@ export default {
       }
 
       try {
+        document.activeElement.blur()
         await this.$graphql.user.updateUser(this.$store.state.auth.user.id, {
           username: this.updateUserForm.username,
           firstName: this.updateUserForm.firstName,
@@ -180,7 +181,7 @@ export default {
         Notify.create({
           color: 'positive',
           position: 'bottom-right',
-          message: 'Your user has been updated'
+          message: 'Your user settings have been updated'
         })
       } catch (error) {
         this.serverErrors = error.graphQLErrors
@@ -196,6 +197,7 @@ export default {
       }
 
       try {
+        document.activeElement.blur()
         await this.$graphql.auth.changePassword({ id: this.$store.state.auth.user.id, password: this.changePasswordForm.password })
         this.resetChangePasswordForm()
 

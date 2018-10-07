@@ -45,6 +45,15 @@ const wsLink = new WebSocketLink({
   }
 })
 
+const subscriptionMiddleware = {
+  applyMiddleware: async (options, next) => {
+    options.authToken = graphql.store.state.auth.token
+    next()
+  }
+}
+
+wsLink.subscriptionClient.use([subscriptionMiddleware])
+
 const link = split(
   ({ query }) => {
     const { kind, operation } = getMainDefinition(query)

@@ -3,6 +3,7 @@ import { hashPassword } from '@services/jwt'
 import { Joi, errorText } from '@services/joi'
 import { find, pick, first } from 'lodash'
 
+import { notificationText, createNotification } from '@modules/notification/manager'
 import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 
 const createUser = async (root, args, context, info) => {
@@ -167,6 +168,16 @@ const updateUser = async (root, args, context, info) => {
     where,
     data
   }, info)
+
+  createNotification(
+    root,
+    {
+      createdBy: { connect: { id: user.id } },
+      message: notificationText.userSettingsUpdated()
+    },
+    context,
+    info
+  )
 
   return updatedUser
 }

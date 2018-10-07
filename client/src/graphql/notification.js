@@ -3,11 +3,12 @@ import gql from 'graphql-tag'
 const init = (apollo, store) => {
   const queries = {
     getNotifications: gql`
-      query($where: NotificationWhereInput!) {
-        notifications(where: $where) {
+      query($where: NotificationWhereInput!, $orderBy: NotificationOrderByInput) {
+        notifications(where: $where, orderBy: $orderBy) {
           id
           message
           viewed
+          createdAt
         }
       }
     `
@@ -20,6 +21,7 @@ const init = (apollo, store) => {
           id
           message
           viewed
+          createdAt
         }
       }
     `
@@ -32,12 +34,12 @@ const init = (apollo, store) => {
           mutation
           previousValues {
             id
-            viewed
           }
           node {
             id
             message
             viewed
+            createdAt
           }
         }
       }
@@ -48,7 +50,7 @@ const init = (apollo, store) => {
     // Queries
     getNotifications: async (userId) => {
       const response = await apollo.query({
-        variables: { where: { createdBy: { id: userId } } },
+        variables: { where: { createdBy: { id: userId } }, orderBy: 'createdAt_DESC' },
         query: queries.getNotifications
       })
 

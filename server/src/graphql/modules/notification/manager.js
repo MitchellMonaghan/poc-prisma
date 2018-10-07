@@ -1,7 +1,15 @@
+import config from '@config'
 import { Joi } from '@services/joi'
 import { pick } from 'lodash'
 
 import { checkPermissionsAndProtectedFields } from '@modules/permission/manager'
+
+const notificationText = {
+  welcome: () => `Welcome to ${config.productName}!`,
+  inviteAccepted: (invitee) => `${invitee} has accepted your invite to ${config.productName}!`,
+  passwordChanged: () => `Your password has been updated.`,
+  userSettingsUpdated: () => `Your settings have been updated.`
+}
 
 const createNotification = async (root, args, context, info) => {
   const { prisma } = context
@@ -46,6 +54,8 @@ const updateNotification = async (root, args, context, info) => {
 }
 
 const publicProps = {
+  notificationText,
+
   createNotification,
   getNotifications,
   updateNotification

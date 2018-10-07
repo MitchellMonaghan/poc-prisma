@@ -7,7 +7,7 @@ import { hashPassword, generateJWT } from '@services/jwt'
 import { Joi, errorText } from '@services/joi'
 import mailer from '@services/mailer'
 
-import { createNotification } from '@modules/notification/manager'
+import { notificationText, createNotification } from '@modules/notification/manager'
 import { createUser, getUser } from '@modules/user/manager'
 
 // Private functions
@@ -130,12 +130,22 @@ const verifyEmail = async (root, args, context, info) => {
       root,
       {
         createdBy: { connect: { id: context.decodedToken.user.inviter } },
-        message: `${user.email} has accepted your invite to ${config.productName}!`
+        message: notificationText.inviteAccepted(user.email)
       },
       context,
       info
     )
   }
+
+  createNotification(
+    root,
+    {
+      createdBy: { connect: { id: user.id } },
+      message: notificationText.welcome()
+    },
+    context,
+    info
+  )
 
   return 'Success'
 }
@@ -159,6 +169,16 @@ const changePassword = async (root, args, context, info) => {
       lastPasswordChange: new Date()
     }
   })
+
+  createNotification(
+    root,
+    {
+      createdBy: { connect: { id } },
+      message: notificationText.passwordChanged()
+    },
+    context,
+    info
+  )
 
   return generateJWT(updatedUser)
 }
