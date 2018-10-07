@@ -1,7 +1,7 @@
 import { UserInputError } from 'apollo-server'
 import { hashPassword } from '@services/jwt'
 import { Joi, errorText } from '@services/joi'
-import { pick, first } from 'lodash'
+import { find, pick, first } from 'lodash'
 
 import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 
@@ -116,7 +116,15 @@ const updateUser = async (root, args, context, info) => {
 
   Joi.validate(where, whereSchemaValidation)
 
-  const userToBeUpdated = await prisma.query.user({ where })
+  const userToBeUpdated = await prisma.query.user({
+    where
+  }, `{
+    id
+    permissions {
+      accessType
+      accessLevel
+    }
+  }`)
 
   if (data.username) {
     // if updating username check to ensure it doesnt already exist
@@ -140,7 +148,10 @@ const updateUser = async (root, args, context, info) => {
     data.username = userToBeUpdated.username
   }
 
-  if (userToBeUpdated.permissions[permissionAccessTypeEnum.UPDATE_USER] > user.permissions[permissionAccessTypeEnum.UPDATE_USER]) {
+  const userToBeUpdatedUpdatePermission = find(userToBeUpdated.permissions, { accessType: permissionAccessTypeEnum.UPDATE_USER })
+  const userUpdatePermission = find(user.permissions, { accessType: permissionAccessTypeEnum.UPDATE_USER })
+
+  if (permissionAccessLevelEnum[userToBeUpdatedUpdatePermission.accessLevel].value > permissionAccessLevelEnum[userUpdatePermission.accessLevel].value) {
     throw new UserInputError(errorText.cannotUpdateUserWithHigherPermission(), {
       invalidArgs: [
         'id'

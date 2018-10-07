@@ -117,6 +117,14 @@ export default {
   },
 
   async created () {
+    // I don't think user subscription is needed only the current
+    // user is only to be making changes to these types of props
+    // await this.$graphql.user.subscribeToUsers(this.user.id)
+
+    // Permissions
+    await this.$graphql.permission.subscribeToPermissions(this.user.id)
+
+    // Notifications
     await this.$graphql.notification.getNotifications(this.user.id)
     await this.$graphql.notification.subscribeToNotifications(this.user.id)
   },

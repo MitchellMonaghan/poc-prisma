@@ -1,5 +1,6 @@
 import auth from './auth'
 import notification from './notification'
+import permission from './permission'
 import user from './user'
 
 import apollo from './apollo'
@@ -11,5 +12,6 @@ export default {
   store: vuexStore,
   auth: auth(apollo, vuexStore),
   notification: notification(apollo, vuexStore),
+  permission: permission(apollo, vuexStore),
   user: user(apollo, vuexStore)
 }

@@ -7,20 +7,52 @@
         <q-field
           class="row col-12 q-mt-md"
           :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
-          :error="$v.changeUsernameForm.username.$error"
+          :error="$v.updateUserForm.username.$error"
           :error-label="usernameError"
         >
           <q-input
-            v-model.trim="changeUsernameForm.username"
+            v-model.trim="updateUserForm.username"
             :float-label="usernameLabel"
-            @blur="$v.changeUsernameForm.username.$touch()"
-            @keyup.enter="onSubmitChangeUsername"
+            @blur="$v.updateUserForm.username.$touch()"
+            @keyup.enter="onSubmitUpdateUser"
           />
         </q-field>
       <!-- End username -->
 
+      <!-- First name -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${firstNameLabel}:`"
+          :error="$v.updateUserForm.firstName.$error"
+          :error-label="firstNameError"
+        >
+          <q-input
+            v-model.trim="updateUserForm.firstName"
+            :float-label="firstNameLabel"
+            @blur="$v.updateUserForm.firstName.$touch()"
+            @keyup.enter="onSubmitUpdateUser"
+          />
+        </q-field>
+      <!-- End first name -->
+
+      <!-- Last name -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${lastNameLabel}:`"
+          :error="$v.updateUserForm.lastName.$error"
+          :error-label="lastNameError"
+        >
+          <q-input
+            v-model.trim="updateUserForm.lastName"
+            :float-label="lastNameLabel"
+            @blur="$v.updateUserForm.lastName.$touch()"
+            @keyup.enter="onSubmitUpdateUser"
+          />
+        </q-field>
+      <!-- End last name -->
+
       <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="onSubmitChangeUsername" label="save" />
+        <q-btn  @click="onSubmitUpdateUser" label="save" />
       </div>
     </form>
 
@@ -78,14 +110,22 @@ export default {
       usernameLabel: 'Username',
       usernameFieldKey: 'username',
 
+      firstNameLabel: 'First Name',
+      firstNameFieldKey: 'firstName',
+
+      lastNameLabel: 'Last Name',
+      lastNameFieldKey: 'lastName',
+
       passwordLabel: 'Password',
       passwordFieldKey: 'password',
 
       confirmPasswordLabel: 'Confirm password',
       confirmPasswordFieldKey: 'confirmPassword',
 
-      changeUsernameForm: {
-        username: ''
+      updateUserForm: {
+        username: this.$store.state.auth.user.username,
+        firstName: this.$store.state.auth.user.firstName,
+        lastName: this.$store.state.auth.user.lastName
       },
 
       changePasswordForm: {
@@ -99,7 +139,15 @@ export default {
 
   computed: {
     usernameError () {
-      return this.$displayError(this.$v.changeUsernameForm.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
+      return this.$displayError(this.$v.updateUserForm.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
+    },
+
+    firstNameError () {
+      return this.$displayError(this.$v.updateUserForm.firstName, this.firstNameLabel, this.firstNameFieldKey, this.serverErrors)
+    },
+
+    lastNameError () {
+      return this.$displayError(this.$v.updateUserForm.lastName, this.lastNameLabel, this.lastNameFieldKey, this.serverErrors)
     },
 
     passwordError () {
@@ -112,23 +160,27 @@ export default {
   },
 
   methods: {
-    async onSubmitChangeUsername () {
+    async onSubmitUpdateUser () {
       this.serverErrors = []
-      this.$v.changeUsernameForm.$touch()
+      this.$v.updateUserForm.$touch()
 
-      if (this.$v.changeUsernameForm.$error) {
+      if (this.$v.updateUserForm.$error) {
         return
       }
 
       try {
-        // TODO: Figure out what we call update user?
-        // await this.$store.dispatch('auth/changePassword', { id: this.$store.state.auth.user.id, password: this.changeUsernameForm.password })
-        this.resetChangeUsernameForm()
+        await this.$graphql.user.updateUser(this.$store.state.auth.user.id, {
+          username: this.updateUserForm.username,
+          firstName: this.updateUserForm.firstName,
+          lastName: this.updateUserForm.lastName
+        })
+
+        this.resetUpdateUserForm()
 
         Notify.create({
           color: 'positive',
           position: 'bottom-right',
-          message: 'Your username has been updated'
+          message: 'Your user has been updated'
         })
       } catch (error) {
         this.serverErrors = error.graphQLErrors
@@ -157,9 +209,11 @@ export default {
       }
     },
 
-    async resetChangeUsernameForm () {
-      this.changeUsernameForm.username = ''
-      this.$v.changeUsernameForm.$reset()
+    async resetUpdateUserForm () {
+      this.updateUserForm.username = this.$store.state.auth.user.username
+      this.updateUserForm.firstName = this.$store.state.auth.user.firstName
+      this.updateUserForm.lastName = this.$store.state.auth.user.lastName
+      this.$v.updateUserForm.$reset()
     },
 
     async resetChangePasswordForm () {
@@ -176,8 +230,10 @@ export default {
 
   validations () {
     return {
-      changeUsernameForm: {
-        username: { required, alphaNum, hasServerError: hasServerError(this.serverErrors, this.usernameFieldKey) }
+      updateUserForm: {
+        username: { required, alphaNum, hasServerError: hasServerError(this.serverErrors, this.usernameFieldKey) },
+        firstName: { required, hasServerError: hasServerError(this.serverErrors, this.firstName) },
+        lastName: { required, hasServerError: hasServerError(this.serverErrors, this.lastName) }
       },
 
       changePasswordForm: {

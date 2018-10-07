@@ -27,21 +27,21 @@ const init = (apollo, store) => {
 
   const subscriptions = {
     notification: gql`
-    subscription($where: NotificationSubscriptionWhereInput!) {
-      notification(where: $where) {
-        mutation
-        previousValues {
-          id
-          viewed
-        }
-        node {
-          id
-          message
-          viewed
+      subscription($where: NotificationSubscriptionWhereInput!) {
+        notification(where: $where) {
+          mutation
+          previousValues {
+            id
+            viewed
+          }
+          node {
+            id
+            message
+            viewed
+          }
         }
       }
-    }
-  `
+    `
   }
 
   return {
@@ -69,8 +69,10 @@ const init = (apollo, store) => {
     // Subscription
     subscribeToNotifications: async (userId) => {
       await apollo.subscribe({
-        variables: { where: {
-          node: { createdBy: { id: userId } } }
+        variables: {
+          where: {
+            node: { createdBy: { id: userId } }
+          }
         },
         query: subscriptions.notification
       }).subscribe({

@@ -1,5 +1,6 @@
 import { Cookies, extend } from 'quasar'
 import jwt from 'jsonwebtoken'
+import { find } from 'lodash'
 
 const state = extend({}, {
   user: null,
@@ -14,6 +15,11 @@ const actions = extend({}, {
     } else {
       state.user = null
     }
+  },
+
+  async updatePermission ({state}, updatedPermission) {
+    const permission = find(state.user.permissions, { accessType: updatedPermission.accessType })
+    permission.accessLevel = updatedPermission.accessLevel
   },
 
   async setToken ({state}, token) {
