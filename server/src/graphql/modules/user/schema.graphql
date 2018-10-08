@@ -5,6 +5,10 @@ type User @usePermissions {
   lastName: String @protected
   email: String @protected
   permissions: [Permission!]! @protected
+
+  receiveEmailNotifications: Boolean! @protected
+
+  updatedAt: DateTime! @protected
 }
 
 type Query {

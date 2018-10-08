@@ -14,6 +14,7 @@ const init = (apollo, store) => {
             accessType
             accessLevel
           }
+          receiveEmailNotifications
         }
       }
     `,
@@ -30,6 +31,7 @@ const init = (apollo, store) => {
             accessType
             accessLevel
           }
+          receiveEmailNotifications
         }
       }
     `
@@ -48,6 +50,7 @@ const init = (apollo, store) => {
             accessType
             accessLevel
           }
+          receiveEmailNotifications
         }
       }
     `
@@ -67,6 +70,7 @@ const init = (apollo, store) => {
               accessType
               accessLevel
             }
+            receiveEmailNotifications
           }
         }
       }

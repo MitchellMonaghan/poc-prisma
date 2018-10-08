@@ -6,9 +6,13 @@ type User {
   email: String! @unique
   password: String!
   lastPasswordChange: DateTime!
-  confirmed: Boolean!
+  confirmed: Boolean! @default(value: "false")
   permissions: [Permission!]! @relation(name: "UserPermissions" onDelete: CASCADE)
   notifications: [Notification!]! @relation(name: "UserNotifications" onDelete: CASCADE)
+
+  receiveEmailNotifications: Boolean! @default(value: "true")
+
+  updatedAt: DateTime!
 }
 
 type Permission {

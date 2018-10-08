@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Sun Oct 07 2018 00:04:32 GMT-0500 (Central Daylight Time)
+# timestamp: Mon Oct 08 2018 11:49:09 GMT-0500 (Central Daylight Time)
 
 type AggregateNotification {
   count: Int!
@@ -587,6 +587,8 @@ type User implements Node {
   confirmed: Boolean!
   permissions(where: PermissionWhereInput, orderBy: PermissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Permission!]
   notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
+  receiveEmailNotifications: Boolean!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -606,7 +608,8 @@ input UserCreateInput {
   email: String!
   password: String!
   lastPasswordChange: DateTime!
-  confirmed: Boolean!
+  confirmed: Boolean
+  receiveEmailNotifications: Boolean
   permissions: PermissionCreateManyWithoutUserInput
   notifications: NotificationCreateManyWithoutCreatedByInput
 }
@@ -628,7 +631,8 @@ input UserCreateWithoutNotificationsInput {
   email: String!
   password: String!
   lastPasswordChange: DateTime!
-  confirmed: Boolean!
+  confirmed: Boolean
+  receiveEmailNotifications: Boolean
   permissions: PermissionCreateManyWithoutUserInput
 }
 
@@ -639,7 +643,8 @@ input UserCreateWithoutPermissionsInput {
   email: String!
   password: String!
   lastPasswordChange: DateTime!
-  confirmed: Boolean!
+  confirmed: Boolean
+  receiveEmailNotifications: Boolean
   notifications: NotificationCreateManyWithoutCreatedByInput
 }
 
@@ -669,6 +674,8 @@ enum UserOrderByInput {
   lastPasswordChange_DESC
   confirmed_ASC
   confirmed_DESC
+  receiveEmailNotifications_ASC
+  receiveEmailNotifications_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -684,6 +691,8 @@ type UserPreviousValues {
   password: String!
   lastPasswordChange: DateTime!
   confirmed: Boolean!
+  receiveEmailNotifications: Boolean!
+  updatedAt: DateTime!
 }
 
 type UserSubscriptionPayload {
@@ -733,6 +742,7 @@ input UserUpdateInput {
   password: String
   lastPasswordChange: DateTime
   confirmed: Boolean
+  receiveEmailNotifications: Boolean
   permissions: PermissionUpdateManyWithoutUserInput
   notifications: NotificationUpdateManyWithoutCreatedByInput
 }
@@ -759,6 +769,7 @@ input UserUpdateWithoutNotificationsDataInput {
   password: String
   lastPasswordChange: DateTime
   confirmed: Boolean
+  receiveEmailNotifications: Boolean
   permissions: PermissionUpdateManyWithoutUserInput
 }
 
@@ -770,6 +781,7 @@ input UserUpdateWithoutPermissionsDataInput {
   password: String
   lastPasswordChange: DateTime
   confirmed: Boolean
+  receiveEmailNotifications: Boolean
   notifications: NotificationUpdateManyWithoutCreatedByInput
 }
 
@@ -1058,6 +1070,32 @@ input UserWhereInput {
 
   """All values that are not equal to given value."""
   confirmed_not: Boolean
+  receiveEmailNotifications: Boolean
+
+  """All values that are not equal to given value."""
+  receiveEmailNotifications_not: Boolean
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
   permissions_every: PermissionWhereInput
   permissions_some: PermissionWhereInput
   permissions_none: PermissionWhereInput

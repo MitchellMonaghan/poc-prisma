@@ -103,7 +103,7 @@ const getUser = async (root, args, context, info) => {
 const updateUser = async (root, args, context, info) => {
   const { prisma, user } = context
   const { where } = args
-  const data = pick(args.data, 'username', 'firstName', 'lastName')
+  const data = pick(args.data, 'username', 'firstName', 'lastName', 'receiveEmailNotifications')
 
   const whereSchemaValidation = {
     id: Joi.string().required()
@@ -112,7 +112,8 @@ const updateUser = async (root, args, context, info) => {
   const dataSchemaValidation = {
     username: Joi.string().alphanum().required(),
     firstName: Joi.string(),
-    lastName: Joi.string()
+    lastName: Joi.string(),
+    receiveEmailNotifications: Joi.boolean()
   }
 
   Joi.validate(where, whereSchemaValidation)

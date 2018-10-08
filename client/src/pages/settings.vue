@@ -4,12 +4,12 @@
 
     <q-field
       class="row col-11 q-mt-md"
-      :label="$q.platform.is.mobile ? null : `${receiveNotificationEmailsLabel}:`"
+      :label="$q.platform.is.mobile ? null : `${receiveEmailNotificationsLabel}:`"
     >
       <q-toggle
-        v-model="updateUserForm.receiveNotificationEmails"
+        v-model="updateUserForm.receiveEmailNotifications"
         :left-label="true"
-        :label="$q.platform.is.mobile? receiveNotificationEmailsLabel: null"
+        :label="$q.platform.is.mobile? receiveEmailNotificationsLabel: null"
         class="col justify-between"
         style="display: flex"
       />
@@ -120,7 +120,7 @@ import { required, alphaNum, not, sameAs, hasServerError } from 'src/validators'
 export default {
   data () {
     return {
-      receiveNotificationEmailsLabel: 'Receive Email Notifications',
+      receiveEmailNotificationsLabel: 'Receive Email Notifications',
 
       usernameLabel: 'Username',
       usernameFieldKey: 'username',
@@ -138,7 +138,7 @@ export default {
       confirmPasswordFieldKey: 'confirmPassword',
 
       updateUserForm: {
-        receiveNotificationEmails: true,
+        receiveEmailNotifications: this.$store.state.auth.user.receiveEmailNotifications,
 
         username: this.$store.state.auth.user.username,
         firstName: this.$store.state.auth.user.firstName,
@@ -187,11 +187,7 @@ export default {
 
       try {
         document.activeElement.blur()
-        await this.$graphql.user.updateUser(this.$store.state.auth.user.id, {
-          username: this.updateUserForm.username,
-          firstName: this.updateUserForm.firstName,
-          lastName: this.updateUserForm.lastName
-        })
+        await this.$graphql.user.updateUser(this.$store.state.auth.user.id, this.updateUserForm)
 
         this.resetUpdateUserForm()
 
