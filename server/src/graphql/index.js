@@ -73,7 +73,7 @@ const graphqlServer = new ApolloServer({
 // Cron jobs
 // depending on how this is deployed this might not be needed and should be
 // executed by something like https://elements.heroku.com/addons/scheduler
-const cleanUpNotificationsJob = new CronJob('0 0 0 * * *', async () => {
+const cleanUpNotificationsJob = new CronJob('0 */5 * * * *', async () => {
   const prisma = new Prisma({
     typeDefs: 'src/graphql/generated/prisma.graphql',
     endpoint: config.prismaUrl,
