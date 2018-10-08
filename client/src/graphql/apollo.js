@@ -1,4 +1,3 @@
-import { Cookies } from 'quasar'
 import { ApolloClient } from 'apollo-client'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
@@ -38,10 +37,7 @@ const httpLink = new HttpLink({
 const wsLink = new WebSocketLink({
   uri: process.env.WEB_SOCKET_URL,
   options: {
-    reconnect: true,
-    connectionParams: {
-      authorization: Cookies.get('token')
-    }
+    reconnect: true
   }
 })
 

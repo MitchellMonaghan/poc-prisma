@@ -55,16 +55,6 @@ const graphqlServer = new ApolloServer({
 
     return context
   },
-  subscriptions: {
-    onConnect: async (connectionParams, webSocket, context) => {
-      context.authToken = connectionParams.authorization || connectionParams.Authorization
-      context.decodedToken = jwt.decode(context.authToken)
-      return context
-    },
-
-    onDisconnect: async (webSocket, context) => {
-    }
-  },
   engine: {
     apiKey: config.apolloEngineAPIKey
   }
