@@ -96,7 +96,11 @@ const checkPermissions = async (entityBeingUpdated, args, context, info) => {
 
 const checkProtectedFields = async (entityBeingUpdated, args, context, info) => {
   const { user } = context
-  const { data } = args
+  let { data } = args
+
+  if (!data) {
+    data = info.returnType._fields
+  }
 
   Object.keys(data).forEach((field) => {
     const entityType = info.returnType.name

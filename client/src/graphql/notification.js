@@ -24,6 +24,15 @@ const init = (apollo, store) => {
           createdAt
         }
       }
+    `,
+
+    deleteNotification: gql`
+      mutation deleteNotification($where: NotificationWhereUniqueInput!) {
+        deleteNotification(where: $where) {
+          id
+          viewed
+        }
+      }
     `
   }
 
@@ -65,6 +74,15 @@ const init = (apollo, store) => {
           data: { viewed: notification.viewed }
         },
         mutation: mutations.updateNotification
+      })
+    },
+
+    deleteNotification: async (notification) => {
+      await apollo.mutate({
+        variables: {
+          where: { id: notification.id }
+        },
+        mutation: mutations.deleteNotification
       })
     },
 

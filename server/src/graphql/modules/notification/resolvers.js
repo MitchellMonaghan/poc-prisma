@@ -6,7 +6,8 @@ export default {
   },
 
   Mutation: {
-    updateNotification: async (root, args, context, info) => manager.updateNotification(root, args, context, info)
+    updateNotification: async (root, args, context, info) => manager.updateNotification(root, args, context, info),
+    deleteNotification: async (root, args, context, info) => manager.deleteNotification(root, args, context, info)
   },
 
   Subscription: {

@@ -27,13 +27,31 @@
 
           <q-popover>
             <q-list separator link>
+              <q-list-header inset>Notifications</q-list-header>
+
               <q-item
                 v-close-overlay
                 @click.native="notificationViewed(notification)"
                 v-for="(notification, index) in notifications" :key="index"
                 :class="notification.viewed ? '' : `bg-blue-3`"
               >
-                {{ notification.message }}
+                <q-item-side icon="settings" inverted color="primary" />
+                <q-item-main>
+                  <q-item-tile label>{{notification.message}}</q-item-tile>
+                  <q-item-tile sublabel>{{date.formatDate(notification.createdAt, dateFormat)}}</q-item-tile>
+                </q-item-main>
+                <q-item-side>
+                  <q-btn
+                    flat
+                    dense
+                    round
+                    @click.stop="deleteNotification(notification)"
+                    aria-label="Delete"
+                    color="red"
+                  >
+                    <q-icon name="close" />
+                  </q-btn>
+                </q-item-side>
               </q-item>
             </q-list>
           </q-popover>
@@ -89,12 +107,15 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 import { mapState } from 'vuex'
 
 export default {
   name: 'MyLayout',
   data () {
     return {
+      date,
+      dateFormat: 'h:mm A MMM D, YYYY',
       leftDrawerOpen: this.$q.platform.is.desktop
     }
   },
@@ -137,6 +158,12 @@ export default {
     async notificationViewed (notification) {
       notification.viewed = true
       await this.$graphql.notification.updateNotification(notification)
+      document.activeElement.blur()
+    },
+
+    async deleteNotification (notification) {
+      await this.$graphql.notification.deleteNotification(notification)
+      document.activeElement.blur()
     }
   }
 }

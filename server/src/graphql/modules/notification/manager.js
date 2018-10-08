@@ -53,12 +53,36 @@ const updateNotification = async (root, args, context, info) => {
   return updatedNotification
 }
 
+const deleteNotification = async (root, args, context, info) => {
+  const { prisma } = context
+  const { where } = args
+
+  const whereSchemaValidation = {
+    id: Joi.string().required()
+  }
+
+  Joi.validate(where, whereSchemaValidation)
+
+  const notificationToBeDeleted = await prisma.query.notification({
+    where
+  }, info)
+
+  await checkPermissionsAndProtectedFields(notificationToBeDeleted, args, context, info)
+
+  await prisma.mutation.deleteNotification({
+    where
+  }, '{ id }')
+
+  return notificationToBeDeleted
+}
+
 const publicProps = {
   notificationText,
 
   createNotification,
   getNotifications,
-  updateNotification
+  updateNotification,
+  deleteNotification
 }
 
 module.exports = publicProps
