@@ -80,6 +80,7 @@ module.exports = function (ctx) {
         'QInput',
         'QField',
         'QChip',
+        'QToggle',
 
         'QPopover',
         'QSpinner'

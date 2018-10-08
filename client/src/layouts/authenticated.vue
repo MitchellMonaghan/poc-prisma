@@ -82,7 +82,7 @@
       </q-list>
     </q-layout-drawer>
 
-    <q-page-container>
+    <q-page-container class="q-mb-lg">
       <router-view />
     </q-page-container>
   </q-layout>

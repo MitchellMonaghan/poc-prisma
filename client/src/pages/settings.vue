@@ -2,6 +2,19 @@
   <div class="row justify-center">
     <div class="q-headline col-11 q-mt-md">Profile Settings</div>
 
+    <q-field
+      class="row col-11 q-mt-md"
+      :label="$q.platform.is.mobile ? null : `${receiveNotificationEmailsLabel}:`"
+    >
+      <q-toggle
+        v-model="updateUserForm.receiveNotificationEmails"
+        :left-label="true"
+        :label="$q.platform.is.mobile? receiveNotificationEmailsLabel: null"
+        class="col justify-between"
+        style="display: flex"
+      />
+    </q-field>
+
     <form class="col-11">
       <!-- Username -->
         <q-field
@@ -107,6 +120,8 @@ import { required, alphaNum, not, sameAs, hasServerError } from 'src/validators'
 export default {
   data () {
     return {
+      receiveNotificationEmailsLabel: 'Receive Email Notifications',
+
       usernameLabel: 'Username',
       usernameFieldKey: 'username',
 
@@ -123,6 +138,8 @@ export default {
       confirmPasswordFieldKey: 'confirmPassword',
 
       updateUserForm: {
+        receiveNotificationEmails: true,
+
         username: this.$store.state.auth.user.username,
         firstName: this.$store.state.auth.user.firstName,
         lastName: this.$store.state.auth.user.lastName
