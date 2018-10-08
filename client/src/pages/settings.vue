@@ -1,6 +1,6 @@
 <template>
   <div class="row justify-center">
-    <div class="q-headline col-11 q-mt-md">Change username</div>
+    <div class="q-headline col-11 q-mt-md">Profile Settings</div>
 
     <form class="col-11">
       <!-- Username -->
