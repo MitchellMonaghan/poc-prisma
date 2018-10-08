@@ -8,13 +8,5 @@ export default {
 
   Mutation: {
     updateUser: async (root, args, context, info) => manager.updateUser(root, args, context, info)
-  },
-
-  Subscription: {
-    user: {
-      subscribe: async (parent, args, context, info) => {
-        return context.prisma.subscription.user(args, info)
-      }
-    }
   }
 }

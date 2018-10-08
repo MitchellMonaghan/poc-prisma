@@ -1,6 +1,6 @@
 # import * from "../directives/schema.graphql"
 
-# import Subscription.notification, Permission, PermissionAccessType, PermissionAccessLevel, Subscription.permission, Subscription.user from "../generated/prisma.graphql"
+# import Subscription.notification, Permission, PermissionAccessType, PermissionAccessLevel, Subscription.permission from "../generated/prisma.graphql"
 
 # import *, Query.*, Mutation.* from "../modules/auth/schema.graphql"
 # import *, Query.*, Mutation.* from "../modules/notification/schema.graphql"
