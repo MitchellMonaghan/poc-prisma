@@ -1,21 +1,18 @@
 import config from '@config'
 import { getUserDisplayName } from '@modules/user/manager'
 
-export default async ({ invitee, inviter }) => {
+export default async (data) => {
   const html = String.raw
-  let displayName = await getUserDisplayName(invitee)
-  let inviterDisplayName = await getUserDisplayName(inviter)
+  let displayName = await getUserDisplayName(data)
 
-  const verifyEmailUrl = `${config.appUrl}/verifyEmail?token=${invitee.verifyEmailToken}`
-
-  const subject = `Please confirm your email with ${config.productName}.`
-  const inviteEmailTemplate = html`
+  const subject = `Your password at ${config.productName} has been changed.`
+  const passwordChangedEmailTemplate = html`
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Welcome to ${config.productName}, ${displayName}!</title>
+        <title>${subject}</title>
         <!-- 
         The style block is collapsed on page load to save you some scrolling.
         Postmark automatically inlines all CSS properties for maximum email client 
@@ -404,7 +401,7 @@ export default async ({ invitee, inviter }) => {
         </style>
       </head>
       <body>
-        <span class="preheader">You have been invited to ${config.productName}! Please click the link below to verify your email.</span>
+        <span class="preheader">${subject}</span>
 
         <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0">
           <tr>
@@ -424,63 +421,14 @@ export default async ({ invitee, inviter }) => {
                       <!-- Body content -->
                       <tr>
                         <td class="content-cell">
-                          <h1>Welcome, ${displayName}!</h1>
-                          <p>${inviterDisplayName} has invited you to ${config.productName}. We’re thrilled to have you on board.</p>
-                          <p>To get the most out of ${config.productName}, do this primary next step:</p>
-
-                          <!-- Action -->
-                          <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                              <td align="center">
-                                <!-- Border based button https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
-                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                  <tr>
-                                    <td align="center">
-                                      <table border="0" cellspacing="0" cellpadding="0">
-                                        <tr>
-                                          <td>
-                                            <a href="${verifyEmailUrl}" class="button button--" target="_blank">
-                                              Click this link to verify your email.
-                                            </a>
-                                          </td>
-                                        </tr>
-                                      </table>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
-
-                          <p>After you verify your email please change your password. For reference, here's your login information:</p>
-                          <table class="attributes" width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                              <td class="attributes_content">
-                                <table width="100%" cellpadding="0" cellspacing="0">
-                                  <tr>
-                                    <td class="attributes_item"><strong>Login Page:</strong> ${config.appUrl}/login</td>
-                                  </tr>
-                                  <tr>
-                                    <td class="attributes_item"><strong>Username:</strong> ${invitee.username}</td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
+                          <h1>Hello, ${displayName}!</h1>
+                          <p>Your password at ${config.productName} has been updated.</p>
+                          <p>If you did not make this change please use the forgot password tool and change your password immediately.</p>
 
                           <p>If you have any questions, feel free to <a href="mailto:${config.mailgunSender}">email our customer success team</a>. We're lightning quick at replying.</p>
                           <p>Thanks,
-                            <br>The ${config.productName} Team</p>
-
-                          <!-- Sub copy -->
-                          <table class="body-sub">
-                            <tr>
-                              <td>
-                                <p class="sub">If you’re having trouble with the button above, copy and paste the URL below into your web browser.</p>
-                                <p class="sub">${verifyEmailUrl}</p>
-                              </td>
-                            </tr>
-                          </table>
+                            <br>The ${config.productName} Team
+                          </p>
                         </td>
                       </tr>
                     </table>
@@ -508,5 +456,5 @@ export default async ({ invitee, inviter }) => {
     </html>
   `
 
-  return { subject, html: inviteEmailTemplate }
+  return { subject, html: passwordChangedEmailTemplate }
 }

@@ -2,6 +2,7 @@ import { UserInputError } from 'apollo-server'
 import { hashPassword } from '@services/jwt'
 import { Joi, errorText } from '@services/joi'
 import { find, pick, first } from 'lodash'
+import mailer from '@services/mailer'
 
 import { notificationText, createNotification } from '@modules/notification/manager'
 import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
@@ -122,6 +123,11 @@ const updateUser = async (root, args, context, info) => {
     where
   }, `{
     id
+    username
+    email
+    firstName
+    lastName
+    receiveEmailNotifications
     permissions {
       accessType
       accessLevel
@@ -170,24 +176,29 @@ const updateUser = async (root, args, context, info) => {
     data
   }, info)
 
-  createNotification(
-    root,
-    {
-      createdBy: { connect: { id: user.id } },
-      message: notificationText.userSettingsUpdated()
-    },
-    context,
-    info
-  )
+  const userSettingsUpdatedNotificationData = {
+    recipient: userToBeUpdated,
+    message: notificationText.userSettingsUpdated(),
+    mailerArgs: [mailer.emailEnum.userSettingsUpdated, [userToBeUpdated.email], userToBeUpdated]
+  }
+
+  createNotification(root, userSettingsUpdatedNotificationData, context, info)
 
   return updatedUser
+}
+
+const getUserDisplayName = async (user) => {
+  const fullName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''
+  return fullName || user.username
 }
 
 const publicProps = {
   createUser,
   getUsers,
   getUser,
-  updateUser
+  updateUser,
+
+  getUserDisplayName
 }
 
 module.exports = publicProps

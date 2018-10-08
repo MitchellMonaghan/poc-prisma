@@ -12,8 +12,8 @@ const mailgunClient = mailgun({
   domain: config.mailgunDomain
 })
 
-const sendEmail = (templateName, recipients, data) => {
-  let email = emailTemplates[templateName].default(data)
+const sendEmail = async (templateName, recipients, data) => {
+  let email = await emailTemplates[templateName].default(data)
   email.from = config.mailgunSender
   email.to = recipients.join(',')
 

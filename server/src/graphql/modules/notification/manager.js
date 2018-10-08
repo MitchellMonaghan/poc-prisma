@@ -1,6 +1,7 @@
 import config from '@config'
 import { Joi } from '@services/joi'
 import { pick } from 'lodash'
+import mailer from '@services/mailer'
 
 import { checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 
@@ -13,9 +14,18 @@ const notificationText = {
 
 const createNotification = async (root, args, context, info) => {
   const { prisma } = context
+  const { recipient, message, mailerArgs } = args
+
   await prisma.mutation.createNotification({
-    data: args
+    data: {
+      createdBy: { connect: { id: recipient.id } },
+      message
+    }
   })
+
+  if (recipient.receiveEmailNotifications && mailerArgs) {
+    mailer.sendEmail(...mailerArgs)
+  }
 }
 
 const getNotifications = async (root, args, context, info) => {

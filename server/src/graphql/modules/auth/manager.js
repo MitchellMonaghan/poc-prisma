@@ -8,7 +8,7 @@ import { Joi, errorText } from '@services/joi'
 import mailer from '@services/mailer'
 
 import { notificationText, createNotification } from '@modules/notification/manager'
-import { createUser, getUser } from '@modules/user/manager'
+import { createUser, getUser, getUserDisplayName } from '@modules/user/manager'
 
 // Private functions
 
@@ -98,7 +98,7 @@ const registerUser = async (root, args, context, info) => {
 
 const inviteUser = async (root, args, context, info) => {
   const { user } = context
-  const { email } = args
+  const { email, firstName, lastName } = args
 
   const validationSchema = {
     email: Joi.string().email({ minDomainAtoms: 2 }).required()
@@ -106,11 +106,11 @@ const inviteUser = async (root, args, context, info) => {
 
   Joi.validate({ email }, validationSchema)
 
-  const invitedUser = await createUser(root, { email, password: uuid() }, context, info)
-  invitedUser.inviter = user.id
+  const invitee = await createUser(root, { email, firstName, lastName, password: uuid() }, context, info)
+  invitee.inviter = user.id
 
-  invitedUser.verifyEmailToken = await generateJWT(invitedUser)
-  mailer.sendEmail(mailer.emailEnum.invite, [invitedUser.email], { invitedUser, inviter: user })
+  invitee.verifyEmailToken = await generateJWT(invitee)
+  mailer.sendEmail(mailer.emailEnum.invite, [invitee.email], { invitee, inviter: user })
 
   return `Success`
 }
@@ -125,27 +125,25 @@ const verifyEmail = async (root, args, context, info) => {
     }
   })
 
-  if (context.decodedToken.user.inviter && !user.confirmed) {
-    createNotification(
-      root,
-      {
-        createdBy: { connect: { id: context.decodedToken.user.inviter } },
-        message: notificationText.inviteAccepted(user.email)
-      },
-      context,
-      info
-    )
-  }
+  if (!user.confirmed) {
+    if (context.decodedToken.user.inviter) {
+      const inviter = await prisma.query.user({ where: { id: context.decodedToken.user.inviter } })
 
-  createNotification(
-    root,
-    {
-      createdBy: { connect: { id: user.id } },
+      const inviteAcceptedNotificationData = {
+        recipient: inviter,
+        message: notificationText.inviteAccepted(getUserDisplayName(user)),
+        mailerArgs: [mailer.emailEnum.inviteAccepted, [inviter.email], { invitee: user, inviter }]
+      }
+      createNotification(root, inviteAcceptedNotificationData, context, info)
+    }
+
+    const welcomeNotificationData = {
+      recipient: user,
       message: notificationText.welcome()
-    },
-    context,
-    info
-  )
+    }
+
+    createNotification(root, welcomeNotificationData, context, info)
+  }
 
   return 'Success'
 }
@@ -170,15 +168,13 @@ const changePassword = async (root, args, context, info) => {
     }
   })
 
-  createNotification(
-    root,
-    {
-      createdBy: { connect: { id } },
-      message: notificationText.passwordChanged()
-    },
-    context,
-    info
-  )
+  const passwordChangedNotificationData = {
+    recipient: updatedUser,
+    message: notificationText.passwordChanged(),
+    mailerArgs: [mailer.emailEnum.passwordChanged, [updatedUser.email], updatedUser]
+  }
+
+  createNotification(root, passwordChangedNotificationData, context, info)
 
   return generateJWT(updatedUser)
 }

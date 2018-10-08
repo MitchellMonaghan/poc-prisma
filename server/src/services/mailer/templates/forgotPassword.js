@@ -1,12 +1,9 @@
 import config from '@config'
+import { getUserDisplayName } from '@modules/user/manager'
 
-export default (data) => {
+export default async (data) => {
   const html = String.raw
-  let displayName = data.username
-
-  if (data.firstName && data.lastName) {
-    displayName = `${data.firstName} ${data.lastName}`
-  }
+  let displayName = await getUserDisplayName(data)
 
   const forgotPasswordUrl = `${config.appUrl}/resetPassword?token=${data.forgotPasswordToken}`
 

@@ -1,23 +1,20 @@
 import config from '@config'
+import { getUserDisplayName } from '@modules/user/manager'
 
-export default (data) => {
+export default async (data) => {
   const html = String.raw
-  let displayName = data.username
-
-  if (data.firstName && data.lastName) {
-    displayName = `${data.firstName} ${data.lastName}`
-  }
+  let displayName = await getUserDisplayName(data)
 
   const verifyEmailUrl = `${config.appUrl}/verifyEmail?token=${data.verifyEmailToken}`
 
-  const subject = `Please confirm your email with ${config.productName}.`
+  const subject = `Welcome to ${config.productName}, ${displayName}!`
   const verifyEmailTemplate = html`
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Welcome to ${config.productName}, ${displayName}!</title>
+        <title>${subject}</title>
         <!-- 
         The style block is collapsed on page load to save you some scrolling.
         Postmark automatically inlines all CSS properties for maximum email client 
