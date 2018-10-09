@@ -40,11 +40,11 @@
         <!-- End password -->
 
         <div class="row q-pt-md col-12 justify-end">
-          <router-link to="forgotPassword">Forgot Password</router-link>
+          <router-link to="forgotPassword">{{$t('headings.forgotPassword')}}</router-link>
         </div>
 
         <div class="row q-pt-xl col-12 justify-end">
-          <q-btn  @click="login" label="login" />
+          <q-btn  @click="login" :label="$t('buttons.login')" />
         </div>
       </form>
     </div>
@@ -57,10 +57,10 @@ import { required, hasServerError } from 'src/validators'
 export default {
   data () {
     return {
-      usernameLabel: 'Email',
+      usernameLabel: this.$t('labels.email'),
       usernameFieldKey: 'username',
 
-      passwordLabel: 'Password',
+      passwordLabel: this.$t('labels.password'),
       passwordFieldKey: 'password',
 
       form: {

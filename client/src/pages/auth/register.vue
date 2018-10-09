@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="row col-12 justify-center">
-      <div class="row col-4" style="margin-top:20vh">
+      <form class="row col-4" style="margin-top:20vh">
         <!-- Username -->
           <q-field
             class="row col-12 q-mt-md"
@@ -14,6 +14,8 @@
               :float-label="usernameLabel"
               @blur="onFieldBlur(usernameFieldKey)"
               @keyup.enter="onSubmit"
+
+              autocomplete="username"
             />
           </q-field>
         <!-- End username -->
@@ -30,6 +32,8 @@
               :float-label="emailLabel"
               @blur="onFieldBlur(emailFieldKey)"
               @keyup.enter="onSubmit"
+
+              autocomplete="email"
             />
           </q-field>
         <!-- End email -->
@@ -47,6 +51,8 @@
               :float-label="passwordLabel"
               @blur="onFieldBlur(passwordFieldKey)"
               @keyup.enter="onSubmit"
+
+              autocomplete="current-password"
             />
           </q-field>
         <!-- End password -->
@@ -69,9 +75,9 @@
         <!-- End confirm password -->
 
         <div class="row q-pt-xl col-12 justify-end">
-          <q-btn  @click="onSubmit" label="register" />
+          <q-btn  @click="onSubmit" :label="$t('buttons.register')" />
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -82,16 +88,16 @@ import { required, alphaNum, email, not, sameAs, hasServerError } from 'src/vali
 export default {
   data () {
     return {
-      usernameLabel: 'Username',
+      usernameLabel: this.$t('labels.username'),
       usernameFieldKey: 'username',
 
-      emailLabel: 'Email',
+      emailLabel: this.$t('labels.email'),
       emailFieldKey: 'email',
 
-      passwordLabel: 'Password',
+      passwordLabel: this.$t('labels.password'),
       passwordFieldKey: 'password',
 
-      confirmPasswordLabel: 'Confirm password',
+      confirmPasswordLabel: this.$t('labels.confirmPassword'),
       confirmPasswordFieldKey: 'confirmPassword',
 
       form: {

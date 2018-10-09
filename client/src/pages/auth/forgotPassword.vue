@@ -2,7 +2,7 @@
   <div class="row items-center" style="min-height:100vh">
     <div class="row col-12 justify-center">
       <div class="row col-lg-4 col-md-8 col-11" v-if="pageState === pageStates.form || pageState === pageStates.invalidToken">
-        <div v-if="pageState === pageStates.invalidToken">Sorry your password reset has expired. Please request a new password reset.</div>
+        <div v-if="pageState === pageStates.invalidToken">{{$t('toastMessages.passwordResetExpired')}}</div>
 
         <!-- Email -->
           <q-field
@@ -21,12 +21,12 @@
         <!-- End email -->
 
         <div class="row q-pt-xl col-12 justify-end">
-          <q-btn  @click="onSubmit" label="Send Email" />
+          <q-btn  @click="onSubmit" :label="$t('buttons.sendEmail')" />
         </div>
       </div>
 
       <div class="row col-lg-4 col-md-8 col-11" v-if="pageState === pageStates.emailSent">
-        <div>Please check your email.</div>
+        <div>{{$t('toastMessages.checkYourEmail')}}</div>
 
         <div class="row q-pt-xl col-12 justify-end">
           <q-btn  @click="$router.push('/')" label="Continue" />
@@ -40,7 +40,6 @@
 import { required, email, hasServerError } from 'src/validators'
 
 const pageStates = {
-
   form: 'form',
   emailSent: 'emailSent',
   invalidToken: 'invalidToken'
@@ -51,7 +50,7 @@ export default {
     return {
       pageStates,
       pageState: pageStates.form,
-      emailLabel: 'Email',
+      emailLabel: this.$t('labels.email'),
       emailFieldKey: 'email',
 
       form: {

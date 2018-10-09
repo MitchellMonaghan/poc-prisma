@@ -6,11 +6,11 @@
       </div>
 
       <div v-if="pageState === pageStates.validToken">
-        Thank you for verifying your email
+        {{$t('toastMessages.verifyEmail')}}
       </div>
 
       <div v-if="pageState === pageStates.invalidToken">
-        Your token has expired please re-register
+        {{$t('toastMessages.expiredRegistration')}}
       </div>
     </div>
   </div>

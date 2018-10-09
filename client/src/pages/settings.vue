@@ -1,6 +1,6 @@
 <template>
   <div class="row justify-center">
-    <div class="q-headline col-11 q-mt-md">Profile Settings</div>
+    <div class="q-headline col-11 q-mt-md">{{$t('headings.profileSettings')}}</div>
 
     <q-field
       class="row col-11 q-mt-md"
@@ -65,11 +65,11 @@
       <!-- End last name -->
 
       <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="onSubmitUpdateUser" label="save" />
+        <q-btn  @click="onSubmitUpdateUser" :label="saveLabel" />
       </div>
     </form>
 
-    <div class="q-headline col-11 q-mt-md">Change password</div>
+    <div class="q-headline col-11 q-mt-md">{{$t('headings.changePassword')}}</div>
 
     <form class="col-11">
       <!-- Password -->
@@ -107,7 +107,7 @@
       <!-- End confirm password -->
 
       <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="onSubmitChangePassword" label="save" />
+        <q-btn  @click="onSubmitChangePassword" :label="saveLabel" />
       </div>
     </form>
   </div>
@@ -120,22 +120,24 @@ import { required, alphaNum, not, sameAs, hasServerError } from 'src/validators'
 export default {
   data () {
     return {
-      receiveEmailNotificationsLabel: 'Receive Email Notifications',
+      receiveEmailNotificationsLabel: this.$t('labels.receiveEmailNotifications'),
 
-      usernameLabel: 'Username',
+      usernameLabel: this.$t('labels.username'),
       usernameFieldKey: 'username',
 
-      firstNameLabel: 'First Name',
+      firstNameLabel: this.$t('labels.firstName'),
       firstNameFieldKey: 'firstName',
 
-      lastNameLabel: 'Last Name',
+      lastNameLabel: this.$t('labels.lastName'),
       lastNameFieldKey: 'lastName',
 
-      passwordLabel: 'Password',
+      passwordLabel: this.$t('labels.password'),
       passwordFieldKey: 'password',
 
-      confirmPasswordLabel: 'Confirm password',
+      confirmPasswordLabel: this.$t('labels.confirmPassword'),
       confirmPasswordFieldKey: 'confirmPassword',
+
+      saveLabel: this.$t('buttons.save'),
 
       updateUserForm: {
         receiveEmailNotifications: this.$store.state.auth.user.receiveEmailNotifications,
@@ -194,7 +196,7 @@ export default {
         Notify.create({
           color: 'positive',
           position: 'bottom-right',
-          message: 'Your user settings have been updated'
+          message: this.$t('toastMessages.userSettingsUpdated')
         })
       } catch (error) {
         this.serverErrors = error.graphQLErrors
@@ -217,7 +219,7 @@ export default {
         Notify.create({
           color: 'positive',
           position: 'bottom-right',
-          message: 'Your password has been updated'
+          message: this.$t('toastMessages.passwordUpdated')
         })
       } catch (error) {
         this.serverErrors = error.graphQLErrors

@@ -27,7 +27,7 @@
 
           <q-popover>
             <q-list separator link>
-              <q-list-header inset>Notifications</q-list-header>
+              <q-list-header inset>{{$t('headings.notifications')}}</q-list-header>
 
               <q-item
                 v-close-overlay
@@ -67,11 +67,11 @@
           <q-popover>
             <q-list separator link>
               <q-item v-close-overlay @click.native="$router.push({ name: 'settings' })">
-                Settings <q-item-side right icon="settings" />
+                {{$t('headings.settings')}} <q-item-side right icon="settings" />
               </q-item>
 
               <q-item v-close-overlay @click.native="logout">
-                Logout <q-item-side right icon="fas fa-sign-out-alt" />
+                {{$t('buttons.logout')}} <q-item-side right icon="fas fa-sign-out-alt" />
               </q-item>
             </q-list>
           </q-popover>
@@ -88,14 +88,14 @@
         link
         inset-delimiter
       >
-        <q-list-header>Essential Links</q-list-header>
+        <q-list-header>{{$t('headings.navigation')}}</q-list-header>
         <q-item @click.native="$router.push({ name: 'authenticatedLandingPage' })">
           <q-item-side icon="home" />
-          <q-item-main label="Home" />
+          <q-item-main :label="$t('headings.home')" />
         </q-item>
         <q-item @click.native="logout">
           <q-item-side icon="fas fa-sign-out-alt" />
-          <q-item-main label="Logout" />
+          <q-item-main :label="$t('headings.logout')" />
         </q-item>
       </q-list>
     </q-layout-drawer>
