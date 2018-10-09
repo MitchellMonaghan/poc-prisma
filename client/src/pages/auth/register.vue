@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="row col-12 justify-center">
-      <form class="row col-4" style="margin-top:20vh">
+      <form class="row col-lg-4 col-11" style="margin-top:20vh">
         <!-- Username -->
           <q-field
             class="row col-12 q-mt-md"

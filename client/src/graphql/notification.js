@@ -78,6 +78,8 @@ const init = (apollo, store) => {
     },
 
     deleteNotification: async (notification) => {
+      store.dispatch('notification/deleteNotification', notification.id)
+
       await apollo.mutate({
         variables: {
           where: { id: notification.id }

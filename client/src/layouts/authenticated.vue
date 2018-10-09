@@ -25,15 +25,21 @@
           <q-icon name="notifications" />
           <q-chip floating color="red" v-if="unviewedNotifications.length > 0">{{ unviewedNotifications.length }}</q-chip>
 
-          <q-popover>
-            <q-list separator link>
-              <q-list-header inset>{{$t('headings.notifications')}}</q-list-header>
+          <q-popover style="width: 400px">
+            <q-list separator>
+              <q-item>
+                <q-item-side icon="notifications" inverted color="primary" />
+                <q-item-main>
+                  <q-item-tile>{{$t('headings.notifications')}}</q-item-tile>
+                </q-item-main>
+              </q-item>
 
               <q-item
                 v-close-overlay
                 @click.native="notificationViewed(notification)"
                 v-for="(notification, index) in notifications" :key="index"
                 :class="notification.viewed ? '' : `bg-blue-3`"
+                link
               >
                 <q-item-side icon="settings" inverted color="primary" />
                 <q-item-main>
@@ -89,7 +95,7 @@
         inset-delimiter
       >
         <q-list-header>{{$t('headings.navigation')}}</q-list-header>
-        <q-item @click.native="$router.push({ name: 'authenticatedLandingPage' })">
+        <q-item @click.native="navigate({ name: 'authenticatedLandingPage' })">
           <q-item-side icon="home" />
           <q-item-main :label="$t('headings.home')" />
         </q-item>
@@ -164,6 +170,14 @@ export default {
     async deleteNotification (notification) {
       await this.$graphql.notification.deleteNotification(notification)
       document.activeElement.blur()
+    },
+
+    async navigate (route) {
+      if (this.$q.platform.is.mobile) {
+        this.leftDrawerOpen = false
+      }
+
+      this.$router.push(route)
     }
   }
 }

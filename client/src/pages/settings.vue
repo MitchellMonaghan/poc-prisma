@@ -190,7 +190,6 @@ export default {
       try {
         document.activeElement.blur()
         await this.$graphql.user.updateUser(this.$store.state.auth.user.id, this.updateUserForm)
-
         this.resetUpdateUserForm()
 
         Notify.create({

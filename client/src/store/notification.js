@@ -1,5 +1,5 @@
 import { extend } from 'quasar'
-import { findIndex } from 'lodash'
+import { findIndex, filter } from 'lodash'
 
 const state = extend({}, {
   notifications: []
@@ -10,8 +10,7 @@ const actions = extend({}, {
     // TODO: Theres a bug in prisma currently where delete subscriptions return the wrong value for id
     // Issue can be viewed here https://github.com/prisma/prisma/issues/2847
     notificationId = notificationId.replace('CuidGCValue(', '').replace(')', '')
-    const notificationIndex = findIndex(state.notifications, { id: notificationId })
-    state.notifications.splice(notificationIndex, 1)
+    state.notifications = filter(state.notifications, (notification) => notification.id !== notificationId)
   },
 
   upsertNotifications ({state}, newNotifications) {

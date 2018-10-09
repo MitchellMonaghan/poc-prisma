@@ -128,10 +128,11 @@ const verifyEmail = async (root, args, context, info) => {
   if (!user.confirmed) {
     if (context.decodedToken.user.inviter) {
       const inviter = await prisma.query.user({ where: { id: context.decodedToken.user.inviter } })
+      const inviteeDisplayName = await getUserDisplayName(user)
 
       const inviteAcceptedNotificationData = {
         recipient: inviter,
-        message: notificationText.inviteAccepted(getUserDisplayName(user)),
+        message: notificationText.inviteAccepted(inviteeDisplayName),
         mailerArgs: [mailer.emailEnum.inviteAccepted, [inviter.email], { invitee: user, inviter }]
       }
       createNotification(root, inviteAcceptedNotificationData, context, info)

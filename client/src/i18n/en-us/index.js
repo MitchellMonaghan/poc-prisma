@@ -21,8 +21,8 @@ export default {
   },
 
   toastMessages: {
-    userSettingsUpdated: 'Your password has been updated',
-    passwordUpdated: 'Your user settings have been updated',
+    userSettingsUpdated: 'Your user settings have been updated',
+    passwordUpdated: 'Your password has been updated',
     passwordResetExpired: 'Sorry your password reset has expired. Please request a new password reset.',
     checkYourEmail: 'Please check your email.',
     verifyEmail: 'Thank you for verifying your email',
