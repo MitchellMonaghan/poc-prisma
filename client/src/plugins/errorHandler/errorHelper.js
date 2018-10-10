@@ -29,10 +29,10 @@ export default (fieldProperty, propertyName, errorKey, serverErrors = []) => {
   if (serverErrors && serverErrors.length > 0) {
     for (let i = 0; i < serverErrors.length; i++) {
       const serverError = serverErrors[i]
-      const errorMessageFound = serverError.extensions.exception.invalidArgs.includes(errorKey)
+      const errorMessageFound = serverError.field === errorKey
 
       if (errorMessageFound) {
-        return serverError.message
+        return `errors.${serverError.type}`
       }
     }
   }

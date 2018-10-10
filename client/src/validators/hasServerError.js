@@ -7,7 +7,7 @@ export default (serverErrors, propertyName) =>
     if (serverErrors) {
       for (let i = 0; i < serverErrors.length; i++) {
         const serverError = serverErrors[i]
-        hasError = serverError.extensions.exception.invalidArgs.includes(propertyName)
+        hasError = serverError.field === propertyName
 
         if (hasError) {
           break

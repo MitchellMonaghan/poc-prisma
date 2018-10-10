@@ -1,45 +1,81 @@
 import Joi from 'joi'
-import { UserInputError } from 'apollo-server'
+import { assign } from 'lodash'
+import { ApolloError } from 'apollo-server'
 
-const errorText = {
-  // Permission Errors
-  authenticationError: () => 'Token invalid please authenticate.',
-  protectedFieldRead: (fieldName) => `${fieldName} is a protected field and can only be read by owner and admin.`,
-  protectedFieldUpdate: (fieldName) => `${fieldName} is a protected field and can only be updated by owner and admin.`,
-  requiresPermission: (fieldName, requiredPermission, requiredAccessLevel) => `${fieldName} requires a minimum access of ${requiredPermission}:${requiredAccessLevel}.`,
-  noAccessRead: (entity) => `You are not allowed to view ${entity} records.`,
-  noAccessUpdate: (entity) => `You are not allowed to update ${entity} records.`,
-  notOwnerRead: (entity) => `You can only view your own ${entity} records.`,
-  notOwnerUpdate: (entity) => `You can only update your own ${entity} records.`,
-  cannotUpdateUserWithHigherPermission: () => `You can not update a user who has a higher level permission than you.`,
+const errorTypes = {
+  authenticationError: 'authenticationError',
+  protectedFieldRead: 'protectedFieldRead',
+  protectedFieldUpdate: 'protectedFieldUpdate',
+  requiresPermission: 'requiresPermission',
+  noAccessRead: 'noAccessRead',
+  noAccessUpdate: 'noAccessUpdate',
+  notOwnerRead: 'notOwnerRead',
+  notOwnerUpdate: 'notOwnerUpdate',
+  cannotUpdateUserWithHigherPermission: 'cannotUpdateUserWithHigherPermission',
 
-  // User input errors
-  userNotFound: () => `User not found.`,
-  incorrectPassword: () => `Incorrect password.`,
-  usernameAlreadyTaken: (username) => `The user name ${username} has already been taken.`,
-  emailAlreadyTaken: (email) => `The email ${email} has already been registered.`
+  alreadyTaken: 'alreadyTaken',
+  notFound: 'notFound',
+  required: 'required',
+  alphaNum: 'alphaNum',
+  notSameAsUsername: 'notSameAsUsername',
+  notSameAsEmail: 'notSameAsEmail',
+  sameAsPassword: 'sameAsPassword',
+  email: 'email',
+  phoneNumber: 'phoneNumber',
+  cron: 'cron',
+  passwordComplexity: 'passwordComplexity',
+  incorrectPassword: 'incorrectPassword'
 }
 
 const validate = Joi.validate
-Joi.validate = (data, validationSchema) => {
-  let { error } = validate(data, validationSchema)
+Joi.validate = (data, validationSchema, options) => {
+  const defaultOptions = {
+    abortEarly: false
+  }
+
+  const response = validate(data, validationSchema, assign(defaultOptions, options))
+  let { error } = response
 
   if (error) {
-    error = error.details[0]
-    error.message = error.type === 'string.regex.base' && error.context.key === 'password'
-      ? 'Password does not meet complexity requirements' : error.message
+    const errors = error.details.map((details) => {
+      let type
 
-    throw new UserInputError(error.message, {
-      invalidArgs: [
-        error.context.key
-      ]
+      switch (details.type) {
+        case 'any.empty':
+          type = 'required'
+          break
+        case 'string.alphanum':
+          type = 'alphaNum'
+          break
+        case 'string.email':
+          type = 'email'
+          break
+        case 'string.regex.base':
+          if (details.context.key === 'password') {
+            type = 'passwordComplexity'
+          }
+          break
+        default:
+          if (!details.type) {
+            type = 'serverError'
+          }
+      }
+
+      return { type, field: details.context.key }
     })
+
+    throw new Error(JSON.stringify(errors))
   }
 }
 
+const error = (additionalProps) => {
+  throw new ApolloError('error', 'error', additionalProps)
+}
+
 const publicProps = {
-  errorText,
-  Joi
+  errorTypes,
+  Joi,
+  error
 }
 
 module.exports = publicProps

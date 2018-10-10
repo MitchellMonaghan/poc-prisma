@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { UserInputError } from 'apollo-server'
 
 import { hashPassword, generateJWT } from '@services/jwt'
-import { Joi, errorText } from '@services/joi'
+import { Joi, errorText, errorTypes, error } from '@services/joi'
 import mailer from '@services/mailer'
 
 import { notificationText, createNotification } from '@modules/notification/manager'
@@ -28,12 +28,7 @@ const authenticateUser = async (root, args, context, info) => {
   const user = await getUser(root, { where: { username } }, context)
 
   if (!user || (user && !user.confirmed)) {
-    throw new UserInputError(errorText.userNotFound(), {
-      invalidArgs: [
-        'username',
-        'email'
-      ]
-    })
+    error({ type: errorTypes.notFound, field: 'username' })
   }
 
   const isValid = await bcrypt.compare(password, user.password)
@@ -83,7 +78,9 @@ const registerUser = async (root, args, context, info) => {
   const validationSchema = {
     email: Joi.string().email({ minDomainAtoms: 2 }).required(),
     username: Joi.string().alphanum(),
-    password: Joi.string().regex(config.passwordRegex).required()
+    password: Joi.string().regex(config.passwordRegex).required(),
+    firstName: Joi.string(),
+    lastName: Joi.string()
   }
 
   Joi.validate(args, validationSchema)

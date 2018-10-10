@@ -41,8 +41,16 @@ enum PermissionAccessLevel {
 
 type Notification {
   id: ID! @unique
-  createdBy: User! @relation(name: "UserNotifications")
-  message: String!
+  notificationType: NotificationType!
+  data: String!
   viewed: Boolean! @default(value: "false")
+  createdBy: User! @relation(name: "UserNotifications")
   createdAt: DateTime!
+}
+
+enum NotificationType {
+  WELCOME
+  INVITE_ACCEPTED
+  PASSWORD_CHANGED
+  USER_SETTINGS_UPDATED
 }

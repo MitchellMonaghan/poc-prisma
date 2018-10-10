@@ -74,7 +74,7 @@ export default {
 
   computed: {
     usernameError () {
-      return this.$displayError(this.$v.form.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
+      return this.$t(this.$displayError(this.$v.form.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors), { field: this.$t('labels.user') })
     },
 
     passwordError () {
