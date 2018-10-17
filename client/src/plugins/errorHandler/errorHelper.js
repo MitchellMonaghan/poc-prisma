@@ -1,49 +1,38 @@
-const fieldPlaceHolder = '{field}'
-
-const errorMessages = {
-  required: `${fieldPlaceHolder} is required.`,
-  alphaNum: `Please only enter alphanumeric characters`,
-  notSameAsUsername: `${fieldPlaceHolder} cannot match Username.`,
-  notSameAsEmail: `${fieldPlaceHolder} cannot match Email.`,
-  sameAsPassword: `Passwords must match.`,
-  email: `Please enter a valid ${fieldPlaceHolder}.`,
-  phoneNumber: `Please enter a valid phone number`,
-  cron: `Please enter a valid cron string`
-}
-
-var evaluateError = function (fieldName, validator) {
-  // Get the appropriate error message from errorMessages object, and plug in field name
-  const errorMessage = errorMessages[validator]
-
-  // if field name gets pluged into the beginning of the string leave it capitalized, otherwise toLower
-  if (errorMessage.indexOf(fieldPlaceHolder) > 0) {
-    fieldName = fieldName.toLowerCase()
-  }
-
-  // replace {field} with the appropriate field name and return error message
-  return errorMessages[validator].replace(fieldPlaceHolder, fieldName)
-}
-
-export default (fieldProperty, propertyName, errorKey, serverErrors = []) => {
+const getErrorCode = (fieldProperty, propertyName, errorKey, serverErrors = []) => {
   // Check for server errors first
   if (serverErrors && serverErrors.length > 0) {
     for (let i = 0; i < serverErrors.length; i++) {
       const serverError = serverErrors[i]
-      const errorMessageFound = serverError.field === errorKey
+      const errorMessageFound = serverError.extensions.exception.field === errorKey
 
       if (errorMessageFound) {
-        return `errors.${serverError.type}`
+        return `errors.${serverError.extensions.exception.field}.${serverError.extensions.exception.type}`
       }
     }
   }
 
   // Commented as I am sure this is confusing
-  // Loop through validators
+  // Loop through validators on field
   for (var key in fieldProperty.$params) {
     // if a validator fails stop loop and return error
     if (!fieldProperty[key]) {
-      // return the property error message text for the failed validator
-      return evaluateError(propertyName, key)
+      // return the property error code/string for the failed validator
+      return `errors.${errorKey}.${key}`
     }
   }
+}
+
+const getError = (translator, fieldProperty, propertyName, errorKey, serverErrors) => {
+  const errorCode = getErrorCode(fieldProperty, propertyName, errorKey, serverErrors)
+  return translator(errorCode, { field: translator(`formFields.${errorKey}`) })
+}
+
+export {
+  getErrorCode,
+  getError
+}
+
+export default {
+  getErrorCode,
+  getError
 }

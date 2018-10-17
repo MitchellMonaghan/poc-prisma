@@ -57,10 +57,10 @@ import { required, hasServerError } from 'src/validators'
 export default {
   data () {
     return {
-      usernameLabel: this.$t('labels.email'),
+      usernameLabel: this.$t('formFields.email'),
       usernameFieldKey: 'username',
 
-      passwordLabel: this.$t('labels.password'),
+      passwordLabel: this.$t('formFields.password'),
       passwordFieldKey: 'password',
 
       form: {
@@ -74,11 +74,11 @@ export default {
 
   computed: {
     usernameError () {
-      return this.$t(this.$displayError(this.$v.form.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors), { field: this.$t('labels.user') })
+      return this.$t(this.$getErrorCode(this.$v.form.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors), { field: this.$t('formFields.email') })
     },
 
     passwordError () {
-      return this.$displayError(this.$v.form.password, this.passwordLabel, this.passwordFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.form.password, this.passwordLabel, this.passwordFieldKey, this.serverErrors)
     }
   },
 

@@ -4,10 +4,10 @@ export default (serverErrors, propertyName) =>
   withParams({type: 'serverError', serverErrors, propertyName}, value => {
     let hasError = false
 
-    if (serverErrors) {
+    if (serverErrors && serverErrors.length > 0) {
       for (let i = 0; i < serverErrors.length; i++) {
         const serverError = serverErrors[i]
-        hasError = serverError.field === propertyName
+        hasError = serverError.extensions.exception.field === propertyName
 
         if (hasError) {
           break

@@ -1,6 +1,6 @@
 import Joi from 'joi'
 import { assign } from 'lodash'
-import { ApolloError } from 'apollo-server'
+import { ApolloError, UserInputError } from 'apollo-server'
 
 const errorTypes = {
   authenticationError: 'authenticationError',
@@ -40,6 +40,8 @@ Joi.validate = (data, validationSchema, options) => {
     const errors = error.details.map((details) => {
       let type
 
+      // Map the joi error types to error strings/codes that I
+      // would like the front end to be using for i18n conversion
       switch (details.type) {
         case 'any.empty':
           type = 'required'
@@ -64,7 +66,11 @@ Joi.validate = (data, validationSchema, options) => {
       return { type, field: details.context.key }
     })
 
-    throw new Error(JSON.stringify(errors))
+    throw new UserInputError(error.message, {
+      errors: [
+        ...errors
+      ]
+    })
   }
 }
 

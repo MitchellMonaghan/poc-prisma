@@ -50,7 +50,7 @@ export default {
     return {
       pageStates,
       pageState: pageStates.form,
-      emailLabel: this.$t('labels.email'),
+      emailLabel: this.$t('formFields.email'),
       emailFieldKey: 'email',
 
       form: {

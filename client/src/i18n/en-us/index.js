@@ -1,3 +1,14 @@
+// generic errors
+const {
+  alreadyTaken,
+  notFound,
+  required
+} = {
+  alreadyTaken: '{field} has already been taken',
+  notFound: '{field} was not found.',
+  required: '{field} is required.'
+}
+
 export default {
   headings: {
     profileSettings: 'Profile Settings',
@@ -8,17 +19,6 @@ export default {
     navigation: 'Navigation',
     home: 'Home',
     logout: 'Logout'
-  },
-
-  labels: {
-    user: 'User',
-    email: 'Email',
-    username: 'Username',
-    firstName: 'First Name',
-    lastName: 'Last Name',
-    password: 'Password',
-    confirmPassword: 'Confirm Password',
-    receiveEmailNotifications: 'Receive Email Notifications'
   },
 
   toastMessages: {
@@ -40,17 +40,48 @@ export default {
     sendEmail: 'Send Email'
   },
 
+  formFields: {
+    email: 'Email',
+    username: 'Username',
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    receiveEmailNotifications: 'Receive Email Notifications'
+  },
+
   errors: {
-    alreadyTaken: '{field} has already been taken',
-    notFound: '{field} was not found.',
-    required: '{field} is required.',
-    alphaNum: 'Please only enter alphanumeric characters',
-    notSameAsUsername: '{field} cannot match Username.',
-    notSameAsEmail: '{field} cannot match Email.',
-    sameAsPassword: 'Passwords must match.',
-    email: 'Please enter a valid email.',
-    phoneNumber: 'Please enter a valid phone number',
-    cron: 'Please enter a valid cron string',
-    passwordComplexity: 'Password does not match complexity requirements'
+    email: {
+      required,
+      email: 'Please enter a valid email.',
+      alreadyTaken,
+      notFound
+    },
+    username: {
+      required,
+      alphaNum: 'Please only enter alphanumeric characters',
+      alreadyTaken,
+      notFound
+    },
+    firstName: {
+      required
+    },
+    lastName: {
+      required
+    },
+    password: {
+      required,
+      incorrectPassword: 'Incorrect password.',
+      notSameAsUsername: 'Password cannot match Username.',
+      notSameAsEmail: 'Password cannot match Email.',
+      sameAsPassword: 'Passwords must match.',
+      passwordComplexity: 'Password does not match complexity requirements'
+    },
+    confirmPassword: {
+      required
+    },
+    receiveEmailNotifications: {
+      required
+    }
   }
 }

@@ -3,7 +3,7 @@ import { parse } from 'graphql'
 import { importSchema } from 'graphql-import'
 import { ApolloServer, makeExecutableSchema } from 'apollo-server'
 import { Prisma, extractFragmentReplacements } from 'prisma-binding'
-import { get, merge, pick } from 'lodash'
+import { get, merge } from 'lodash'
 import jwt from 'jsonwebtoken'
 import { CronJob } from 'cron'
 
@@ -54,9 +54,6 @@ const graphqlServer = new ApolloServer({
     }
 
     return context
-  },
-  formatError: error => {
-    return pick(error.originalError, 'type', 'field')
   },
   engine: {
     apiKey: config.apolloEngineAPIKey

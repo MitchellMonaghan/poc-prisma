@@ -88,16 +88,16 @@ import { required, alphaNum, email, not, sameAs, hasServerError } from 'src/vali
 export default {
   data () {
     return {
-      usernameLabel: this.$t('labels.username'),
+      usernameLabel: this.$t('formFields.username'),
       usernameFieldKey: 'username',
 
-      emailLabel: this.$t('labels.email'),
+      emailLabel: this.$t('formFields.email'),
       emailFieldKey: 'email',
 
-      passwordLabel: this.$t('labels.password'),
+      passwordLabel: this.$t('formFields.password'),
       passwordFieldKey: 'password',
 
-      confirmPasswordLabel: this.$t('labels.confirmPassword'),
+      confirmPasswordLabel: this.$t('formFields.confirmPassword'),
       confirmPasswordFieldKey: 'confirmPassword',
 
       form: {

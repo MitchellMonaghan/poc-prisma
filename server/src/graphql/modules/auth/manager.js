@@ -28,17 +28,13 @@ const authenticateUser = async (root, args, context, info) => {
   const user = await getUser(root, { where: { username } }, context)
 
   if (!user || (user && !user.confirmed)) {
-    error({ type: errorTypes.notFound, field: 'username' })
+    return error({ type: errorTypes.notFound, field: 'username' })
   }
 
   const isValid = await bcrypt.compare(password, user.password)
 
   if (!isValid) {
-    return new UserInputError(errorText.incorrectPassword(), {
-      invalidArgs: [
-        'password'
-      ]
-    })
+    return error({ type: errorTypes.incorrectPassword, field: 'password' })
   }
 
   return generateJWT(user)

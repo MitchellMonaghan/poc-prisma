@@ -120,21 +120,21 @@ import { required, alphaNum, not, sameAs, hasServerError } from 'src/validators'
 export default {
   data () {
     return {
-      receiveEmailNotificationsLabel: this.$t('labels.receiveEmailNotifications'),
+      receiveEmailNotificationsLabel: this.$t('formFields.receiveEmailNotifications'),
 
-      usernameLabel: this.$t('labels.username'),
+      usernameLabel: this.$t('formFields.username'),
       usernameFieldKey: 'username',
 
-      firstNameLabel: this.$t('labels.firstName'),
+      firstNameLabel: this.$t('formFields.firstName'),
       firstNameFieldKey: 'firstName',
 
-      lastNameLabel: this.$t('labels.lastName'),
+      lastNameLabel: this.$t('formFields.lastName'),
       lastNameFieldKey: 'lastName',
 
-      passwordLabel: this.$t('labels.password'),
+      passwordLabel: this.$t('formFields.password'),
       passwordFieldKey: 'password',
 
-      confirmPasswordLabel: this.$t('labels.confirmPassword'),
+      confirmPasswordLabel: this.$t('formFields.confirmPassword'),
       confirmPasswordFieldKey: 'confirmPassword',
 
       saveLabel: this.$t('buttons.save'),
