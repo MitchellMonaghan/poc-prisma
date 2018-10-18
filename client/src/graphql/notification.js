@@ -6,7 +6,10 @@ const init = (apollo, store) => {
       query($where: NotificationWhereInput!, $orderBy: NotificationOrderByInput) {
         notifications(where: $where, orderBy: $orderBy) {
           id
-          message
+          notificationType
+          data
+          linkTo
+          icon
           viewed
           createdAt
         }
@@ -19,7 +22,10 @@ const init = (apollo, store) => {
       mutation updateNotification($where: NotificationWhereUniqueInput!, $data: NotificationUpdateInput!) {
         updateNotification(where: $where, data: $data) {
           id
-          message
+          notificationType
+          data
+          linkTo
+          icon
           viewed
           createdAt
         }
@@ -46,7 +52,10 @@ const init = (apollo, store) => {
           }
           node {
             id
-            message
+            notificationType
+            data
+            linkTo
+            icon
             viewed
             createdAt
           }

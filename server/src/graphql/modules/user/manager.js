@@ -2,9 +2,8 @@ import { ForbiddenError } from 'apollo-server'
 import { hashPassword } from '@services/jwt'
 import { Joi, errorText, errorTypes, error } from '@services/joi'
 import { find, pick, first } from 'lodash'
-import mailer from '@services/mailer'
 
-import { notificationText, createNotification } from '@modules/notification/manager'
+import { userSettingsUpdatedNotification } from '@modules/notification/manager'
 import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 
 const createUser = async (root, args, context, info) => {
@@ -160,13 +159,7 @@ const updateUser = async (root, args, context, info) => {
     data
   }, info)
 
-  const userSettingsUpdatedNotificationData = {
-    recipient: userToBeUpdated,
-    message: notificationText.userSettingsUpdated(),
-    mailerArgs: [mailer.emailEnum.userSettingsUpdated, [userToBeUpdated.email], userToBeUpdated]
-  }
-
-  createNotification(root, userSettingsUpdatedNotificationData, context, info)
+  await userSettingsUpdatedNotification(root, { recipient: userToBeUpdated }, context, info)
 
   return updatedUser
 }

@@ -21,6 +21,14 @@ export default {
     logout: 'Logout'
   },
 
+  notifications: {
+    welcome: 'Welcome to productName!',
+    inviteAccepted: '{invitee} has accepted your invite to productName!',
+    passwordChanged: 'Your password has been updated.',
+    userSettingsUpdated: 'Your settings have been updated.',
+    pleaseUpdateYourPassword: 'Please update your password.'
+  },
+
   toastMessages: {
     userSettingsUpdated: 'Your user settings have been updated.',
     passwordUpdated: 'Your password has been updated.',

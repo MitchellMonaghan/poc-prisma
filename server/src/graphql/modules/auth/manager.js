@@ -6,8 +6,13 @@ import { hashPassword, generateJWT } from '@services/jwt'
 import { Joi, errorTypes, error } from '@services/joi'
 import mailer from '@services/mailer'
 
-import { notificationText, createNotification } from '@modules/notification/manager'
-import { createUser, getUser, getUserDisplayName } from '@modules/user/manager'
+import {
+  inviteAcceptedNotification,
+  pleaseUpdateYourPasswordNotification,
+  welcomeNotification,
+  passwordChangedNotification
+} from '@modules/notification/manager'
+import { createUser, getUser } from '@modules/user/manager'
 
 // Private functions
 
@@ -116,22 +121,12 @@ const verifyEmail = async (root, args, context, info) => {
   if (!user.confirmed) {
     if (context.decodedToken.user.inviter) {
       const inviter = await prisma.query.user({ where: { id: context.decodedToken.user.inviter } })
-      const inviteeDisplayName = await getUserDisplayName(user)
 
-      const inviteAcceptedNotificationData = {
-        recipient: inviter,
-        message: notificationText.inviteAccepted(inviteeDisplayName),
-        mailerArgs: [mailer.emailEnum.inviteAccepted, [inviter.email], { invitee: user, inviter }]
-      }
-      createNotification(root, inviteAcceptedNotificationData, context, info)
+      await inviteAcceptedNotification(root, { inviter, invitee: user }, context, info)
+      await pleaseUpdateYourPasswordNotification(root, { recipient: user }, context, info)
     }
 
-    const welcomeNotificationData = {
-      recipient: user,
-      message: notificationText.welcome()
-    }
-
-    createNotification(root, welcomeNotificationData, context, info)
+    await welcomeNotification(root, { recipient: user }, context, info)
   }
 
   return 'Success'
@@ -157,13 +152,7 @@ const changePassword = async (root, args, context, info) => {
     }
   })
 
-  const passwordChangedNotificationData = {
-    recipient: updatedUser,
-    message: notificationText.passwordChanged(),
-    mailerArgs: [mailer.emailEnum.passwordChanged, [updatedUser.email], updatedUser]
-  }
-
-  createNotification(root, passwordChangedNotificationData, context, info)
+  await passwordChangedNotification(root, { recipient: updatedUser }, context, info)
 
   return generateJWT(updatedUser)
 }

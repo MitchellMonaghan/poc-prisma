@@ -1,25 +1,92 @@
-import config from '@config'
 import { Joi } from '@services/joi'
 import { pick } from 'lodash'
 import mailer from '@services/mailer'
 
 import { checkPermissionsAndProtectedFields } from '@modules/permission/manager'
+import { getUserDisplayName } from '@modules/user/manager'
 
-const notificationText = {
-  welcome: () => `Welcome to ${config.productName}!`,
-  inviteAccepted: (invitee) => `${invitee} has accepted your invite to ${config.productName}!`,
-  passwordChanged: () => `Your password has been updated.`,
-  userSettingsUpdated: () => `Your settings have been updated.`
+const welcomeNotification = async (root, args, context, info) => {
+  const {
+    recipient
+  } = args
+
+  const welcomeNotificationData = {
+    recipient,
+    notificationType: 'welcome'
+  }
+
+  createNotification(root, welcomeNotificationData, context, info)
+}
+
+const inviteAcceptedNotification = async (root, args, context, info) => {
+  const { inviter, invitee } = args
+
+  const inviteAcceptedNotificationData = {
+    recipient: inviter,
+    notificationType: 'inviteAccepted',
+    data: {
+      invitee: getUserDisplayName(invitee)
+    },
+    mailerArgs: [mailer.emailEnum.inviteAccepted, [inviter.email], { invitee, inviter }]
+  }
+
+  createNotification(root, inviteAcceptedNotificationData, context, info)
+}
+
+const passwordChangedNotification = async (root, args, context, info) => {
+  const { recipient } = args
+
+  const passwordChangedNotificationData = {
+    recipient,
+    notificationType: 'passwordChanged',
+    mailerArgs: [mailer.emailEnum.passwordChanged, [recipient.email], recipient]
+  }
+
+  createNotification(root, passwordChangedNotificationData, context, info)
+}
+
+const userSettingsUpdatedNotification = async (root, args, context, info) => {
+  const { recipient } = args
+
+  const userSettingsUpdatedNotificationData = {
+    recipient,
+    notificationType: 'userSettingsUpdated',
+    mailerArgs: [mailer.emailEnum.userSettingsUpdated, [recipient.email], recipient]
+  }
+
+  createNotification(root, userSettingsUpdatedNotificationData, context, info)
+}
+
+const pleaseUpdateYourPasswordNotification = async (root, args, context, info) => {
+  const { recipient } = args
+
+  const pleaseChangeYourPasswordNotificationData = {
+    recipient,
+    notificationType: 'pleaseUpdateYourPassword',
+    linkTo: 'changePassword'
+  }
+
+  createNotification(root, pleaseChangeYourPasswordNotificationData, context, info)
 }
 
 const createNotification = async (root, args, context, info) => {
   const { prisma } = context
-  const { recipient, message, mailerArgs } = args
+  const {
+    notificationType,
+    data,
+    linkTo,
+    icon,
+    recipient,
+    mailerArgs
+  } = args
 
   await prisma.mutation.createNotification({
     data: {
-      createdBy: { connect: { id: recipient.id } },
-      message
+      notificationType,
+      data,
+      linkTo,
+      icon,
+      createdBy: { connect: { id: recipient.id } }
     }
   })
 
@@ -87,7 +154,11 @@ const deleteNotification = async (root, args, context, info) => {
 }
 
 const publicProps = {
-  notificationText,
+  welcomeNotification,
+  inviteAcceptedNotification,
+  passwordChangedNotification,
+  userSettingsUpdatedNotification,
+  pleaseUpdateYourPasswordNotification,
 
   createNotification,
   getNotifications,

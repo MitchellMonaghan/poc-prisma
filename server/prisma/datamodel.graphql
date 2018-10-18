@@ -42,7 +42,9 @@ enum PermissionAccessLevel {
 type Notification {
   id: ID! @unique
   notificationType: NotificationType!
-  data: String!
+  data: String! #data is a json object that includes any info needed to help populate the i18n notification text
+  linkTo: String, #this string should just be the name of the page, server should not determine routes for client
+  icon: String,
   viewed: Boolean! @default(value: "false")
   createdBy: User! @relation(name: "UserNotifications")
   createdAt: DateTime!
@@ -53,4 +55,5 @@ enum NotificationType {
   INVITE_ACCEPTED
   PASSWORD_CHANGED
   USER_SETTINGS_UPDATED
+  PLEASE_CHANGE_YOUR_PASSWORD
 }

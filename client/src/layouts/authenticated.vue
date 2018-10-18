@@ -41,9 +41,9 @@
                 :class="notification.viewed ? '' : `bg-blue-3`"
                 link
               >
-                <q-item-side icon="settings" inverted color="primary" />
+                <q-item-side :icon="notification.icon ? notification.icon : 'settings'" inverted color="primary" />
                 <q-item-main>
-                  <q-item-tile label>{{notification.message}}</q-item-tile>
+                  <q-item-tile label>{{$t(`notifications.${notification.notificationType}`, notification.data)}}</q-item-tile>
                   <q-item-tile sublabel>{{date.formatDate(notification.createdAt, dateFormat)}}</q-item-tile>
                 </q-item-main>
                 <q-item-side>
