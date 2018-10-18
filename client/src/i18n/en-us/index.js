@@ -72,8 +72,6 @@ export default {
     password: {
       required,
       incorrectPassword: 'Incorrect password.',
-      notSameAsUsername: 'Password cannot match Username.',
-      notSameAsEmail: 'Password cannot match Email.',
       sameAsPassword: 'Passwords must match.',
       passwordComplexity: 'Password does not match complexity requirements'
     },

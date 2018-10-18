@@ -80,7 +80,7 @@ export default {
 
   computed: {
     emailError () {
-      return this.$displayError(this.$v.form.email, this.emailLabel, this.emailFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.form.email, this.emailLabel, this.emailFieldKey, this.serverErrors)
     }
   },
 

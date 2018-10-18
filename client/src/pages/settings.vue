@@ -115,7 +115,7 @@
 
 <script>
 import { Notify } from 'quasar'
-import { required, alphaNum, not, sameAs, hasServerError } from 'src/validators'
+import { required, alphaNum, sameAs, hasServerError } from 'src/validators'
 
 export default {
   data () {
@@ -158,23 +158,23 @@ export default {
 
   computed: {
     usernameError () {
-      return this.$displayError(this.$v.updateUserForm.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.updateUserForm.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
     },
 
     firstNameError () {
-      return this.$displayError(this.$v.updateUserForm.firstName, this.firstNameLabel, this.firstNameFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.updateUserForm.firstName, this.firstNameLabel, this.firstNameFieldKey, this.serverErrors)
     },
 
     lastNameError () {
-      return this.$displayError(this.$v.updateUserForm.lastName, this.lastNameLabel, this.lastNameFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.updateUserForm.lastName, this.lastNameLabel, this.lastNameFieldKey, this.serverErrors)
     },
 
     passwordError () {
-      return this.$displayError(this.$v.changePasswordForm.password, this.passwordLabel, this.passwordFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.changePasswordForm.password, this.passwordLabel, this.passwordFieldKey, this.serverErrors)
     },
 
     confirmPasswordError () {
-      return this.$displayError(this.$v.changePasswordForm.confirmPassword, this.confirmPasswordLabel)
+      return this.$getError(this.$t, this.$v.changePasswordForm.confirmPassword, this.confirmPasswordLabel)
     }
   },
 
@@ -255,8 +255,6 @@ export default {
       changePasswordForm: {
         password: {
           required,
-          notSameAsUsername: not(sameAs(this.usernameFieldKey)),
-          notSameAsEmail: not(sameAs(this.emailFieldKey)),
           sameAsPassword: sameAs(this.confirmPasswordFieldKey),
           hasServerError: hasServerError(this.serverErrors, this.passwordFieldKey)
         },

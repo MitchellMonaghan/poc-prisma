@@ -1,6 +1,6 @@
-import { UserInputError } from 'apollo-server'
+import { ForbiddenError } from 'apollo-server'
 import { hashPassword } from '@services/jwt'
-import { Joi, errorText } from '@services/joi'
+import { Joi, errorText, errorTypes, error } from '@services/joi'
 import { find, pick, first } from 'lodash'
 import mailer from '@services/mailer'
 
@@ -38,11 +38,7 @@ const createUser = async (root, args, context, info) => {
       })
 
       if (userNameExists) {
-        throw new UserInputError(errorText.usernameAlreadyTaken(user.username), {
-          invalidArgs: [
-            'username'
-          ]
-        })
+        return error({ type: errorTypes.alreadyTaken, field: 'username' })
       }
     } else {
       user.username = user.email
@@ -61,11 +57,7 @@ const createUser = async (root, args, context, info) => {
     })
   } else if (user && user.confirmed) {
     // If user exists and is verified, throw error
-    throw new UserInputError(errorText.emailAlreadyTaken(args.email), {
-      invalidArgs: [
-        'email'
-      ]
-    })
+    return error({ type: errorTypes.alreadyTaken, field: 'email' })
   }
 
   return user
@@ -142,11 +134,7 @@ const updateUser = async (root, args, context, info) => {
 
     // if it exists ignore it if its on the user we are updating
     if (userNameExists && where.id !== userNameExists.id) {
-      throw new UserInputError(errorText.usernameAlreadyTaken(data.username), {
-        invalidArgs: [
-          'username'
-        ]
-      })
+      return error({ type: errorTypes.alreadyTaken, field: 'username' })
     }
   } else {
     // If were defaulting to use the username already set by the user
@@ -160,11 +148,7 @@ const updateUser = async (root, args, context, info) => {
   const userUpdatePermission = find(user.permissions, { accessType: permissionAccessTypeEnum.UPDATE_USER })
 
   if (permissionAccessLevelEnum[userToBeUpdatedUpdatePermission.accessLevel].value > permissionAccessLevelEnum[userUpdatePermission.accessLevel].value) {
-    throw new UserInputError(errorText.cannotUpdateUserWithHigherPermission(), {
-      invalidArgs: [
-        'id'
-      ]
-    })
+    throw new ForbiddenError(errorText.cannotUpdateUserWithHigherPermission())
   }
 
   Joi.validate(data, dataSchemaValidation)

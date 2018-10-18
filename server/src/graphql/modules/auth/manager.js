@@ -1,10 +1,9 @@
 import config from '@config'
 import uuid from 'uuid/v4'
 import bcrypt from 'bcrypt'
-import { UserInputError } from 'apollo-server'
 
 import { hashPassword, generateJWT } from '@services/jwt'
-import { Joi, errorText, errorTypes, error } from '@services/joi'
+import { Joi, errorTypes, error } from '@services/joi'
 import mailer from '@services/mailer'
 
 import { notificationText, createNotification } from '@modules/notification/manager'
@@ -57,11 +56,7 @@ const forgotPassword = async (root, args, context, info) => {
   const user = await getUser(root, { where: { email } }, context)
 
   if (!user || (user && !user.confirmed)) {
-    throw new UserInputError(errorText.userNotFound(), {
-      invalidArgs: [
-        'email'
-      ]
-    })
+    return error({ type: errorTypes.notFound, field: 'email' })
   }
 
   user.forgotPasswordToken = await generateJWT(user)

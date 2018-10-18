@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { required, alphaNum, email, not, sameAs, hasServerError } from 'src/validators'
+import { required, alphaNum, email, sameAs, hasServerError } from 'src/validators'
 
 export default {
   data () {
@@ -113,19 +113,19 @@ export default {
 
   computed: {
     usernameError () {
-      return this.$displayError(this.$v.form.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.form.username, this.usernameLabel, this.usernameFieldKey, this.serverErrors)
     },
 
     emailError () {
-      return this.$displayError(this.$v.form.email, this.emailLabel, this.emailFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.form.email, this.emailLabel, this.emailFieldKey, this.serverErrors)
     },
 
     passwordError () {
-      return this.$displayError(this.$v.form.password, this.passwordLabel, this.passwordFieldKey, this.serverErrors)
+      return this.$getError(this.$t, this.$v.form.password, this.passwordLabel, this.passwordFieldKey, this.serverErrors)
     },
 
     confirmPasswordError () {
-      return this.$displayError(this.$v.form.confirmPassword, this.confirmPasswordLabel)
+      return this.$getError(this.$t, this.$v.form.confirmPassword, this.confirmPasswordLabel)
     }
   },
 
@@ -159,8 +159,6 @@ export default {
         email: { required, email, hasServerError: hasServerError(this.serverErrors, this.emailFieldKey) },
         password: {
           required,
-          notSameAsUsername: not(sameAs(this.usernameFieldKey)),
-          notSameAsEmail: not(sameAs(this.emailFieldKey)),
           sameAsPassword: sameAs(this.confirmPasswordFieldKey),
           hasServerError: hasServerError(this.serverErrors, this.passwordFieldKey)
         },
