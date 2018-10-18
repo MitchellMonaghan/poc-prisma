@@ -82,8 +82,7 @@ const checkPermissions = async (entityBeingUpdated, args, context, info) => {
       }
 
       const isOwner = entityBeingUpdated.createdBy.id === user.id
-      const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
-      const usersPermissionAccessLevel = permissionAccessLevelEnum[updatePermission.accessLevel].value
+      const usersPermissionAccessLevel = getPermisionAccessLevel(entityUpdatePermissionName, user)
 
       if (usersPermissionAccessLevel === permissionAccessLevelEnum.NONE.value) {
         throw new ForbiddenError(errorText.noAccessUpdate(entityType))
@@ -123,15 +122,18 @@ const checkProtectedFields = async (entityBeingUpdated, args, context, info) => 
       if (protectedDirective.arguments.length === 0 || updatePermissionSpecified) {
         // Check if user has admin update or is owner
         const isOwner = entityBeingUpdated.createdBy.id === user.id
-        const updatePermission = find(user.permissions, { accessType: entityUpdatePermissionName })
-        const usersPermissionAccessLevel = permissionAccessLevelEnum[updatePermission.accessLevel].value
 
-        if (!(isOwner || usersPermissionAccessLevel >= permissionAccessLevelEnum.ADMIN.value)) {
+        if (!(isOwner || getPermisionAccessLevel(entityUpdatePermissionName, user) >= permissionAccessLevelEnum.ADMIN.value)) {
           throw new ForbiddenError(errorText.protectedFieldUpdate(field))
         }
       }
     }
   })
+}
+
+const getPermisionAccessLevel = (accessType, user) => {
+  const permission = find(user.permissions, { accessType })
+  return permissionAccessLevelEnum[permission.accessLevel].value
 }
 
 const updatePermission = async (root, args, context, info) => {
@@ -146,6 +148,7 @@ const publicProps = {
   addFragmentToFieldResolvers,
   checkPermissionsAndProtectedFields,
 
+  getPermisionAccessLevel,
   updatePermission
 }
 

@@ -1,7 +1,6 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
-import { find } from 'lodash'
-import { permissionAccessLevelEnum } from '@modules/permission/manager'
+import { permissionAccessLevelEnum, getPermisionAccessLevel } from '@modules/permission/manager'
 import { errorText } from '@services/joi'
 
 class requiresPermission extends SchemaDirectiveVisitor {
@@ -32,10 +31,7 @@ class requiresPermission extends SchemaDirectiveVisitor {
       const permissionTypeRequired = this.args.permission
       const accessLevelRequired = permissionAccessLevelEnum[this.args.accessLevel].value
 
-      const usersPermission = find(user.permissions, { accessType: permissionTypeRequired })
-      const usersPermissionAccessLevel = permissionAccessLevelEnum[usersPermission.accessLevel].value
-
-      if (usersPermissionAccessLevel < accessLevelRequired) {
+      if (getPermisionAccessLevel(permissionTypeRequired, user) < accessLevelRequired) {
         throw new ForbiddenError(errorText.requiresPermission(field.fieldName, this.args.permission, this.args.accessLevel))
       } else {
         return resolve ? resolve.apply(this, args) : parent[field.fieldName]

@@ -1,10 +1,10 @@
 import { ForbiddenError } from 'apollo-server'
 import { hashPassword } from '@services/jwt'
 import { Joi, errorText, errorTypes, error } from '@services/joi'
-import { find, pick, first } from 'lodash'
+import { pick, first } from 'lodash'
 
 import { userSettingsUpdatedNotification } from '@modules/notification/manager'
-import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields } from '@modules/permission/manager'
+import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields, getPermisionAccessLevel } from '@modules/permission/manager'
 
 const createUser = async (root, args, context, info) => {
   const { prisma } = context
@@ -143,10 +143,7 @@ const updateUser = async (root, args, context, info) => {
     data.username = userToBeUpdated.username
   }
 
-  const userToBeUpdatedUpdatePermission = find(userToBeUpdated.permissions, { accessType: permissionAccessTypeEnum.UPDATE_USER })
-  const userUpdatePermission = find(user.permissions, { accessType: permissionAccessTypeEnum.UPDATE_USER })
-
-  if (permissionAccessLevelEnum[userToBeUpdatedUpdatePermission.accessLevel].value > permissionAccessLevelEnum[userUpdatePermission.accessLevel].value) {
+  if (getPermisionAccessLevel(permissionAccessTypeEnum.UPDATE_USER, userToBeUpdated) > getPermisionAccessLevel(permissionAccessTypeEnum.UPDATE_USER, user)) {
     throw new ForbiddenError(errorText.cannotUpdateUserWithHigherPermission())
   }
 

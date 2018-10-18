@@ -1,7 +1,7 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
-import { get, find } from 'lodash'
-import { permissionAccessLevelEnum } from '@modules/permission/manager'
+import { get } from 'lodash'
+import { permissionAccessLevelEnum, getPermisionAccessLevel } from '@modules/permission/manager'
 import { isRootObject } from './directiveHelper'
 
 import { errorText } from '@services/joi'
@@ -36,12 +36,9 @@ class protectedField extends SchemaDirectiveVisitor {
       const entityReadPermission = `READ_${parentTypeName.toUpperCase()}`
       const permissionRequired = get(this, 'args.permission') ? this.args.permission : entityReadPermission
 
-      const usersPermission = find(user.permissions, { accessType: permissionRequired })
-      const usersPermissionAccessLevel = permissionAccessLevelEnum[usersPermission.accessLevel].value
-
       const isOwner = await this.isOwner(...args)
 
-      if (isOwner || usersPermissionAccessLevel >= permissionAccessLevelEnum.ADMIN.value) {
+      if (isOwner || getPermisionAccessLevel(permissionRequired, user) >= permissionAccessLevelEnum.ADMIN.value) {
         return resolve ? resolve.apply(this, args) : parent[field.fieldName]
       } else {
         throw new ForbiddenError(errorText.protectedFieldRead(field.fieldName))

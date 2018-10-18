@@ -1,7 +1,7 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
-import { get, find } from 'lodash'
-import { permissionAccessLevelEnum } from '@modules/permission/manager'
+import { get } from 'lodash'
+import { permissionAccessLevelEnum, getPermisionAccessLevel } from '@modules/permission/manager'
 import { errorText } from '@services/joi'
 
 // TODO: Implement a resolver that will check the users permission to know if
@@ -38,8 +38,7 @@ class usePermissions extends SchemaDirectiveVisitor {
         return resolve ? resolve.apply(this, args) : parent[field.fieldName]
       }
 
-      const usersPermission = find(user.permissions, { accessType: permissionTypeRequired })
-      const usersPermissionAccessLevel = permissionAccessLevelEnum[usersPermission.accessLevel].value
+      const usersPermissionAccessLevel = getPermisionAccessLevel(permissionTypeRequired, user)
 
       if (usersPermissionAccessLevel === permissionAccessLevelEnum.NONE.value) {
         throw new ForbiddenError(errorText.noAccessRead(parentTypeName))
