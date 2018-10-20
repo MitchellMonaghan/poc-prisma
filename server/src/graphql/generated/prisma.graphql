@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/mitchell-monaghan-704942/poc-prisma/dev
-# timestamp: Mon Oct 08 2018 11:49:09 GMT-0500 (Central Daylight Time)
+# timestamp: Thu Oct 18 2018 17:44:00 GMT-0500 (Central Daylight Time)
 
 type AggregateNotification {
   count: Int!
@@ -61,9 +61,10 @@ interface Node {
 
 type Notification implements Node {
   id: ID!
-  createdBy: User!
-  message: String!
+  notificationType: NotificationType!
+  data: String!
   viewed: Boolean!
+  createdBy: User!
   createdAt: DateTime!
 }
 
@@ -78,7 +79,8 @@ type NotificationConnection {
 }
 
 input NotificationCreateInput {
-  message: String!
+  notificationType: NotificationType!
+  data: String
   viewed: Boolean
   createdBy: UserCreateOneWithoutNotificationsInput!
 }
@@ -89,7 +91,8 @@ input NotificationCreateManyWithoutCreatedByInput {
 }
 
 input NotificationCreateWithoutCreatedByInput {
-  message: String!
+  notificationType: NotificationType!
+  data: String
   viewed: Boolean
 }
 
@@ -105,8 +108,10 @@ type NotificationEdge {
 enum NotificationOrderByInput {
   id_ASC
   id_DESC
-  message_ASC
-  message_DESC
+  notificationType_ASC
+  notificationType_DESC
+  data_ASC
+  data_DESC
   viewed_ASC
   viewed_DESC
   createdAt_ASC
@@ -117,7 +122,8 @@ enum NotificationOrderByInput {
 
 type NotificationPreviousValues {
   id: ID!
-  message: String!
+  notificationType: NotificationType!
+  data: String!
   viewed: Boolean!
   createdAt: DateTime!
 }
@@ -161,8 +167,17 @@ input NotificationSubscriptionWhereInput {
   node: NotificationWhereInput
 }
 
+enum NotificationType {
+  WELCOME
+  INVITE_ACCEPTED
+  PASSWORD_CHANGED
+  USER_SETTINGS_UPDATED
+  PLEASE_CHANGE_YOUR_PASSWORD
+}
+
 input NotificationUpdateInput {
-  message: String
+  notificationType: NotificationType
+  data: String
   viewed: Boolean
   createdBy: UserUpdateOneRequiredWithoutNotificationsInput
 }
@@ -177,7 +192,8 @@ input NotificationUpdateManyWithoutCreatedByInput {
 }
 
 input NotificationUpdateWithoutCreatedByDataInput {
-  message: String
+  notificationType: NotificationType
+  data: String
   viewed: Boolean
 }
 
@@ -241,46 +257,56 @@ input NotificationWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  message: String
+  notificationType: NotificationType
 
   """All values that are not equal to given value."""
-  message_not: String
+  notificationType_not: NotificationType
 
   """All values that are contained in given list."""
-  message_in: [String!]
+  notificationType_in: [NotificationType!]
 
   """All values that are not contained in given list."""
-  message_not_in: [String!]
+  notificationType_not_in: [NotificationType!]
+  data: String
+
+  """All values that are not equal to given value."""
+  data_not: String
+
+  """All values that are contained in given list."""
+  data_in: [String!]
+
+  """All values that are not contained in given list."""
+  data_not_in: [String!]
 
   """All values less than the given value."""
-  message_lt: String
+  data_lt: String
 
   """All values less than or equal the given value."""
-  message_lte: String
+  data_lte: String
 
   """All values greater than the given value."""
-  message_gt: String
+  data_gt: String
 
   """All values greater than or equal the given value."""
-  message_gte: String
+  data_gte: String
 
   """All values containing the given string."""
-  message_contains: String
+  data_contains: String
 
   """All values not containing the given string."""
-  message_not_contains: String
+  data_not_contains: String
 
   """All values starting with the given string."""
-  message_starts_with: String
+  data_starts_with: String
 
   """All values not starting with the given string."""
-  message_not_starts_with: String
+  data_not_starts_with: String
 
   """All values ending with the given string."""
-  message_ends_with: String
+  data_ends_with: String
 
   """All values not ending with the given string."""
-  message_not_ends_with: String
+  data_not_ends_with: String
   viewed: Boolean
 
   """All values that are not equal to given value."""

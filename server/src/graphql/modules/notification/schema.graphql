@@ -1,8 +1,9 @@
 type Notification @usePermissions {
   id: ID!
-  createdBy: User!
-  message: String!
+  notificationType: NotificationType!
+  data: String!
   viewed: Boolean!
+  createdBy: User!
   createdAt: DateTime!
 }
 

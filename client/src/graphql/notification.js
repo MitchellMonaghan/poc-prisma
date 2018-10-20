@@ -8,8 +8,6 @@ const init = (apollo, store) => {
           id
           notificationType
           data
-          linkTo
-          icon
           viewed
           createdAt
         }
@@ -24,8 +22,6 @@ const init = (apollo, store) => {
           id
           notificationType
           data
-          linkTo
-          icon
           viewed
           createdAt
         }
@@ -54,8 +50,6 @@ const init = (apollo, store) => {
             id
             notificationType
             data
-            linkTo
-            icon
             viewed
             createdAt
           }

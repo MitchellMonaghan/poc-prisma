@@ -5,6 +5,14 @@ import mailer from '@services/mailer'
 import { checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 import { getUserDisplayName } from '@modules/user/manager'
 
+const notificationTypes = {
+  WELCOME: 'WELCOME',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  PASSWORD_CHANGED: 'PASSWORD_CHANGED',
+  USER_SETTINGS_UPDATED: 'USER_SETTINGS_UPDATED',
+  PLEASE_CHANGE_YOUR_PASSWORD: 'PLEASE_CHANGE_YOUR_PASSWORD'
+}
+
 const welcomeNotification = async (root, args, context, info) => {
   const {
     recipient
@@ -12,7 +20,7 @@ const welcomeNotification = async (root, args, context, info) => {
 
   const welcomeNotificationData = {
     recipient,
-    notificationType: 'welcome'
+    notificationType: notificationTypes.WELCOME
   }
 
   createNotification(root, welcomeNotificationData, context, info)
@@ -20,13 +28,14 @@ const welcomeNotification = async (root, args, context, info) => {
 
 const inviteAcceptedNotification = async (root, args, context, info) => {
   const { inviter, invitee } = args
+  const inviteeDisplayName = await getUserDisplayName(invitee)
 
   const inviteAcceptedNotificationData = {
     recipient: inviter,
-    notificationType: 'inviteAccepted',
-    data: {
-      invitee: getUserDisplayName(invitee)
-    },
+    notificationType: notificationTypes.INVITE_ACCEPTED,
+    data: JSON.stringify({
+      invitee: inviteeDisplayName
+    }),
     mailerArgs: [mailer.emailEnum.inviteAccepted, [inviter.email], { invitee, inviter }]
   }
 
@@ -38,7 +47,7 @@ const passwordChangedNotification = async (root, args, context, info) => {
 
   const passwordChangedNotificationData = {
     recipient,
-    notificationType: 'passwordChanged',
+    notificationType: notificationTypes.PASSWORD_CHANGED,
     mailerArgs: [mailer.emailEnum.passwordChanged, [recipient.email], recipient]
   }
 
@@ -50,20 +59,19 @@ const userSettingsUpdatedNotification = async (root, args, context, info) => {
 
   const userSettingsUpdatedNotificationData = {
     recipient,
-    notificationType: 'userSettingsUpdated',
+    notificationType: notificationTypes.USER_SETTINGS_UPDATED,
     mailerArgs: [mailer.emailEnum.userSettingsUpdated, [recipient.email], recipient]
   }
 
   createNotification(root, userSettingsUpdatedNotificationData, context, info)
 }
 
-const pleaseUpdateYourPasswordNotification = async (root, args, context, info) => {
+const pleaseChangeYourPasswordNotification = async (root, args, context, info) => {
   const { recipient } = args
 
   const pleaseChangeYourPasswordNotificationData = {
     recipient,
-    notificationType: 'pleaseUpdateYourPassword',
-    linkTo: 'changePassword'
+    notificationType: notificationTypes.PLEASE_CHANGE_YOUR_PASSWORD
   }
 
   createNotification(root, pleaseChangeYourPasswordNotificationData, context, info)
@@ -71,21 +79,12 @@ const pleaseUpdateYourPasswordNotification = async (root, args, context, info) =
 
 const createNotification = async (root, args, context, info) => {
   const { prisma } = context
-  const {
-    notificationType,
-    data,
-    linkTo,
-    icon,
-    recipient,
-    mailerArgs
-  } = args
+  const { notificationType, data, recipient, mailerArgs } = args
 
   await prisma.mutation.createNotification({
     data: {
       notificationType,
       data,
-      linkTo,
-      icon,
       createdBy: { connect: { id: recipient.id } }
     }
   })
@@ -158,7 +157,7 @@ const publicProps = {
   inviteAcceptedNotification,
   passwordChangedNotification,
   userSettingsUpdatedNotification,
-  pleaseUpdateYourPasswordNotification,
+  pleaseChangeYourPasswordNotification,
 
   createNotification,
   getNotifications,

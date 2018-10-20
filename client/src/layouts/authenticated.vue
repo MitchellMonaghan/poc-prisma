@@ -41,9 +41,9 @@
                 :class="notification.viewed ? '' : `bg-blue-3`"
                 link
               >
-                <q-item-side :icon="notification.icon ? notification.icon : 'settings'" inverted color="primary" />
+                <q-item-side :icon="notification.icon" inverted color="primary" />
                 <q-item-main>
-                  <q-item-tile label>{{$t(`notifications.${notification.notificationType}`, notification.data)}}</q-item-tile>
+                  <q-item-tile label>{{$t(`notifications.${notification.notificationType}`, JSON.parse(notification.data))}}</q-item-tile>
                   <q-item-tile sublabel>{{date.formatDate(notification.createdAt, dateFormat)}}</q-item-tile>
                 </q-item-main>
                 <q-item-side>
@@ -114,7 +114,7 @@
 
 <script>
 import { date } from 'quasar'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'MyLayout',
@@ -144,7 +144,7 @@ export default {
       'user'
     ]),
 
-    ...mapState('notification', [
+    ...mapGetters('notification', [
       'notifications'
     ]),
 
@@ -163,8 +163,12 @@ export default {
 
     async notificationViewed (notification) {
       notification.viewed = true
-      await this.$graphql.notification.updateNotification(notification)
+      this.$graphql.notification.updateNotification(notification)
       document.activeElement.blur()
+
+      if (notification.linkTo) {
+        this.$router.push(notification.linkTo)
+      }
     },
 
     async deleteNotification (notification) {

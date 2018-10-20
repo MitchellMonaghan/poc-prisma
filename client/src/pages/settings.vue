@@ -174,7 +174,7 @@ export default {
     },
 
     confirmPasswordError () {
-      return this.$getError(this.$t, this.$v.changePasswordForm.confirmPassword, this.confirmPasswordLabel)
+      return this.$getError(this.$t, this.$v.changePasswordForm.confirmPassword, this.confirmPasswordLabel, this.confirmPasswordFieldKey)
     }
   },
 

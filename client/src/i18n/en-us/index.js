@@ -1,3 +1,6 @@
+// TODO: Replace product name with your website/product
+// This can't be in config as we want it to be supported by the i18n
+
 // generic errors
 const {
   alreadyTaken,
@@ -22,11 +25,11 @@ export default {
   },
 
   notifications: {
-    welcome: 'Welcome to productName!',
-    inviteAccepted: '{invitee} has accepted your invite to productName!',
-    passwordChanged: 'Your password has been updated.',
-    userSettingsUpdated: 'Your settings have been updated.',
-    pleaseUpdateYourPassword: 'Please update your password.'
+    WELCOME: 'Welcome to productName!',
+    INVITE_ACCEPTED: '{invitee} has accepted your invite to productName!',
+    PASSWORD_CHANGED: 'Your password has been updated.',
+    USER_SETTINGS_UPDATED: 'Your settings have been updated.',
+    PLEASE_CHANGE_YOUR_PASSWORD: 'Please update your password.'
   },
 
   toastMessages: {

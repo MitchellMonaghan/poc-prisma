@@ -8,7 +8,7 @@ import mailer from '@services/mailer'
 
 import {
   inviteAcceptedNotification,
-  pleaseUpdateYourPasswordNotification,
+  pleaseChangeYourPasswordNotification,
   welcomeNotification,
   passwordChangedNotification
 } from '@modules/notification/manager'
@@ -123,7 +123,7 @@ const verifyEmail = async (root, args, context, info) => {
       const inviter = await prisma.query.user({ where: { id: context.decodedToken.user.inviter } })
 
       await inviteAcceptedNotification(root, { inviter, invitee: user }, context, info)
-      await pleaseUpdateYourPasswordNotification(root, { recipient: user }, context, info)
+      await pleaseChangeYourPasswordNotification(root, { recipient: user }, context, info)
     }
 
     await welcomeNotification(root, { recipient: user }, context, info)

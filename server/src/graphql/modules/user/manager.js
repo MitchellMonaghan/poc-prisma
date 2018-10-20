@@ -6,7 +6,7 @@ import { pick, first } from 'lodash'
 import { userSettingsUpdatedNotification } from '@modules/notification/manager'
 import { permissionAccessTypeEnum, permissionAccessLevelEnum, checkPermissionsAndProtectedFields, getPermisionAccessLevel } from '@modules/permission/manager'
 
-const createUser = async (root, args, context, info) => {
+export const createUser = async (root, args, context, info) => {
   const { prisma } = context
 
   let user = await prisma.query.user({
@@ -62,12 +62,12 @@ const createUser = async (root, args, context, info) => {
   return user
 }
 
-const getUsers = async (root, args, context, info) => {
+export const getUsers = async (root, args, context, info) => {
   const { prisma } = context
   return prisma.query.users(args, info)
 }
 
-const getUser = async (root, args, context, info) => {
+export const getUser = async (root, args, context, info) => {
   const { prisma } = context
   const { id, username, email } = args.where
 
@@ -92,7 +92,7 @@ const getUser = async (root, args, context, info) => {
   }, info))
 }
 
-const updateUser = async (root, args, context, info) => {
+export const updateUser = async (root, args, context, info) => {
   const { prisma, user } = context
   const { where } = args
   const data = pick(args.data, 'username', 'firstName', 'lastName', 'receiveEmailNotifications')
@@ -161,12 +161,12 @@ const updateUser = async (root, args, context, info) => {
   return updatedUser
 }
 
-const getUserDisplayName = async (user) => {
+export const getUserDisplayName = async (user) => {
   const fullName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''
   return fullName || user.username
 }
 
-const publicProps = {
+export default {
   createUser,
   getUsers,
   getUser,
@@ -174,6 +174,3 @@ const publicProps = {
 
   getUserDisplayName
 }
-
-module.exports = publicProps
-export default publicProps

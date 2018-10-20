@@ -1,8 +1,42 @@
 import { extend } from 'quasar'
 import { findIndex, filter } from 'lodash'
 
+const notificationTypes = {
+  WELCOME: 'WELCOME',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  PASSWORD_CHANGED: 'PASSWORD_CHANGED',
+  USER_SETTINGS_UPDATED: 'USER_SETTINGS_UPDATED',
+  PLEASE_CHANGE_YOUR_PASSWORD: 'PLEASE_CHANGE_YOUR_PASSWORD'
+}
+
 const state = extend({}, {
   notifications: []
+})
+
+const getters = extend({}, {
+  notifications: state => state.notifications.map((notification) => {
+    notification.icon = 'settings'
+
+    switch (notification.notificationType) {
+      case notificationTypes.WELCOME:
+        break
+      case notificationTypes.INVITE_ACCEPTED:
+        notification.icon = 'fa fa-users'
+        break
+      case notificationTypes.PASSWORD_CHANGED:
+        notification.icon = 'fa fa-lock'
+        break
+      case notificationTypes.USER_SETTINGS_UPDATED:
+        notification.linkTo = { name: 'settings' }
+        break
+      case notificationTypes.PLEASE_CHANGE_YOUR_PASSWORD:
+        notification.icon = 'fa fa-lock'
+        notification.linkTo = { name: 'changePassword' }
+        break
+    }
+
+    return notification
+  })
 })
 
 const actions = extend({}, {
@@ -35,5 +69,6 @@ const actions = extend({}, {
 export default {
   namespaced: true,
   state,
+  getters,
   actions
 }

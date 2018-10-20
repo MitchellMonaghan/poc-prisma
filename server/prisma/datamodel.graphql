@@ -42,9 +42,7 @@ enum PermissionAccessLevel {
 type Notification {
   id: ID! @unique
   notificationType: NotificationType!
-  data: String! #data is a json object that includes any info needed to help populate the i18n notification text
-  linkTo: String, #this string should just be the name of the page, server should not determine routes for client
-  icon: String,
+  data: String! @default(value: "{}") #data is a json object that includes any info needed to help populate the i18n notification text
   viewed: Boolean! @default(value: "false")
   createdBy: User! @relation(name: "UserNotifications")
   createdAt: DateTime!
