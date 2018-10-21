@@ -81,12 +81,9 @@ const error = (additionalProps) => {
   throw new ApolloError('error', 'error', additionalProps)
 }
 
-const publicProps = {
+export {
   errorText,
   errorTypes,
   Joi,
   error
 }
-
-module.exports = publicProps
-export default publicProps

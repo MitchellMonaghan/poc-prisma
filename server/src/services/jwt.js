@@ -53,11 +53,8 @@ const getUserFromToken = async (prisma, token) => {
   }
 }
 
-const publicProps = {
+export {
   hashPassword,
   generateJWT,
   getUserFromToken
 }
-
-module.exports = publicProps
-export default publicProps

@@ -141,7 +141,7 @@ const updatePermission = async (root, args, context, info) => {
   prisma.mutation.updatePermission(args, info)
 }
 
-const publicProps = {
+export {
   permissionAccessTypeEnum,
   permissionAccessLevelEnum,
 
@@ -151,6 +151,3 @@ const publicProps = {
   getPermisionAccessLevel,
   updatePermission
 }
-
-module.exports = publicProps
-export default publicProps

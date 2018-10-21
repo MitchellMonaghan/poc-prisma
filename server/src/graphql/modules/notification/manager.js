@@ -1,6 +1,6 @@
 import { Joi } from '@services/joi'
 import { pick } from 'lodash'
-import mailer from '@services/mailer'
+import * as mailer from '@services/mailer'
 
 import { checkPermissionsAndProtectedFields } from '@modules/permission/manager'
 import { getUserDisplayName } from '@modules/user/manager'
@@ -152,7 +152,7 @@ const deleteNotification = async (root, args, context, info) => {
   return notificationToBeDeleted
 }
 
-const publicProps = {
+export {
   welcomeNotification,
   inviteAcceptedNotification,
   passwordChangedNotification,
@@ -164,6 +164,3 @@ const publicProps = {
   updateNotification,
   deleteNotification
 }
-
-module.exports = publicProps
-export default publicProps

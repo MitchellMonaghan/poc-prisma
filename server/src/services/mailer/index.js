@@ -31,10 +31,7 @@ Object.keys(emailTemplates).forEach(key => {
   emailEnum[key] = key
 })
 
-const publicProps = {
+export {
   emailEnum,
   sendEmail
 }
-
-module.exports = publicProps
-export default publicProps

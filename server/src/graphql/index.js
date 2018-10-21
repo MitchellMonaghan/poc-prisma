@@ -12,7 +12,7 @@ import { verifyEmail } from '@modules/auth/manager'
 import { addFragmentToFieldResolvers } from '@modules/permission/manager'
 
 import { resolvers as rootResolvers } from './resolvers'
-import schemaDirectives from './directives'
+import * as schemaDirectives from './directives'
 
 const typeDefs = importSchema('./src/graphql/schema/schema.graphql')
 const dataModel = importSchema('./src/graphql/schema/dataModel.graphql')

@@ -37,10 +37,8 @@ const loadFolder = (folderPath) => {
   return modules
 }
 // End public functions
-const publicProps = {
+
+export {
   loadModules,
   loadFolder
 }
-
-module.exports = publicProps
-export default publicProps

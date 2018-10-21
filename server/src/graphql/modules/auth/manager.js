@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 
 import { hashPassword, generateJWT } from '@services/jwt'
 import { Joi, errorTypes, error } from '@services/joi'
-import mailer from '@services/mailer'
+import * as mailer from '@services/mailer'
 
 import {
   inviteAcceptedNotification,
@@ -158,7 +158,7 @@ const changePassword = async (root, args, context, info) => {
 }
 // End public functions
 
-const publicProps = {
+export {
   authenticateUser,
   refreshToken,
   forgotPassword,
@@ -168,6 +168,3 @@ const publicProps = {
   verifyEmail,
   changePassword
 }
-
-module.exports = publicProps
-export default publicProps

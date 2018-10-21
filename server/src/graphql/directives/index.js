@@ -3,12 +3,9 @@ import requiresPermission from './requiresPermission'
 import usePermissions from './usePermissions'
 import protectedField from './protected'
 
-const publicProps = {
+export {
   isAuthenticated,
   requiresPermission,
   usePermissions,
-  protected: protectedField
+  protectedField as protected
 }
-
-module.exports = publicProps
-export default publicProps

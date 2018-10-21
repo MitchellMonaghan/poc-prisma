@@ -1,4 +1,4 @@
-import manager from './manager'
+import * as manager from './manager'
 
 export default {
   Query: {
