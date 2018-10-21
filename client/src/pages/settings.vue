@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-center">
+  <div class="col-11">
     <div class="q-headline col-11 q-mt-md">{{$t('headings.profileSettings')}}</div>
 
     <q-field

@@ -106,8 +106,18 @@
       </q-list>
     </q-layout-drawer>
 
-    <q-page-container class="q-mb-lg">
-      <router-view />
+    <q-page-container>
+      <q-page class="row justify-center relative-position">
+        <transition
+          enter-active-class="animated fadeInDown"
+          mode="out-in"
+        >
+          <router-view v-if="!loading" />
+        </transition>
+
+        <q-inner-loading color="primary" :visible="loading">
+        </q-inner-loading>
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
@@ -122,11 +132,14 @@ export default {
     return {
       date,
       dateFormat: 'h:mm A MMM D, YYYY',
-      leftDrawerOpen: this.$q.platform.is.desktop
+      leftDrawerOpen: this.$q.platform.is.desktop,
+      loading: true
     }
   },
 
   async created () {
+    this.loading = true
+
     // I don't think user subscription is needed only the current
     // user is only to be making changes to these types of props
     // await this.$graphql.user.subscribeToUsers(this.user.id)
@@ -137,6 +150,8 @@ export default {
     // Notifications
     await this.$graphql.notification.getNotifications(this.user.id)
     await this.$graphql.notification.subscribeToNotifications(this.user.id)
+
+    this.loading = false
   },
 
   computed: {
