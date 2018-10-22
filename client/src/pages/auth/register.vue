@@ -1,84 +1,82 @@
 <template>
-  <div class="row">
-    <div class="row col-12 justify-center">
-      <form class="row col-lg-4 col-11" style="margin-top:20vh">
-        <!-- Username -->
-          <q-field
-            class="row col-12 q-mt-md"
-            :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
-            :error="$v.form.username.$error"
-            :error-label="usernameError"
-          >
-            <q-input
-              v-model.trim="form.username"
-              :float-label="usernameLabel"
-              @blur="onFieldBlur(usernameFieldKey)"
-              @keyup.enter="onSubmit"
+  <div class="flex flex-center row col-12">
+    <form class="row col-lg-4 col-md-8 col-11">
+      <!-- Username -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
+          :error="$v.form.username.$error"
+          :error-label="usernameError"
+        >
+          <q-input
+            v-model.trim="form.username"
+            :float-label="usernameLabel"
+            @blur="onFieldBlur(usernameFieldKey)"
+            @keyup.enter="onSubmit"
 
-              autocomplete="username"
-            />
-          </q-field>
-        <!-- End username -->
+            autocomplete="username"
+          />
+        </q-field>
+      <!-- End username -->
 
-        <!-- Email -->
-          <q-field
-            class="row col-12 q-mt-md"
-            :label="$q.platform.is.mobile ? null : `${emailLabel}:`"
-            :error="$v.form.email.$error"
-            :error-label="emailError"
-          >
-            <q-input
-              v-model.trim="form.email"
-              :float-label="emailLabel"
-              @blur="onFieldBlur(emailFieldKey)"
-              @keyup.enter="onSubmit"
+      <!-- Email -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${emailLabel}:`"
+          :error="$v.form.email.$error"
+          :error-label="emailError"
+        >
+          <q-input
+            v-model.trim="form.email"
+            :float-label="emailLabel"
+            @blur="onFieldBlur(emailFieldKey)"
+            @keyup.enter="onSubmit"
 
-              autocomplete="email"
-            />
-          </q-field>
-        <!-- End email -->
+            autocomplete="email"
+          />
+        </q-field>
+      <!-- End email -->
 
-        <!-- Password -->
-          <q-field
-            class="row col-12 q-mt-md"
-            :label="$q.platform.is.mobile ? null : `${passwordLabel}:`"
-            :error="$v.form.password.$error"
-            :error-label="passwordError"
-          >
-            <q-input
-              type="password"
-              v-model.trim="form.password"
-              :float-label="passwordLabel"
-              @blur="onFieldBlur(passwordFieldKey)"
-              @keyup.enter="onSubmit"
+      <!-- Password -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${passwordLabel}:`"
+          :error="$v.form.password.$error"
+          :error-label="passwordError"
+        >
+          <q-input
+            type="password"
+            v-model.trim="form.password"
+            :float-label="passwordLabel"
+            @blur="onFieldBlur(passwordFieldKey)"
+            @keyup.enter="onSubmit"
 
-              autocomplete="current-password"
-            />
-          </q-field>
-        <!-- End password -->
+            autocomplete="current-password"
+          />
+        </q-field>
+      <!-- End password -->
 
-        <!-- Confirm password -->
-          <q-field
-            class="row col-12 q-mt-md"
-            :label="$q.platform.is.mobile ? null : `${confirmPasswordLabel}:`"
-            :error="$v.form.confirmPassword.$error"
-            :error-label="confirmPasswordError"
-          >
-            <q-input
-              type="password"
-              v-model.trim="form.confirmPassword"
-              :float-label="confirmPasswordLabel"
-              @blur="$v.form.confirmPassword.$touch()"
-              @keyup.enter="onSubmit"
-            />
-          </q-field>
-        <!-- End confirm password -->
+      <!-- Confirm password -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${confirmPasswordLabel}:`"
+          :error="$v.form.confirmPassword.$error"
+          :error-label="confirmPasswordError"
+        >
+          <q-input
+            type="password"
+            v-model.trim="form.confirmPassword"
+            :float-label="confirmPasswordLabel"
+            @blur="$v.form.confirmPassword.$touch()"
+            @keyup.enter="onSubmit"
+          />
+        </q-field>
+      <!-- End confirm password -->
 
-        <div class="row q-pt-xl col-12 justify-end">
-          <q-btn  @click="onSubmit" :label="$t('buttons.register')" />
-        </div>
-      </form>
-    </div>
+      <div class="row q-pt-xl col-12 justify-end">
+        <q-btn  @click="onSubmit" :label="$t('buttons.register')" />
+      </div>
+    </form>
   </div>
 </template>
 

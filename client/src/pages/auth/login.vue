@@ -1,53 +1,51 @@
 <template>
-  <div class="row">
-    <div class="row col-12 justify-center">
-      <form class="row col-lg-4 col-md-8 col-11" style="margin-top:20vh">
-        <!-- Username -->
-          <q-field
-            class="row col-12 q-mt-md"
-            :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
-            :error="$v.form.username.$error"
-            :error-label="usernameError"
-          >
-            <q-input
-              v-model.trim="form.username"
-              :float-label="usernameLabel"
-              @blur="onFieldBlur(usernameFieldKey)"
-              @keyup.enter="login"
+  <div class="flex flex-center row col-12">
+    <form class="row col-lg-4 col-md-8 col-11">
+      <!-- Username -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
+          :error="$v.form.username.$error"
+          :error-label="usernameError"
+        >
+          <q-input
+            v-model.trim="form.username"
+            :float-label="usernameLabel"
+            @blur="onFieldBlur(usernameFieldKey)"
+            @keyup.enter="login"
 
-              autocomplete="email"
-            />
-          </q-field>
-        <!-- End username -->
+            autocomplete="email"
+          />
+        </q-field>
+      <!-- End username -->
 
-        <!-- Password -->
-          <q-field
-            class="row col-12 q-mt-md"
-            :label="$q.platform.is.mobile ? null : `${passwordLabel}:`"
-            :error="$v.form.password.$error"
-            :error-label="passwordError"
-          >
-            <q-input
-              type="password"
-              v-model.trim="form.password"
-              :float-label="passwordLabel"
-              @blur="onFieldBlur(passwordFieldKey)"
-              @keyup.enter="login"
+      <!-- Password -->
+        <q-field
+          class="row col-12 q-mt-md"
+          :label="$q.platform.is.mobile ? null : `${passwordLabel}:`"
+          :error="$v.form.password.$error"
+          :error-label="passwordError"
+        >
+          <q-input
+            type="password"
+            v-model.trim="form.password"
+            :float-label="passwordLabel"
+            @blur="onFieldBlur(passwordFieldKey)"
+            @keyup.enter="login"
 
-              autocomplete="current-password"
-            />
-          </q-field>
-        <!-- End password -->
+            autocomplete="current-password"
+          />
+        </q-field>
+      <!-- End password -->
 
-        <div class="row q-pt-md col-12 justify-end">
-          <router-link to="forgotPassword">{{$t('headings.forgotPassword')}}</router-link>
-        </div>
+      <div class="row q-pt-md col-12 justify-end">
+        <router-link to="forgotPassword">{{$t('headings.forgotPassword')}}</router-link>
+      </div>
 
-        <div class="row q-pt-xl col-12 justify-end">
-          <q-btn  @click="login" :label="$t('buttons.login')" />
-        </div>
-      </form>
-    </div>
+      <div class="row q-pt-xl col-12 justify-end">
+        <q-btn  @click="login" :label="$t('buttons.login')" />
+      </div>
+    </form>
   </div>
 </template>
 

@@ -1,17 +1,15 @@
 <template>
-  <div class="row items-center" style="min-height:100vh">
-    <div class="row col-12 justify-center">
-      <div v-if="pageState === pageStates.pending">
-        <q-spinner color="teal-4" size="40px" />
-      </div>
+  <div class="flex flex-center row col-12">
+    <div v-if="pageState === pageStates.pending">
+      <q-spinner color="teal-4" size="40px" />
+    </div>
 
-      <div v-if="pageState === pageStates.validToken">
-        {{$t('toastMessages.verifyEmail')}}
-      </div>
+    <div v-if="pageState === pageStates.validToken">
+      {{$t('toastMessages.verifyEmail')}}
+    </div>
 
-      <div v-if="pageState === pageStates.invalidToken">
-        {{$t('toastMessages.expiredRegistration')}}
-      </div>
+    <div v-if="pageState === pageStates.invalidToken">
+      {{$t('toastMessages.expiredRegistration')}}
     </div>
   </div>
 </template>

@@ -107,7 +107,7 @@
     </q-layout-drawer>
 
     <q-page-container>
-      <q-page class="row justify-center relative-position">
+      <q-page class="row justify-center relative-position q-pb-xl">
         <transition
           enter-active-class="animated fadeInDown"
           mode="out-in"
@@ -127,7 +127,6 @@ import { date } from 'quasar'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  name: 'MyLayout',
   data () {
     return {
       date,

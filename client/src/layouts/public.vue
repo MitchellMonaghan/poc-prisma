@@ -1,14 +1,15 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
-      <router-view />
+      <q-page class="row justify-center relative-position">
+        <router-view />
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
 export default {
-  name: 'MyLayout',
   data () {
     return {
     }
