@@ -1,37 +1,39 @@
 <template>
-  <div class="flex flex-center row col-12">
-    <div class="row col-lg-4 col-md-8 col-11" v-if="pageState === pageStates.form || pageState === pageStates.invalidToken">
-      <div v-if="pageState === pageStates.invalidToken">{{$t('toastMessages.passwordResetExpired')}}</div>
+  <page-transition class="row col flex flex-center fit" :enterActiveClass="$route.meta.enterActiveClass">
+    <div class="col-lg-4 col-md-8 col-11">
+      <div class="row col" v-if="pageState === pageStates.form || pageState === pageStates.invalidToken">
+        <div v-if="pageState === pageStates.invalidToken">{{$t('toastMessages.passwordResetExpired')}}</div>
 
-      <!-- Email -->
-        <q-field
-          class="row col-12 q-mt-md"
-          :label="$q.platform.is.mobile ? null : `${emailLabel}:`"
-          :error="$v.form.email.$error"
-          :error-label="emailError"
-        >
-          <q-input
-            v-model.trim="form.email"
-            :float-label="emailLabel"
-            @blur="onFieldBlur(emailFieldKey)"
-            @keyup.enter="onSubmit"
-          />
-        </q-field>
-      <!-- End email -->
+        <!-- Email -->
+          <q-field
+            class="row col-12 q-mt-md"
+            :label="$q.platform.is.mobile ? null : `${emailLabel}:`"
+            :error="$v.form.email.$error"
+            :error-label="emailError"
+          >
+            <q-input
+              v-model.trim="form.email"
+              :float-label="emailLabel"
+              @blur="onFieldBlur(emailFieldKey)"
+              @keyup.enter="onSubmit"
+            />
+          </q-field>
+        <!-- End email -->
 
-      <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="onSubmit" :label="$t('buttons.sendEmail')" />
+        <div class="row q-pt-xl col-12 justify-end">
+          <q-btn  @click="onSubmit" :label="$t('buttons.sendEmail')" />
+        </div>
+      </div>
+
+      <div class="row col" v-if="pageState === pageStates.emailSent">
+        <div>{{$t('toastMessages.checkYourEmail')}}</div>
+
+        <div class="row q-pt-xl col-12 justify-end">
+          <q-btn  @click="$router.push('/')" label="Continue" />
+        </div>
       </div>
     </div>
-
-    <div class="row col-lg-4 col-md-8 col-11" v-if="pageState === pageStates.emailSent">
-      <div>{{$t('toastMessages.checkYourEmail')}}</div>
-
-      <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="$router.push('/')" label="Continue" />
-      </div>
-    </div>
-  </div>
+  </page-transition>
 </template>
 
 <script>

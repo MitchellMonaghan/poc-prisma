@@ -1,17 +1,19 @@
 <template>
-  <div class="flex flex-center row col-12">
-    <div v-if="pageState === pageStates.pending">
-      <q-spinner color="teal-4" size="40px" />
-    </div>
+  <page-transition class="fixed-center text-center" :enterActiveClass="$route.meta.enterActiveClass">
+    <div class="col-lg-4 col-md-8 col-11">
+      <div v-if="pageState === pageStates.pending">
+        <q-spinner color="primary" size="40px" />
+      </div>
 
-    <div v-if="pageState === pageStates.validToken">
-      {{$t('toastMessages.verifyEmail')}}
-    </div>
+      <div v-if="pageState === pageStates.validToken">
+        {{$t('toastMessages.verifyEmail')}}
+      </div>
 
-    <div v-if="pageState === pageStates.invalidToken">
-      {{$t('toastMessages.expiredRegistration')}}
+      <div v-if="pageState === pageStates.invalidToken">
+        {{$t('toastMessages.expiredRegistration')}}
+      </div>
     </div>
-  </div>
+  </page-transition>
 </template>
 
 <script>

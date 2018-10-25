@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-center row col-12">
-    <form class="row col-lg-4 col-md-8 col-11">
+  <page-transition class="row col flex flex-center fit" :enterActiveClass="$route.meta.enterActiveClass">
+    <form class="col-lg-4 col-md-8 col-11">
       <!-- Username -->
         <q-field
           class="row col-12 q-mt-md"
@@ -46,7 +46,7 @@
         <q-btn  @click="login" :label="$t('buttons.login')" />
       </div>
     </form>
-  </div>
+  </page-transition>
 </template>
 
 <script>

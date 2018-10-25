@@ -1,14 +1,5 @@
 <template>
-  <div class="flex flex-center col-11">
+  <page-transition class="flex flex-center fit" :enterActiveClass="$route.meta.enterActiveClass">
     <img alt="Quasar logo" src="~assets/quasar-logo-full.svg">
-  </div>
+  </page-transition>
 </template>
-
-<style>
-</style>
-
-<script>
-export default {
-  name: 'PageIndex'
-}
-</script>

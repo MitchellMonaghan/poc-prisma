@@ -1,116 +1,118 @@
 <template>
-  <div class="col-11">
-    <div class="q-headline col-11 q-mt-md">{{$t('headings.profileSettings')}}</div>
+  <page-transition :enterActiveClass="$route.meta.enterActiveClass">
+    <div class="col">
+      <div class="q-headline col-11 q-mt-md">{{$t('headings.profileSettings')}}</div>
 
-    <q-field
-      class="row col-11 q-mt-md"
-      :label="$q.platform.is.mobile ? null : `${receiveEmailNotificationsLabel}:`"
-    >
-      <q-toggle
-        v-model="updateUserForm.receiveEmailNotifications"
-        :left-label="true"
-        :label="$q.platform.is.mobile? receiveEmailNotificationsLabel: null"
-        class="col justify-between"
-        style="display: flex"
-      />
-    </q-field>
+      <q-field
+        class="row col-11 q-mt-md"
+        :label="$q.platform.is.mobile ? null : `${receiveEmailNotificationsLabel}:`"
+      >
+        <q-toggle
+          v-model="updateUserForm.receiveEmailNotifications"
+          :left-label="true"
+          :label="$q.platform.is.mobile? receiveEmailNotificationsLabel: null"
+          class="col justify-between"
+          style="display: flex"
+        />
+      </q-field>
 
-    <form class="col-11">
-      <!-- Username -->
-        <q-field
-          class="row col-12 q-mt-md"
-          :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
-          :error="$v.updateUserForm.username.$error"
-          :error-label="usernameError"
-        >
-          <q-input
-            v-model.trim="updateUserForm.username"
-            :float-label="usernameLabel"
-            @blur="$v.updateUserForm.username.$touch()"
-            @keyup.enter="onSubmitUpdateUser"
-          />
-        </q-field>
-      <!-- End username -->
+      <form class="col-11">
+        <!-- Username -->
+          <q-field
+            class="row col-12 q-mt-md"
+            :label="$q.platform.is.mobile ? null : `${usernameLabel}:`"
+            :error="$v.updateUserForm.username.$error"
+            :error-label="usernameError"
+          >
+            <q-input
+              v-model.trim="updateUserForm.username"
+              :float-label="usernameLabel"
+              @blur="$v.updateUserForm.username.$touch()"
+              @keyup.enter="onSubmitUpdateUser"
+            />
+          </q-field>
+        <!-- End username -->
 
-      <!-- First name -->
-        <q-field
-          class="row col-12 q-mt-md"
-          :label="$q.platform.is.mobile ? null : `${firstNameLabel}:`"
-          :error="$v.updateUserForm.firstName.$error"
-          :error-label="firstNameError"
-        >
-          <q-input
-            v-model.trim="updateUserForm.firstName"
-            :float-label="firstNameLabel"
-            @blur="$v.updateUserForm.firstName.$touch()"
-            @keyup.enter="onSubmitUpdateUser"
-          />
-        </q-field>
-      <!-- End first name -->
+        <!-- First name -->
+          <q-field
+            class="row col-12 q-mt-md"
+            :label="$q.platform.is.mobile ? null : `${firstNameLabel}:`"
+            :error="$v.updateUserForm.firstName.$error"
+            :error-label="firstNameError"
+          >
+            <q-input
+              v-model.trim="updateUserForm.firstName"
+              :float-label="firstNameLabel"
+              @blur="$v.updateUserForm.firstName.$touch()"
+              @keyup.enter="onSubmitUpdateUser"
+            />
+          </q-field>
+        <!-- End first name -->
 
-      <!-- Last name -->
-        <q-field
-          class="row col-12 q-mt-md"
-          :label="$q.platform.is.mobile ? null : `${lastNameLabel}:`"
-          :error="$v.updateUserForm.lastName.$error"
-          :error-label="lastNameError"
-        >
-          <q-input
-            v-model.trim="updateUserForm.lastName"
-            :float-label="lastNameLabel"
-            @blur="$v.updateUserForm.lastName.$touch()"
-            @keyup.enter="onSubmitUpdateUser"
-          />
-        </q-field>
-      <!-- End last name -->
+        <!-- Last name -->
+          <q-field
+            class="row col-12 q-mt-md"
+            :label="$q.platform.is.mobile ? null : `${lastNameLabel}:`"
+            :error="$v.updateUserForm.lastName.$error"
+            :error-label="lastNameError"
+          >
+            <q-input
+              v-model.trim="updateUserForm.lastName"
+              :float-label="lastNameLabel"
+              @blur="$v.updateUserForm.lastName.$touch()"
+              @keyup.enter="onSubmitUpdateUser"
+            />
+          </q-field>
+        <!-- End last name -->
 
-      <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="onSubmitUpdateUser" :label="saveLabel" />
-      </div>
-    </form>
+        <div class="row q-pt-xl col-12 justify-end">
+          <q-btn  @click="onSubmitUpdateUser" :label="saveLabel" />
+        </div>
+      </form>
 
-    <div class="q-headline col-11 q-mt-md">{{$t('headings.changePassword')}}</div>
+      <div class="q-headline col-11 q-mt-md">{{$t('headings.changePassword')}}</div>
 
-    <form class="col-11">
-      <!-- Password -->
-        <q-field
-          class="row col-12 q-mt-md"
-          :label="$q.platform.is.mobile ? null : `${passwordLabel}:`"
-          :error="$v.changePasswordForm.password.$error"
-          :error-label="passwordError"
-        >
-          <q-input
-            type="password"
-            v-model.trim="changePasswordForm.password"
-            :float-label="passwordLabel"
-            @blur="$v.changePasswordForm.password.$touch()"
-            @keyup.enter="onSubmitChangePassword"
-          />
-        </q-field>
-      <!-- End password -->
+      <form class="col-11">
+        <!-- Password -->
+          <q-field
+            class="row col-12 q-mt-md"
+            :label="$q.platform.is.mobile ? null : `${passwordLabel}:`"
+            :error="$v.changePasswordForm.password.$error"
+            :error-label="passwordError"
+          >
+            <q-input
+              type="password"
+              v-model.trim="changePasswordForm.password"
+              :float-label="passwordLabel"
+              @blur="$v.changePasswordForm.password.$touch()"
+              @keyup.enter="onSubmitChangePassword"
+            />
+          </q-field>
+        <!-- End password -->
 
-      <!-- Confirm password -->
-        <q-field
-          class="row col-12 q-mt-md"
-          :label="$q.platform.is.mobile ? null : `${confirmPasswordLabel}:`"
-          :error="$v.changePasswordForm.confirmPassword.$error"
-          :error-label="confirmPasswordError"
-        >
-          <q-input
-            type="password"
-            v-model.trim="changePasswordForm.confirmPassword"
-            :float-label="confirmPasswordLabel"
-            @blur="$v.changePasswordForm.confirmPassword.$touch()"
-            @keyup.enter="onSubmitChangePassword"
-          />
-        </q-field>
-      <!-- End confirm password -->
+        <!-- Confirm password -->
+          <q-field
+            class="row col-12 q-mt-md"
+            :label="$q.platform.is.mobile ? null : `${confirmPasswordLabel}:`"
+            :error="$v.changePasswordForm.confirmPassword.$error"
+            :error-label="confirmPasswordError"
+          >
+            <q-input
+              type="password"
+              v-model.trim="changePasswordForm.confirmPassword"
+              :float-label="confirmPasswordLabel"
+              @blur="$v.changePasswordForm.confirmPassword.$touch()"
+              @keyup.enter="onSubmitChangePassword"
+            />
+          </q-field>
+        <!-- End confirm password -->
 
-      <div class="row q-pt-xl col-12 justify-end">
-        <q-btn  @click="onSubmitChangePassword" :label="saveLabel" />
-      </div>
-    </form>
-  </div>
+        <div class="row q-pt-xl col-12 justify-end">
+          <q-btn  @click="onSubmitChangePassword" :label="saveLabel" />
+        </div>
+      </form>
+    </div>
+  </page-transition>
 </template>
 
 <script>

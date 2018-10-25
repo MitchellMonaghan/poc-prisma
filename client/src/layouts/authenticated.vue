@@ -108,15 +108,9 @@
 
     <q-page-container>
       <q-page class="row justify-center relative-position q-pb-xl">
-        <transition
-          enter-active-class="animated fadeInDown"
-          mode="out-in"
-        >
-          <router-view v-if="!loading" />
-        </transition>
-
-        <q-inner-loading color="primary" :visible="loading">
-        </q-inner-loading>
+        <page-transition class="col-11" :leaveActiveClass="$route.meta.leaveActiveClass">
+          <router-view />
+        </page-transition>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -137,8 +131,6 @@ export default {
   },
 
   async created () {
-    this.loading = true
-
     // I don't think user subscription is needed only the current
     // user is only to be making changes to these types of props
     // await this.$graphql.user.subscribeToUsers(this.user.id)
@@ -149,8 +141,6 @@ export default {
     // Notifications
     await this.$graphql.notification.getNotifications(this.user.id)
     await this.$graphql.notification.subscribeToNotifications(this.user.id)
-
-    this.loading = false
   },
 
   computed: {

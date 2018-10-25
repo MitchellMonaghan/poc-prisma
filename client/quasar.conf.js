@@ -11,6 +11,7 @@ module.exports = function (ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
+      'globalComponents',
       'i18n',
       'axios',
       'graphql',
@@ -103,7 +104,8 @@ module.exports = function (ctx) {
     },
     // animations: 'all' --- includes all animations
     animations: [
-      'fadeInDown'
+      'fadeInDown',
+      'fadeOutDown'
     ],
     ssr: {
       pwa: false
