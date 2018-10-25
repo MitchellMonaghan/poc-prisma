@@ -34,7 +34,15 @@
                 </q-item-main>
               </q-item>
 
+              <q-item v-if="notifications.length === 0">
+                <q-item-side inverted color="primary" />
+                <q-item-main>
+                  <q-item-tile label>No new notifications</q-item-tile>
+                </q-item-main>
+              </q-item>
+
               <q-item
+                v-if="notifications.length > 0"
                 v-close-overlay
                 @click.native="notificationViewed(notification)"
                 v-for="(notification, index) in notifications" :key="index"
