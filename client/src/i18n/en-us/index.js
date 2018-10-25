@@ -18,6 +18,7 @@ export default {
     changePassword: 'Change Password',
     forgotPassword: 'Forgot Password',
     notifications: 'Notifications',
+    noNotifications: 'No notifications',
     settings: 'Settings',
     navigation: 'Navigation',
     home: 'Home',

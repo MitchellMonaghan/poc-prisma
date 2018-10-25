@@ -37,7 +37,7 @@
               <q-item v-if="notifications.length === 0">
                 <q-item-side inverted color="primary" />
                 <q-item-main>
-                  <q-item-tile label>No new notifications</q-item-tile>
+                  <q-item-tile label>{{$t('headings.noNotifications')}}</q-item-tile>
                 </q-item-main>
               </q-item>
 
